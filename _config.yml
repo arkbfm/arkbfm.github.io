@@ -1,33 +1,85 @@
 actors:
-  alice:
-    image_url: /images/actors/alice.png
-    name: alice
-    url: http://sns.example.com/alice
-  bob:
-    image_url: /images/actors/bob.png
-    name: bob
-    url: http://sns.example.com/bob
-author: alice
-description: Example description
-description_long: Example long description
-email: info@example.com
+  ark_B:
+    image_url: /images/actors/ark_B.jpg
+    name: あらB
+    url: https://twitter.com/ark_B
+  morazumorazu:
+    image_url: /images/actors/morazumorazu.jpg
+    name: モラズ
+    url: https://twitter.com/morazumorazu
+  MasashiU:
+    image_url: /images/actors/MasashiU.png
+    name: うっしー
+    url: https://twitter.com/MasashiU
+  AHA_oretama:
+    image_url: /images/actors/AHA_oretama.jpg
+    name: おれたま
+    url: https://twitter.com/AHA_oretama
+  syu_ya:
+    image_url: /images/actors/syu_ya.png
+    name: 本名
+    url: https://twitter.com/syu_ya
+  toshakuukan:
+    image_url: /images/actors/toshakuukan.png
+    name: ボインゴ
+    url: https://twitter.com/toshakuukan
+  matyunmatyun:
+    image_url: /images/actors/matyunmatyun.jpg
+    name: まちゅん
+    url: https://twitter.com/matyunmatyun
+  katsuko_meumeu:
+    image_url: /images/actors/katsuko_meumeu.jpg
+    name: かつこ
+    url: https://twitter.com/katsuko_meumeu
+  ky0muk0_chan:
+    image_url: /images/actors/ky0muk0_chan.jpg
+    name: 虚無子
+    url: https://twitter.com/ky0muk0_chan
+  muscle_azoson:
+    image_url: /images/actors/muscle_azoson.jpg
+    name: アゾソン
+    url: https://twitter.com/muscle_azoson
+  go_o2:
+    image_url: /images/actors/go_o2.jpeg
+    name: ぐーつー
+    url: https://twitter.com/go_o2
+  Q_chan_zzz:
+    image_url: /images/actors/Q_chan_zzz.jpg
+    name: きゅう
+    url: https://twitter.com/Q_chan_zzz
+  kokomakige:
+    image_url: /images/actors/kokomakige.jpg
+    name: もぐたん
+    url: https://twitter.com/kokomakige
+  imo_ben_:
+    image_url: /images/actors/imo_ben_.jpg
+    name: イモ弁
+    url: https://twitter.com/imo_ben_
+  toko157:
+    image_url: /images/actors/toko157.jpg
+    name: とこ
+    url: https://twitter.com/toko157
+  oooTORIBALLooo:
+    image_url: /images/actors/oooTORIBALLooo.jpg
+    name: とりボール
+    url: https://twitter.com/oooTORIBALLooo
+author: ark_B
+description: あらB.fm はゲストと一緒にくだをまく様子をお届けするポッドキャストです。
+description_long: あらB.fm はゲストと一緒にくだをまく様子をお届けするポッドキャストです。
+email: arkbb3@gmail.com
 exclude:
-  - docker
-  - docker-compose.yml
   - Gemfile
   - Gemfile.lock
   - LICENSE.txt
-  - README.md
-  - vendor
 google_analytics:
-hashtag: examplehashtag
+hashtag: arkbfm
 itunes_podcast_url:
-keywords: comma,separated,keywords
+keywords: guest,chat,letter
 language: ja
 markdown: kramdown
 permalink: /episode/:title
 sass:
   sass_dir: css
 timezone: Asia/Tokyo
-title: Example title
-url: http://example.com
+title: あらB.fm
+url: https://arkb.github.io
