@@ -7,7 +7,7 @@
             {{ site.title }} とは
           </h1>
           <div class="footer-sections-element-description">
-            {{ site.title }} は、{{ site.description_long }}です。
+            {{ site.description_long }}
           </div>
         </section>
         <section class="column-small-4 footer-sections-element">
@@ -23,34 +23,10 @@
             </a>
           </div>
         </section>
-        <section class="column-small-4 footer-sections-element">
-          <h1 class="footer-sections-element-heading">
-            購読
-          </h1>
-          <div class="footer-sections-element-description">
-            新しいエピソードの配信を購読できます。
-          </div>
-          <ul>
-            {% if site.itunes_podcast_url %}
-              <li>
-                <a href="{{ site.itunes_podcast_url }}" target="_blank">iTunesで購読</a>
-              </li>
-            {% endif %}
-            <li>
-              <a href="http://subscribeonandroid.com/{{ site.github.url | remove: "https://" | remove: "http://" }}/feed.xml" target="_blank">Androidで購読</a>
-            </li>
-            <li>
-              <a href="https://push.dog/subscribe?url={{ site.github.url }}/feed.xml" target="_blank">Pushdogで購読</a>
-            </li>
-            <li>
-              <a href="{{ site.github.url }}/feed.xml" target="_blank">RSSで購読</a>
-            </li>
-          </ul>
-        </section>
       </div>
     </div>
     <div class="footer-copyright">
-      © 2016 <a href="{{ site.github.url }}/">{{ site.title }}</a>
+      © 2021 <a href="{{ site.github.url }}/">{{ site.title }}</a>
     </div>
   </div>
 </footer>
