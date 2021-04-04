@@ -83,6 +83,9 @@ sass:
 timezone: Asia/Tokyo
 title: あらB.fm
 url: https://arkbfm.github.io
+theme: jekyll-theme-cayman
+twitter:
+  username: arkbfm
 defaults:
   - scope:
       path: ""
