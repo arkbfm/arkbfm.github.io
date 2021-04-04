@@ -83,3 +83,11 @@ sass:
 timezone: Asia/Tokyo
 title: あらB.fm
 url: https://arkbfm.github.io
+defaults:
+  - scope:
+      path: ""
+    values:
+      image:
+        path: /images/artwork.png
+        height: 1400
+        width: 1400
