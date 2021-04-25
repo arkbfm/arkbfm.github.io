@@ -63,6 +63,10 @@ actors:
     image_url: /images/actors/oooTORIBALLooo.jpg
     name: とりボール
     url: https://twitter.com/oooTORIBALLooo
+  tjmlab:
+    image_url: /images/actors/tjmlab.jpg
+    name: 部品（本田翼）
+    url: https://twitter.com/tjmlab
 author: ark_B
 description: あらB.fm はゲストと一緒にくだをまく様子をお届けするポッドキャストです。
 description_long: あらB.fm はゲストと一緒にくだをまく様子をお届けするポッドキャストです。
