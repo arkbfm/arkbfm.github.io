@@ -67,6 +67,14 @@ actors:
     image_url: /images/actors/tjmlab.jpg
     name: 部品（本田翼）
     url: https://twitter.com/tjmlab
+  saikoro19937:
+    image_url: /images/actors/saikoro19937.jpg
+    name: さいころ
+    url: https://twitter.com/saikoro19937
+  tjmlab:
+    image_url: /images/actors/Leukosaphir.jpg
+    name: ロイコ
+    url: https://twitter.com/Leukosaphir
 author: ark_B
 description: あらB.fm はゲストと一緒にくだをまく様子をお届けするポッドキャストです。
 description_long: あらB.fm はゲストと一緒にくだをまく様子をお届けするポッドキャストです。
