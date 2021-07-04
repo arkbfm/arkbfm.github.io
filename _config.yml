@@ -75,6 +75,14 @@ actors:
     image_url: /images/actors/Leukosaphir.jpg
     name: ロイコ
     url: https://twitter.com/Leukosaphir
+  echinusv:
+    image_url: /images/actors/echinusv.png
+    name: さばうに
+    url: https://twitter.com/echinusv
+  mutoreimu:
+    image_url: /images/actors/mutoreimu.jpg
+    name: 空飛ぶムート
+    url: https://twitter.com/mutoreimu
 author: ark_B
 description: あらB.fm はゲストと一緒にくだをまく様子をお届けするポッドキャストです。
 description_long: あらB.fm はゲストと一緒にくだをまく様子をお届けするポッドキャストです。
