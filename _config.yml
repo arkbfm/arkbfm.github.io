@@ -83,6 +83,10 @@ actors:
     image_url: /images/actors/mutoreimu.jpg
     name: 空飛ぶムート
     url: https://twitter.com/mutoreimu
+  yasu_shinohara:
+    image_url: /images/actors/yasu_shionohara.jpg
+    name: 篠原 康
+    url: https://twitter.com/yasu_shinohara
 author: ark_B
 description: あらB.fm はゲストと一緒にくだをまく様子をお届けするポッドキャストです。
 description_long: あらB.fm はゲストと一緒にくだをまく様子をお届けするポッドキャストです。
