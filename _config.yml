@@ -87,6 +87,10 @@ actors:
     image_url: /images/actors/yasu_shinohara.jpg
     name: わわっぴ（篠原 康）
     url: https://twitter.com/yasu_shinohara
+  kichisyumi:
+    image_url: /images/actors/kichisyumi.jpg
+    name: いえこもり
+    url: https://twitter.com/kichisyumi
 author: ark_B
 description: あらB.fm はゲストと一緒にくだをまく様子をお届けするポッドキャストです。
 description_long: あらB.fm はゲストと一緒にくだをまく様子をお届けするポッドキャストです。
