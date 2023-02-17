@@ -95,6 +95,10 @@ actors:
     image_url: /images/actors/umiske.jpg
     name: うみすけ
     url: https://twitter.com/umiske
+  adsc3_141:
+    image_url: /images/actors/adsc3_141.jpg
+    name: あどすく
+    url: https://twitter.com/adsc3_141
 author: ark_B
 description: あらB.fm はゲストと一緒にくだをまく様子をお届けするポッドキャストです。
 description_long: あらB.fm はゲストと一緒にくだをまく様子をお届けするポッドキャストです。
