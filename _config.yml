@@ -91,6 +91,10 @@ actors:
     image_url: /images/actors/kichisyumi.jpg
     name: いえこもり
     url: https://twitter.com/kichisyumi
+  umiske:
+    image_url: /images/actors/umiske.jpg
+    name: うみすけ
+    url: https://twitter.com/umiske
 author: ark_B
 description: あらB.fm はゲストと一緒にくだをまく様子をお届けするポッドキャストです。
 description_long: あらB.fm はゲストと一緒にくだをまく様子をお届けするポッドキャストです。
