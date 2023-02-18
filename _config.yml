@@ -103,6 +103,54 @@ actors:
     image_url: /images/actors/otama_jacksy.png
     name: おたま
     url: https://twitter.com/otama_jacksy
+  dr_Q_99:
+    image_url: /images/actors/dr_Q_99.jpg
+    name: ドラQ
+    url: https://twitter.com/dr_Q_99
+  _buumm:
+    image_url: /images/actors/_buumm.jpg
+    name: シマダ
+    url: https://twitter.com/_buumm
+  hiropon160:
+    image_url: /images/actors/hiropon160.jpg
+    name: ひろ
+    url: https://twitter.com/hiropon160
+  mesirupedo:
+    image_url: /images/actors/mesirupedo.jpg
+    name: ゆっこくん
+    url: https://twitter.com/mesirupedo
+  yjmtsmt:
+    image_url: /images/actors/yjmtsmt.jpg
+    name: ○本
+    url: https://twitter.com/yjmtsmt
+  Romancing_park:
+    image_url: /images/actors/Romancing_park.jpg
+    name: おしり
+    url: https://twitter.com/Romancing_park
+  saqui_game:
+    image_url: /images/actors/saqui_game.jpg
+    name: saqui
+    url: https://twitter.com/saqui_game
+  Weisweiler:
+    image_url: /images/actors/Weisweiler.jpg
+    name: ウスター
+    url: https://twitter.com/Weisweiler
+  shiroie_event:
+    image_url: /images/actors/shiroie_event.jpg
+    name: 汗様
+    url: https://twitter.com/shiroie_event
+  sisisisisyamoo:
+    image_url: /images/actors/sisisisisyamoo.jpg
+    name: ししゃも
+    url: https://twitter.com/sisisisisyamoo
+  xiPJ:
+    image_url: /images/actors/xiPJ.jpg
+    name: ピジェ
+    url: https://twitter.com/xiPJ
+  yagihexe:
+    image_url: /images/actors/yagihexe.jpg
+    name: めへへ
+    url: https://twitter.com/yagihexe
 author: ark_B
 description: あらB.fm はゲストと一緒にくだをまく様子をお届けするポッドキャストです。
 description_long: あらB.fm はゲストと一緒にくだをまく様子をお届けするポッドキャストです。
