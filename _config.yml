@@ -107,8 +107,8 @@ actors:
     image_url: /images/actors/dr_Q_99.jpg
     name: ドラQ
     url: https://twitter.com/dr_Q_99
-  _buumm:
-    image_url: /images/actors/buumm.png
+  buumm:
+    image_url: /images/actors/buumm.jpg
     name: シマダ
     url: https://twitter.com/_buumm
   hiropon160:
