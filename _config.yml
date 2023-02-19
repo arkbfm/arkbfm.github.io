@@ -151,6 +151,10 @@ actors:
     image_url: /images/actors/yagihexe.jpg
     name: めへへ
     url: https://twitter.com/yagihexe
+  maraky99:
+    image_url: /images/actors/maraky99.jpg
+    name: まにー
+    url: https://twitter.com/maraky99
 author: ark_B
 description: あらB.fm はゲストと一緒にくだをまく様子をお届けするポッドキャストです。
 description_long: あらB.fm はゲストと一緒にくだをまく様子をお届けするポッドキャストです。
