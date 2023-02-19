@@ -223,6 +223,38 @@ actors:
     image_url: /images/actors/sprtfrst.jpg
     name: ムミ
     url: https://twitter.com/sprtfrst
+  kurptoon:
+    image_url: /images/actors/kurptoon.jpg
+    name: そら
+    url: https://twitter.com/kurptoon
+  eigenvector3:
+    image_url: /images/actors/eigenvector3.jpg
+    name: こゆうち
+    url: https://twitter.com/eigenvector3
+  a33554432:
+    image_url: /images/actors/a33554432.jpg
+    name: センケイ
+    url: https://twitter.com/a33554432
+  mof_mmm:
+    image_url: /images/actors/mof_mmm.jpg
+    name: もふふ
+    url: https://twitter.com/mof_mmm
+  watanabe:
+    image_url: /images/actors/watanabe.png
+    name: ワタナベ
+    url: https://twitter.com/watanabe
+  zeeksphere:
+    image_url: /images/actors/zeeksphere.png
+    name: ムミ
+    url: https://twitter.com/zeeksphere
+  SesameElegy:
+    image_url: /images/actors/SesameElegy.jpg
+    name: ごま
+    url: https://twitter.com/SesameElegy
+  mkmchng:
+    image_url: /images/actors/mkmchng.jpg
+    name: まちょンゴ
+    url: https://twitter.com/mkmchng
 author: ark_B
 description: あらB.fm はゲストと一緒にくだをまく様子をお届けするポッドキャストです。
 description_long: あらB.fm はゲストと一緒にくだをまく様子をお届けするポッドキャストです。
