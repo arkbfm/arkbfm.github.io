@@ -127,8 +127,8 @@ actors:
     image_url: /images/actors/Romancing_park.jpg
     name: おしり
     url: https://twitter.com/Romancing_park
-  saqui_game:
-    image_url: /images/actors/saqui_game.jpg
+  saqui_emouvant:
+    image_url: /images/actors/saqui_emouvant.jpg
     name: saqui
     url: https://twitter.com/saqui_game
   Weisweiler:
