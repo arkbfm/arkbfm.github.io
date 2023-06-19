@@ -255,6 +255,10 @@ actors:
     image_url: /images/actors/mkmchng.jpg
     name: まちょンゴ
     url: https://twitter.com/mkmchng
+  RyoAkashi:
+    image_url: /images/actors/RyoAkashi.jpg
+    name: RA
+    url: https://twitter.com/RyoAkashi
 author: ark_B
 description: あらB.fm はゲストと一緒にくだをまく様子をお届けするポッドキャストです。
 description_long: あらB.fm はゲストと一緒にくだをまく様子をお届けするポッドキャストです。
