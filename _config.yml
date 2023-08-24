@@ -259,6 +259,10 @@ actors:
     image_url: /images/actors/RyoAkashi.jpg
     name: RA
     url: https://twitter.com/RyoAkashi
+  takayutsch:
+    image_url: /images/actors/takayutsch.jpg
+    name: スーパー猫かわいい人材
+    url: https://twitter.com/takayutsch
 author: ark_B
 description: あらB.fm はゲストと一緒にくだをまく様子をお届けするポッドキャストです。
 description_long: あらB.fm はゲストと一緒にくだをまく様子をお届けするポッドキャストです。
