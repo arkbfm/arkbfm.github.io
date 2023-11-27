@@ -1,4 +1,7 @@
 actors:
+  booandchang:
+    image_url: /images/actors/booandchang.png
+    name: ぶーちゃん
   ark_B:
     image_url: /images/actors/ark_B.jpg
     name: あらB
