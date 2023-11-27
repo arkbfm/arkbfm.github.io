@@ -2,6 +2,7 @@ actors:
   booandchang:
     image_url: /images/actors/booandchang.png
     name: ぶーちゃん
+    url: https://twitter.com/booandchang
   ark_B:
     image_url: /images/actors/ark_B.jpg
     name: あらB
