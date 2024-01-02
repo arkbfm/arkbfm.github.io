@@ -1,4 +1,8 @@
 actors:
+  saba1024:
+    image_url: /images/actors/saba1024.jpeg
+    name: こーじ
+    url: https://twitter.com/saba1024
   booandchang:
     image_url: /images/actors/booandchang.png
     name: ぶーちゃん
