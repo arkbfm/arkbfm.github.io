@@ -250,7 +250,7 @@ actors:
   watanabe:
     image_url: /images/actors/watanabe.png
     name: ワタナベ
-    url: https://twitter.com/watanabe
+    url: https://twitter.com/
   zeeksphere:
     image_url: /images/actors/zeeksphere.png
     name: ムミ
@@ -271,6 +271,10 @@ actors:
     image_url: /images/actors/takayutsch.jpg
     name: スーパー猫かわいい人材
     url: https://twitter.com/takayutsch
+  kyomuo:
+    image_url: /images/actors/kyomuo.png
+    name: きょむお
+    url: https://twitter.com/
 author: ark_B
 description: あらB.fm はゲストと一緒にくだをまく様子をお届けするポッドキャストです。
 description_long: あらB.fm はゲストと一緒にくだをまく様子をお届けするポッドキャストです。
