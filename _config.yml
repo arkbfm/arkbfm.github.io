@@ -1,4 +1,8 @@
 actors:
+  Healthya_Univ:
+    image_url: /images/actors/Healthya_Univ.jpg
+    name: へるしあ
+    url: https://x.com/Healthya_Univ
   37min_:
     image_url: /images/actors/37min_.jpg
     name: みなみん
