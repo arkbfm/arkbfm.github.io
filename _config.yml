@@ -1,4 +1,8 @@
 actors:
+  syncat2:
+    image_url: /images/actors/syncat2.jpg
+    name: すこ
+    url: https://x.com/syncat2 
   mistigrix0123:
     image_url: /images/actors/mistigrix0123.jpg
     name: るかりお
