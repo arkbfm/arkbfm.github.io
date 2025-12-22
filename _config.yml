@@ -1,4 +1,8 @@
 actors:
+  asesama_:
+    image_url: /images/actors/asesama_.jpg
+    name: 汗様
+    url: https://x.com/asesama_
   mizuumi:
     image_url: /images/actors/mizuumi.jpg
     name: みずうみ
