@@ -18,7 +18,10 @@
           </header>
           <section class="card-body markdown">
             <p style="text-align:center">
-              <iframe src="https://open.spotify.com/embed/episode/{{ page.audio_url }}" height="204px" width="100%" frameborder="0" scrolling="no" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+              {% assign audio_urls = page.audio_url | split: ", " %}
+              {% for audio_id in audio_urls %}
+                <iframe src="https://open.spotify.com/embed/episode/{{ audio_id | strip }}" height="204px" width="100%" frameborder="0" scrolling="no" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+              {% endfor %}
             </p>
             <h2>
               内容紹介
