@@ -4,9 +4,7 @@
   background-position: center;
 
   &-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    position: relative;
   }
 
   &-description {
@@ -38,12 +36,9 @@
   }
 
   &-search {
-    flex-shrink: 0;
-
-    &-icon {
-      color: #fff;
-      text-decoration: none;
-    }
+    position: absolute;
+    top: 0;
+    right: 0;
 
     &-input {
       padding: 8px 12px;
@@ -54,6 +49,12 @@
       font-size: 0.9rem;
       width: 200px;
       outline: none;
+
+      @media (max-width: $width-screen-extra-small-maximum) {
+        width: 140px;
+        font-size: 0.8rem;
+        padding: 6px 10px;
+      }
 
       &::placeholder {
         color: rgba(255, 255, 255, 0.6);
