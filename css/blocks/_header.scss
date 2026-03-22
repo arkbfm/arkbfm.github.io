@@ -40,6 +40,11 @@
   &-search {
     flex-shrink: 0;
 
+    &-icon {
+      color: #fff;
+      text-decoration: none;
+    }
+
     &-input {
       padding: 8px 12px;
       border: 1px solid rgba(255, 255, 255, 0.5);
