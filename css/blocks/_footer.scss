@@ -8,6 +8,26 @@
     text-align: center;
   }
 
+  &-search {
+    text-align: center;
+    margin-bottom: 24px;
+
+    &-input {
+      padding: 8px 12px;
+      border: 1px solid $color-text-dark-hint;
+      border-radius: 4px;
+      background: #fff;
+      font-size: 0.9rem;
+      width: 100%;
+      max-width: 300px;
+      outline: none;
+
+      &:focus {
+        border-color: $color-text-dark-secondary;
+      }
+    }
+  }
+
   &-sections {
     &-element {
       margin-bottom: 24px;
