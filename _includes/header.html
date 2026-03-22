@@ -1,13 +1,21 @@
 <header class="header">
   <div class="header-overlay">
-    <div class="container">
-      <h1 class="header-heading">
-        <a href="{{ site.github.url }}/">
-          {{ site.title }}
-        </a>
-      </h1>
-      <div class="header-description">
-        {{ site.description }}
+    <div class="container header-container">
+      <div class="header-left">
+        <h1 class="header-heading">
+          <a href="{{ site.github.url }}/">
+            {{ site.title }}
+          </a>
+        </h1>
+        <div class="header-description">
+          {{ site.description }}
+        </div>
+      </div>
+      <div class="header-search">
+        <form class="header-search-form" action="{{ site.github.url | default: site.url }}/search" method="get">
+          <input type="search" name="q" placeholder="エピソードを検索..."
+                 class="header-search-input" autocomplete="off">
+        </form>
       </div>
     </div>
   </div>
