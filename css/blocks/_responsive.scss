@@ -30,18 +30,6 @@
   }
 }
 
-.header-container {
-  @media (max-width: $width-screen-extra-small-maximum) {
-    flex-direction: column;
-  }
-}
-
-.header-search {
-  @media (max-width: $width-screen-extra-small-maximum) {
-    margin-top: 16px;
-  }
-}
-
 .hidden-extra-small {
   @media (max-width: $width-screen-extra-small-maximum) {
     display: none;
