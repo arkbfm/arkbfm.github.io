@@ -1,11 +1,11 @@
 @font-face {
-  font-family: 'Ikaho';
-  src: url('../fonts/Ikaho-Hiragana-Unicode.otf') format('opentype');
-  unicode-range: U+3040-309F; // ひらがな
+  font-family: 'Splatoon';
+  src: url('../fonts/ikamodoki1_0.ttf') format('truetype');
+  unicode-range: U+3040-309F, U+30A0-30FF; // ひらがな・カタカナ
 }
 
 @font-face {
-  font-family: 'Ikaho';
+  font-family: 'Splatoon';
   src: url('../fonts/Ikaho-Alphabet.otf') format('opentype');
   unicode-range: U+0000-007F; // ASCII (英数字・記号)
 }
@@ -27,7 +27,7 @@
   &-heading {
     color: $color-text-light-primary;
     text-shadow: 0 1px 5px black;
-    font-family: 'Ikaho', sans-serif;
+    font-family: 'Splatoon', sans-serif;
     font-size: 2.5rem;
     font-weight: 500;
 
