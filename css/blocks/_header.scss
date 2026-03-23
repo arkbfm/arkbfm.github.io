@@ -8,6 +8,8 @@
   font-family: 'Splatoon';
   src: url('../fonts/ProjectPaintballDisplay.ttf') format('truetype');
   unicode-range: U+0000-007F; // ASCII (英数字・記号)
+  size-adjust: 115%;
+  ascent-override: 80%;
 }
 
 .header {
