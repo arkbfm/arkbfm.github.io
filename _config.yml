@@ -315,6 +315,10 @@ actors:
     image_url: /images/actors/kyomuo.png
     name: きょむお
     url: https://twitter.com/
+  ban20151031_2:
+    image_url: /images/actors/ban20151031_2.jpg
+    name: ばん
+    url: https://twitter.com/ban20151031_2
 author: ark_B
 description: あらB.fm はゲストと一緒にくだをまく様子をお届けするポッドキャストです。
 description_long: あらB.fm はゲストと一緒にくだをまく様子をお届けするポッドキャストです。
