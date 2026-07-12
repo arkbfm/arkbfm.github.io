@@ -319,6 +319,10 @@ actors:
     image_url: /images/actors/ban20151031_2.jpg
     name: ばん
     url: https://twitter.com/ban20151031_2
+  yamaken37:
+    image_url: /images/actors/yamaken37.png
+    name: やまけん
+    url: https://twitter.com/yamaken37
 author: ark_B
 description: あらB.fm はゲストと一緒にくだをまく様子をお届けするポッドキャストです。
 description_long: あらB.fm はゲストと一緒にくだをまく様子をお届けするポッドキャストです。
