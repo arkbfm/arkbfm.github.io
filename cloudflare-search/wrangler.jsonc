@@ -1,0 +1,17 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "arkbfm-search",
+  "main": "worker.js",
+  "compatibility_date": "2026-09-16",
+  "workers_dev": false,
+  "routes": [
+    { "pattern": "search.arkbfm.com", "custom_domain": true }
+  ],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "arkbfm-search",
+      "database_id": "390de978-7db4-409c-9b55-e3f221b2b6a5"
+    }
+  ]
+}

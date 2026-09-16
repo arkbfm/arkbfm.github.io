@@ -1,0 +1,8 @@
+import.sql
+audio-migration.sql
+metadata-migration.sql
+.env
+.config/
+.npm-cache/
+.wrangler/
+node_modules/
