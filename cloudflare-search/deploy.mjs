@@ -13,7 +13,10 @@ if (!account || !token) throw new Error("CLOUDFLARE_ACCOUNT_ID and CLOUDFLARE_AP
 const metadata = {
   main_module: "worker.js",
   compatibility_date: "2026-09-16",
-  bindings: [{ type: "d1", name: "DB", database_id: "390de978-7db4-409c-9b55-e3f221b2b6a5" }],
+  bindings: [
+    { type: "d1", name: "DB", database_id: "390de978-7db4-409c-9b55-e3f221b2b6a5" },
+    { type: "ratelimit", name: "SEARCH_RATE_LIMIT", namespace_id: "1001", simple: { limit: 30, period: 60 } },
+  ],
 };
 const form = new FormData();
 form.append("metadata", JSON.stringify(metadata));
