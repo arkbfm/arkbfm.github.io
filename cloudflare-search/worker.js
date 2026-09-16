@@ -1,14 +1,14 @@
 const HTML = `<!doctype html>
 <html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>あらB.fm 横断検索</title>
+<title>横断検索 | あらB.fm</title><meta name="robots" content="noindex,nofollow,noarchive">
+<link rel="stylesheet" href="https://www.arkbfm.com/css/main.css"><link rel="shortcut icon" href="https://www.arkbfm.com/favicon.ico">
 <style>
-:root{font-family:system-ui,sans-serif;color:#182027;background:#f4f1ea}body{max-width:960px;margin:auto;padding:32px 18px}
-h1{font-size:1.55rem;margin:0 0 6px}.note,#meta{color:#66717a}.bar{display:flex;gap:8px;margin:24px 0 16px}
-input,button{font:inherit;padding:11px 13px;border:1px solid #aab1b5;border-radius:8px;background:white}input{flex:1}button{cursor:pointer;background:#1e6156;color:white;border-color:#1e6156}
-.result{background:white;border:1px solid #d9d5cc;border-radius:10px;padding:14px 16px;margin:10px 0}.title{font-weight:700}.attrs,.kind{font-size:.86rem;color:#68727a;margin:4px 0 9px}.hit{border-top:1px solid #eee;padding-top:10px;margin-top:10px}.text{line-height:1.65}mark{background:#ffe28a}
-.play{margin-top:10px;padding:7px 10px}.player{position:sticky;bottom:8px;margin-top:16px}
-</style></head><body><h1>あらB.fm 横断検索</h1><p class="note">校正済み文字起こしを検索します。</p>
-<form class="bar" id="form"><input id="q" minlength="2" maxlength="100" required autofocus placeholder="検索語（2文字以上）"><button>検索</button></form><div id="meta"></div><main id="results"></main><div class="player" id="player"></div>
+.search-card{max-width:960px}.search-note,#meta,.attrs,.kind{color:rgba(0,0,0,.54)}#meta{margin-top:8px}
+.result{padding:22px 0}.result+.result{border-top:1px solid #eee}.title{font-size:1.5rem}.attrs,.kind{font-size:.86rem;margin:4px 0 9px}.hit{border-top:1px solid #eee;padding-top:12px;margin-top:12px}.text{line-height:1.7}mark{background:#ffe28a}
+.play{font:inherit;cursor:pointer;color:#fff;background:#1c3c7c;border:0;border-radius:4px;margin-top:10px;padding:7px 11px}.player{position:sticky;bottom:8px;margin-top:16px}
+@media(max-width:767px){.header-search{position:static;margin-top:18px}.header-search-input{width:100%}.title{font-size:1.25rem}}
+</style></head><body><header class="header"><div class="header-overlay"><div class="container header-container"><div class="header-left"><h1 class="header-heading"><a href="https://www.arkbfm.com/"><span class="header-heading-ja">あら</span><span class="header-heading-en">B.fm</span></a></h1><div class="header-description">あらBがテクノロジー、音楽、映画などについてゲストを招いて話すポッドキャストです。</div></div><div class="header-search"><form class="header-search-form" id="form"><input type="search" id="q" name="q" minlength="2" maxlength="100" required autofocus placeholder="文字起こしを横断検索..." class="header-search-input" autocomplete="off"></form></div></div></div></header>
+<main class="main"><div class="container search-card"><div class="card"><div class="card-header"><h1 class="card-heading">横断検索</h1><p class="search-note">校正済み文字起こし、タイトル、概要、ショーノートを検索します。</p><div id="meta"></div></div><div class="card-body" id="results"></div></div><div class="player" id="player"></div></div></main>
 <script>
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const highlight=(text,q)=>esc(text).replaceAll(esc(q),'<mark>'+esc(q)+'</mark>');
@@ -19,14 +19,15 @@ try{const response=await fetch('/api/search',{method:'POST',headers:{'content-ty
 meta.textContent=data.results.length+'エピソード';results.innerHTML=data.results.map(x=>'<article class="result"><a class="title" href="'+esc(x.url)+'">'+esc(x.title)+'</a><div class="attrs">'+esc(x.published_at)+' · '+esc(x.actors)+'</div><div class="kind">'+esc(x.reason)+'</div>'+x.hits.map(h=>'<div class="hit"><div class="attrs">'+esc(h.timestamp)+' · '+esc(h.speaker||'話者不明')+(h.fuzzy?' · あいまい一致':'')+'</div><div class="text">'+highlight(h.text,q)+'</div><button class="play" data-spotify="'+esc(h.spotify_id)+'" data-start="'+Number(h.start)+'">Spotifyプレイヤーを表示（'+esc(h.timestamp)+'〜）</button></div>').join('')+'</article>').join('')||'<p>一致するエピソードはありませんでした。</p>';
 }catch(error){meta.textContent=error.message;}});
 const initialQuery=new URLSearchParams(location.search).get('q');if(initialQuery){document.querySelector('#q').value=initialQuery;document.querySelector('#form').requestSubmit()}
-</script></body></html>`;
+</script><footer class="footer"><div class="container"><div class="footer-copyright">© 2021 <a href="https://www.arkbfm.com/">あらB.fm</a></div></div></footer></body></html>`;
 
 const headers = {
   "content-type": "application/json; charset=utf-8",
   "cache-control": "no-store",
-  "content-security-policy": "default-src 'self'; style-src 'unsafe-inline'; script-src 'self' 'unsafe-inline'; frame-src https://open.spotify.com; base-uri 'none'; frame-ancestors 'none'",
+  "content-security-policy": "default-src 'self'; style-src 'self' 'unsafe-inline' https://www.arkbfm.com; font-src https://www.arkbfm.com; img-src https://www.arkbfm.com; script-src 'self' 'unsafe-inline'; frame-src https://open.spotify.com; base-uri 'none'; frame-ancestors 'none'",
   "x-content-type-options": "nosniff",
   "referrer-policy": "no-referrer",
+  "x-robots-tag": "noindex, nofollow, noarchive",
 };
 
 function json(data, status = 200) {
@@ -44,6 +45,14 @@ function timestamp(seconds) {
 const normalize = value => value.normalize("NFKC").toLowerCase().replace(/\s+/g, " ").trim();
 const quoted = value => `"${value.replaceAll('"', '""')}"`;
 const trigrams = value => [...new Set(Array.from(normalize(value)).slice(0, -2).map((_, index, chars) => chars.slice(index, index + 3).join("")))];
+const excerpt = (text, needles) => {
+  if (text.length <= 280) return text;
+  const positions = needles.map(needle => normalize(text).indexOf(normalize(needle))).filter(index => index >= 0);
+  const start = Math.max(0, (positions[0] || 0) - 100);
+  const prefix = start ? "…" : "";
+  const suffix = start + 280 - prefix.length < text.length ? "…" : "";
+  return `${prefix}${text.slice(start, start + 280 - prefix.length - suffix.length)}${suffix}`;
+};
 
 async function search(env, query) {
   const normalized = normalize(query);
@@ -121,7 +130,7 @@ async function search(env, query) {
       reason: [...item.reasons].join("・"),
       url: `https://www.arkbfm.com/episode/${item.slug}`,
       hits: item.hits.sort((a, b) => (b.coverage || 1) - (a.coverage || 1) || a.start - b.start).slice(0, 3)
-        .map(hit => ({ ...hit, timestamp: timestamp(hit.start) })),
+        .map(hit => ({ ...hit, text: excerpt(hit.text, [query, ...variants, ...trigrams(query)]), timestamp: timestamp(hit.start) })),
     }));
 }
 
@@ -134,6 +143,9 @@ export default {
     if (request.method !== "POST" || url.pathname !== "/api/search") {
       return new Response("Not found", { status: 404, headers: { "content-type": "text/plain; charset=utf-8" } });
     }
+
+    const rate = await env.SEARCH_RATE_LIMIT.limit({ key: request.headers.get("cf-connecting-ip") || "unknown" });
+    if (!rate.success) return json({ error: "検索回数が多すぎます。1分後にお試しください" }, 429);
 
     let query;
     try {

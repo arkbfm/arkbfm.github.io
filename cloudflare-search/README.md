@@ -1,13 +1,12 @@
 # あらB.fm private transcript search
 
-Cloudflare Worker + D1 + Access で、校正済み文字起こしを認証付き検索として配信する。
+Cloudflare Worker + D1 で、校正済み文字起こしの短い抜粋を公開検索として配信する。
 文字起こしや生成した `import.sql` はリポジトリへ追加しない。
 
 ## 初回デプロイ
 
 1. `.env.example` を `.env` にコピーし、対象アカウントのIDと権限を限定したAPIトークンを設定する。
-2. Cloudflare Zero Trust で `search.arkbfm.com` の Access Application を先に作り、許可するメールアドレスを限定する。
-3. D1を作り、表示されたIDを `wrangler.jsonc` の `database_id` に設定する。
+2. D1を作り、表示されたIDを `wrangler.jsonc` の `database_id` に設定する。
 
 ```powershell
 npx wrangler d1 create arkbfm-search
@@ -16,7 +15,7 @@ npx wrangler d1 execute arkbfm-search --remote --file=import.sql
 node deploy.mjs --attach-domain
 ```
 
-`workers_dev` は無効。Accessを作る前にカスタムドメインへデプロイしないこと。Access Application は `search.arkbfm.com` だけを対象にし、公開中の `www.arkbfm.com` は含めない。
+`workers_dev` は無効。検索APIは1接続元あたり毎分30回に制限し、1件あたり最大280文字の抜粋だけを返す。
 
 ## 更新
 
