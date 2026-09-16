@@ -43,6 +43,19 @@
               {% endfor %}
             </div>
             {{ content }}
+            {% assign episode_key = page.url | split: "/" | last %}
+            {% assign related_episodes = site.data.related_episodes[episode_key] %}
+            {% if related_episodes.size > 0 %}
+              <h2>関連エピソード</h2>
+              <ul>
+                {% for episode in related_episodes %}
+                  <li>
+                    <a href="{{ episode.url | prepend:site.github.url }}">{{ episode.title }}</a>
+                    <small>（{{ episode.reasons | join: "・" }}）</small>
+                  </li>
+                {% endfor %}
+              </ul>
+            {% endif %}
           </section>
           <footer class="article-footer">
             <a class="twitter-share-button" href="https://twitter.com/intent/tweet?hashtags={{ site.hashtag }}&url={{ site.github.url }}{{ page.url }}&text={{ page.title }}">
