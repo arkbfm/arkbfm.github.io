@@ -16,6 +16,8 @@ const metadata = {
   bindings: [
     { type: "d1", name: "DB", database_id: "390de978-7db4-409c-9b55-e3f221b2b6a5" },
     { type: "ratelimit", name: "SEARCH_RATE_LIMIT", namespace_id: "1001", simple: { limit: 30, period: 60 } },
+    { type: "ai", name: "AI" },
+    { type: "vectorize", name: "VECTORS", index_name: "arkbfm-search" },
   ],
 };
 const form = new FormData();

@@ -6,8 +6,8 @@ const HTML = `<!doctype html>
 .search-card{max-width:960px}.search-note,#meta,.attrs,.kind{color:rgba(0,0,0,.54)}#meta{margin-top:8px}
 .result{padding:22px 0}.result+.result{border-top:1px solid #eee}.title{font-size:1.5rem}.attrs,.kind{font-size:.86rem;margin:4px 0 9px}.hit{border-top:1px solid #eee;padding-top:12px;margin-top:12px}.text{line-height:1.7}mark{background:#ffe28a}
 .play{font:inherit;cursor:pointer;color:#fff;background:#1c3c7c;border:0;border-radius:4px;margin-top:10px;padding:7px 11px}.player{position:sticky;bottom:8px;margin-top:16px}
-@media(max-width:767px){.header-search{position:static;margin-top:18px}.title{font-size:1.25rem}}
-</style></head><body><header class="header"><div class="header-overlay"><div class="container header-container"><div class="header-left"><h1 class="header-heading"><a href="https://www.arkbfm.com/"><span class="header-heading-ja">あら</span><span class="header-heading-en">B.fm</span></a></h1><div class="header-description">あらBがテクノロジー、音楽、映画などについてゲストを招いて話すポッドキャストです。</div></div><div class="header-search"><form class="header-search-form" id="form" action="/" method="get"><input type="search" id="q" name="q" minlength="2" maxlength="100" required autofocus placeholder="話題を検索" class="header-search-input" autocomplete="off"></form></div></div></div></header>
+@media(max-width:767px){.title{font-size:1.25rem}}
+</style></head><body><header class="header"><div class="header-overlay"><div class="container header-container"><div class="header-left"><h1 class="header-heading"><a href="https://www.arkbfm.com/"><span class="header-heading-ja">あら</span><span class="header-heading-en">B.fm</span></a></h1><div class="header-description">あらBがテクノロジー、音楽、映画などについてゲストを招いて話すポッドキャストです。</div></div><div class="header-search"><form class="header-search-form" id="form" action="/" method="get"><input type="search" id="q" name="q" minlength="2" maxlength="100" required autofocus placeholder="エピソードを検索" aria-label="エピソードを検索" class="header-search-input" autocomplete="off"></form></div></div></div></header>
 <main class="main"><div class="container search-card"><div class="card"><div class="card-header"><h1 class="card-heading">横断検索</h1><p class="search-note">校正済み文字起こし、タイトル、概要、ショーノートを検索します。</p><div id="meta"></div></div><div class="card-body" id="results"></div></div><div class="player" id="player"></div></div></main>
 <script>
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -29,6 +29,8 @@ const headers = {
   "referrer-policy": "no-referrer",
   "x-robots-tag": "noindex, nofollow, noarchive",
 };
+const EMBEDDING_MODEL = "@cf/qwen/qwen3-embedding-0.6b";
+const EMBEDDING_DIMENSIONS = 256;
 
 function json(data, status = 200) {
   return new Response(JSON.stringify(data), { status, headers });
@@ -43,8 +45,30 @@ function timestamp(seconds) {
 }
 
 const normalize = value => value.normalize("NFKC").toLowerCase().replace(/\s+/g, " ").trim();
+const semanticQuery = value => normalize(value).replace(/(?:について)?の?話(?:題)?$/, "").trim() || normalize(value);
 const quoted = value => `"${value.replaceAll('"', '""')}"`;
-const trigrams = value => [...new Set(Array.from(normalize(value)).slice(0, -2).map((_, index, chars) => chars.slice(index, index + 3).join("")))];
+const trigrams = value => {
+  const chars = Array.from(normalize(value));
+  return [...new Set(chars.slice(0, -2).map((_, index) => chars.slice(index, index + 3).join("")))];
+};
+const fuzzyTrigrams = value => {
+  const chars = Array.from(normalize(value));
+  const variants = chars.length <= 32 ? chars.map((_, index) => chars.toSpliced(index, 1).join("")) : [];
+  return [...new Set([value, ...variants].flatMap(trigrams))];
+};
+const editDistance = (left, right) => {
+  const row = Array.from({ length: right.length + 1 }, (_, index) => index);
+  for (let i = 1; i <= left.length; i++) {
+    let diagonal = row[0];
+    row[0] = i;
+    for (let j = 1; j <= right.length; j++) {
+      const previous = row[j];
+      row[j] = Math.min(row[j] + 1, row[j - 1] + 1, diagonal + (left[i - 1] === right[j - 1] ? 0 : 1));
+      diagonal = previous;
+    }
+  }
+  return row.at(-1);
+};
 const excerpt = (text, needles) => {
   if (text.length <= 280) return text;
   const positions = needles.map(needle => normalize(text).indexOf(normalize(needle))).filter(index => index >= 0);
@@ -56,10 +80,26 @@ const excerpt = (text, needles) => {
 
 async function search(env, query) {
   const normalized = normalize(query);
+  let meaning = semanticQuery(query);
   const aliasRows = await env.DB.prepare(
     "SELECT term,replacement FROM search_aliases WHERE lower(term)=? OR lower(replacement)=? LIMIT 4"
   ).bind(normalized, normalized).all();
-  const variants = [...new Set([query, ...aliasRows.results.flatMap(row => [row.term, row.replacement])])];
+  const spelling = [];
+  for (const token of [...new Set(normalized.match(/[a-z0-9][a-z0-9.+#-]{1,31}/g) || [])].slice(0, 5)) {
+    const vocabulary = await env.DB.prepare(
+      `SELECT term,frequency FROM search_vocabulary
+       WHERE length(term) BETWEEN ? AND ? AND (substr(term,1,1)=? OR substr(term,-1)=?)
+       ORDER BY frequency DESC LIMIT 500`
+    ).bind(Math.max(2, token.length - 1), token.length + 1, token[0], token.at(-1)).all();
+    if (vocabulary.results.some(row => row.term === token)) continue;
+    const corrections = vocabulary.results.map(row => ({ ...row, distance: editDistance(token, row.term) }))
+      .filter(row => row.distance <= (token.length <= 4 ? 1 : 2))
+      .sort((a, b) => a.distance - b.distance || b.frequency - a.frequency)
+      .slice(0, 3);
+    spelling.push(...corrections.map(row => normalized.replace(token, row.term)));
+  }
+  if (spelling.length) meaning = semanticQuery(spelling[0]);
+  const variants = [...new Set([query, ...spelling, ...aliasRows.results.flatMap(row => [row.term, row.replacement])])];
   const groups = new Map();
   const group = row => {
     if (!groups.has(row.episode)) groups.set(row.episode, {
@@ -83,9 +123,9 @@ async function search(env, query) {
       : episodeQuery.bind(term).all());
     episodeRows.results.forEach((row, index) => {
       const item = group(row), needle = normalize(variant);
-      if (normalize(row.title).includes(needle)) { item.score = Math.max(item.score, 100 - index / 100); item.reasons.add("タイトル一致"); }
-      else if (normalize(row.description).includes(needle)) { item.score = Math.max(item.score, 50 - index / 100); item.reasons.add("概要一致"); }
-      else { item.score = Math.max(item.score, 30 - index / 100); item.reasons.add("ショーノート一致"); }
+      if (normalize(row.title).includes(needle)) { item.score += 4 / (60 + index + 1); item.reasons.add("タイトル一致"); }
+      else if (normalize(row.description).includes(needle)) { item.score += 2 / (60 + index + 1); item.reasons.add("概要一致"); }
+      else { item.score += 1 / (60 + index + 1); item.reasons.add("ショーノート一致"); }
     });
 
     const segmentSql = variant.length < 3
@@ -97,15 +137,44 @@ async function search(env, query) {
     const segmentRows = await env.DB.prepare(segmentSql).bind(term).all();
     segmentRows.results.forEach((row, index) => {
       const item = group(row);
-      item.score = Math.max(item.score, 20 - index / 1000);
+      item.score += 1.5 / (60 + index + 1);
       item.reasons.add("文字起こし一致");
       if (!item.hits.some(hit => hit.start === row.start)) item.hits.push({ ...row, fuzzy: false });
     });
   }
 
+  try {
+    const embedding = await env.AI.run(EMBEDDING_MODEL, {
+      queries: [meaning],
+      instruction: "日本語ポッドキャストから、質問と関連する話題を検索してください",
+    });
+    const matches = await env.VECTORS.query(embedding.data[0].slice(0, EMBEDDING_DIMENSIONS), {
+      topK: 50, returnMetadata: "all",
+    });
+    const statements = matches.matches.map(match => match.metadata.kind === "episode"
+      ? env.DB.prepare(`SELECT id episode,title,slug,published_at,actors,description,show_notes
+                        FROM episodes WHERE id=?`).bind(match.metadata.episode)
+      : env.DB.prepare(`SELECT s.episode,e.title,e.slug,e.published_at,e.actors,s.spotify_id,s.start,s.speaker,s.text
+                        FROM segments s JOIN episodes e ON e.id=s.episode
+                        WHERE s.episode=? AND s.segment_id=?`).bind(match.metadata.episode, match.metadata.segment_id));
+    const rows = statements.length ? await env.DB.batch(statements) : [];
+    rows.forEach((result, index) => result.results.forEach(row => {
+      const item = group(row);
+      item.score += 1.25 / (60 + index + 1);
+      item.reasons.add("意味一致");
+      if (row.text && !item.hits.some(hit => hit.start === row.start)) {
+        item.hits.push({ ...row, semantic: true });
+      }
+    }));
+  } catch (error) {
+    // Lexical search remains useful while AI or the vector index is unavailable.
+    console.error("semantic search unavailable", error);
+  }
+
   if (groups.size < 10 && Array.from(normalized).length >= 4) {
     const grams = trigrams(query);
-    const fuzzyTerm = grams.map(quoted).join(" OR ");
+    const candidates = fuzzyTrigrams(query);
+    const fuzzyTerm = candidates.map(quoted).join(" OR ");
     const fuzzyRows = await env.DB.prepare(
       `SELECT s.episode,e.title,e.slug,e.published_at,e.actors,s.spotify_id,s.start,s.speaker,s.text
        FROM segments_fts f JOIN segments s ON s.rowid=f.rowid JOIN episodes e ON e.id=s.episode
@@ -113,17 +182,46 @@ async function search(env, query) {
     ).bind(fuzzyTerm).all();
     fuzzyRows.results.forEach(row => {
       const text = normalize(row.text);
-      const coverage = grams.filter(gram => text.includes(gram)).length / grams.length;
-      if (coverage < 0.55) return;
+      const exactMatches = grams.filter(gram => text.includes(gram)).length;
+      const candidateMatches = candidates.filter(gram => text.includes(gram)).length;
+      const required = grams.length <= 3 ? 1 : Math.ceil(grams.length * 0.45);
+      if (Math.max(exactMatches, candidateMatches) < required) return;
+      const coverage = Math.max(exactMatches / grams.length, candidateMatches / candidates.length);
       const item = group(row);
-      item.score = Math.max(item.score, 5 + coverage * 10);
+      item.score += (0.5 + coverage) / 60;
       item.reasons.add("あいまい一致");
       if (!item.hits.some(hit => hit.start === row.start)) item.hits.push({ ...row, fuzzy: true, coverage });
     });
   }
 
-  return [...groups.values()]
-    .sort((a, b) => b.score - a.score || b.published_at.localeCompare(a.published_at))
+  const ranked = [...groups.values()]
+    .sort((a, b) => b.score - a.score || b.published_at.localeCompare(a.published_at));
+  const candidates = ranked.slice(0, 20);
+  if (candidates.length > 1) {
+    try {
+      const reranked = await env.AI.run("@cf/baai/bge-reranker-base", {
+        query: meaning,
+        contexts: candidates.map(item => ({
+          text: `${item.title}\n${item.hits.slice(0, 2).map(hit => hit.text).join("\n")}`.slice(0, 1000),
+        })),
+        top_k: candidates.length,
+      });
+      const scores = reranked.response.map(result => result.score);
+      const sortedScores = [...scores].sort((a, b) => a - b);
+      const min = sortedScores[0], max = sortedScores.at(-1), median = sortedScores[Math.floor(sortedScores.length / 2)];
+      if (max >= Math.max(0.001, median * 2) && max > min) {
+        reranked.response.forEach(result => {
+          candidates[result.id].score += ((result.score - min) / (max - min)) / 61;
+          candidates[result.id].reasons.add("関連度再評価");
+        });
+        ranked.sort((a, b) => b.score - a.score || b.published_at.localeCompare(a.published_at));
+      }
+    } catch (error) {
+      console.error("reranking unavailable", error);
+    }
+  }
+
+  return ranked
     .slice(0, 20)
     .map(item => ({
       ...item, reasons: undefined, score: undefined,
@@ -165,3 +263,5 @@ export default {
     }
   },
 };
+
+export { normalize, semanticQuery, trigrams, fuzzyTrigrams, editDistance };

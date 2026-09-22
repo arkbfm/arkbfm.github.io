@@ -1,6 +1,8 @@
 import.sql
 audio-migration.sql
 metadata-migration.sql
+vector-documents.json
+vectors.ndjson
 .env
 .config/
 .npm-cache/
