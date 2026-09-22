@@ -3,6 +3,7 @@ DROP TABLE IF EXISTS segments;
 DROP TABLE IF EXISTS episodes_fts;
 DROP TABLE IF EXISTS episodes;
 DROP TABLE IF EXISTS search_aliases;
+DROP TABLE IF EXISTS search_vocabulary;
 
 CREATE TABLE segments (
   rowid INTEGER PRIMARY KEY,
@@ -43,3 +44,4 @@ CREATE VIRTUAL TABLE episodes_fts USING fts5(
   tokenize='trigram'
 );
 CREATE TABLE search_aliases (term TEXT NOT NULL, replacement TEXT NOT NULL);
+CREATE TABLE search_vocabulary (term TEXT PRIMARY KEY, frequency INTEGER NOT NULL);
