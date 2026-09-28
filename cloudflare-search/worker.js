@@ -78,6 +78,57 @@ const excerpt = (text, needles) => {
   return `${prefix}${text.slice(start, start + 280 - prefix.length - suffix.length)}${suffix}`;
 };
 
+function addRerankScores(candidates, scores, minimum = 0, minRange = 0) {
+  if (scores.length !== candidates.length || scores.some(score => !Number.isFinite(score))) return false;
+  const min = Math.min(...scores), max = Math.max(...scores);
+  if (max < minimum || max - min <= minRange) return false;
+  scores.forEach((score, index) => {
+    candidates[index].score += ((score - min) / (max - min)) / 61;
+    candidates[index].reasons.add("関連度再評価");
+  });
+  return true;
+}
+
+async function rerankCandidates(env, query, candidates) {
+  const contexts = candidates.map(item => ({
+    text: [item.title, String(item.description || "").slice(0, 300),
+      ...item.hits.slice(0, 2).map(hit => hit.text.slice(0, 180))].join("\n").slice(0, 700),
+  }));
+  try {
+    const questions = Object.fromEntries(contexts.map((_, index) => [`candidate_${index}`, {
+      type: "noul",
+      instructions: `検索語に対して候補 ${index} は関連するポッドキャスト回ですか？`,
+      criteria: {
+        true: "検索した人がこの回を聴きたい可能性が高い",
+        false: "検索意図と話題が異なる",
+      },
+    }]));
+    const result = await env.AI.run("typesafe/jev", {
+      state: { query, candidates: contexts.map((context, index) => ({ index, text: context.text })) },
+      questions,
+    });
+    const scores = contexts.map((_, index) => result.answers?.[`candidate_${index}`]?.noul);
+    if (addRerankScores(candidates, scores, 0.2, 0.05)) return "jev";
+  } catch (error) {
+    console.error("Jev reranking unavailable", error);
+  }
+  try {
+    const result = await env.AI.run("@cf/baai/bge-reranker-base", {
+      query,
+      contexts,
+      top_k: candidates.length,
+    });
+    const scores = Array(candidates.length).fill(NaN);
+    result.response.forEach(row => { scores[row.id] = row.score; });
+    const sorted = [...scores].sort((a, b) => a - b);
+    if (sorted.at(-1) >= Math.max(0.001, sorted[Math.floor(sorted.length / 2)] * 2)
+      && addRerankScores(candidates, scores)) return "bge";
+  } catch (error) {
+    console.error("BGE reranking unavailable", error);
+  }
+  return null;
+}
+
 async function search(env, query) {
   const normalized = normalize(query);
   let meaning = semanticQuery(query);
@@ -104,7 +155,7 @@ async function search(env, query) {
   const group = row => {
     if (!groups.has(row.episode)) groups.set(row.episode, {
       episode: row.episode, title: row.title, slug: row.slug, published_at: row.published_at,
-      actors: row.actors, score: 0, reasons: new Set(), hits: [],
+      actors: row.actors, description: row.description || "", score: 0, reasons: new Set(), hits: [],
     });
     return groups.get(row.episode);
   };
@@ -129,9 +180,9 @@ async function search(env, query) {
     });
 
     const segmentSql = variant.length < 3
-      ? `SELECT s.episode,e.title,e.slug,e.published_at,e.actors,s.spotify_id,s.start,s.speaker,s.text
+      ? `SELECT s.episode,e.title,e.slug,e.published_at,e.actors,e.description,s.spotify_id,s.start,s.speaker,s.text
          FROM segments s JOIN episodes e ON e.id=s.episode WHERE s.text LIKE ? LIMIT 200`
-      : `SELECT s.episode,e.title,e.slug,e.published_at,e.actors,s.spotify_id,s.start,s.speaker,s.text
+      : `SELECT s.episode,e.title,e.slug,e.published_at,e.actors,e.description,s.spotify_id,s.start,s.speaker,s.text
          FROM segments_fts f JOIN segments s ON s.rowid=f.rowid JOIN episodes e ON e.id=s.episode
          WHERE segments_fts MATCH ? ORDER BY bm25(segments_fts) LIMIT 200`;
     const segmentRows = await env.DB.prepare(segmentSql).bind(term).all();
@@ -154,7 +205,7 @@ async function search(env, query) {
     const statements = matches.matches.map(match => match.metadata.kind === "episode"
       ? env.DB.prepare(`SELECT id episode,title,slug,published_at,actors,description,show_notes
                         FROM episodes WHERE id=?`).bind(match.metadata.episode)
-      : env.DB.prepare(`SELECT s.episode,e.title,e.slug,e.published_at,e.actors,s.spotify_id,s.start,s.speaker,s.text
+      : env.DB.prepare(`SELECT s.episode,e.title,e.slug,e.published_at,e.actors,e.description,s.spotify_id,s.start,s.speaker,s.text
                         FROM segments s JOIN episodes e ON e.id=s.episode
                         WHERE s.episode=? AND s.segment_id=?`).bind(match.metadata.episode, match.metadata.segment_id));
     const rows = statements.length ? await env.DB.batch(statements) : [];
@@ -176,7 +227,7 @@ async function search(env, query) {
     const candidates = fuzzyTrigrams(query);
     const fuzzyTerm = candidates.map(quoted).join(" OR ");
     const fuzzyRows = await env.DB.prepare(
-      `SELECT s.episode,e.title,e.slug,e.published_at,e.actors,s.spotify_id,s.start,s.speaker,s.text
+      `SELECT s.episode,e.title,e.slug,e.published_at,e.actors,e.description,s.spotify_id,s.start,s.speaker,s.text
        FROM segments_fts f JOIN segments s ON s.rowid=f.rowid JOIN episodes e ON e.id=s.episode
        WHERE segments_fts MATCH ? ORDER BY bm25(segments_fts) LIMIT 200`
     ).bind(fuzzyTerm).all();
@@ -198,37 +249,19 @@ async function search(env, query) {
     .sort((a, b) => b.score - a.score || b.published_at.localeCompare(a.published_at));
   const candidates = ranked.slice(0, 20);
   if (candidates.length > 1) {
-    try {
-      const reranked = await env.AI.run("@cf/baai/bge-reranker-base", {
-        query: meaning,
-        contexts: candidates.map(item => ({
-          text: `${item.title}\n${item.hits.slice(0, 2).map(hit => hit.text).join("\n")}`.slice(0, 1000),
-        })),
-        top_k: candidates.length,
-      });
-      const scores = reranked.response.map(result => result.score);
-      const sortedScores = [...scores].sort((a, b) => a - b);
-      const min = sortedScores[0], max = sortedScores.at(-1), median = sortedScores[Math.floor(sortedScores.length / 2)];
-      if (max >= Math.max(0.001, median * 2) && max > min) {
-        reranked.response.forEach(result => {
-          candidates[result.id].score += ((result.score - min) / (max - min)) / 61;
-          candidates[result.id].reasons.add("関連度再評価");
-        });
-        ranked.sort((a, b) => b.score - a.score || b.published_at.localeCompare(a.published_at));
-      }
-    } catch (error) {
-      console.error("reranking unavailable", error);
+    if (await rerankCandidates(env, meaning, candidates)) {
+      ranked.sort((a, b) => b.score - a.score || b.published_at.localeCompare(a.published_at));
     }
   }
 
   return ranked
     .slice(0, 20)
     .map(item => ({
-      ...item, reasons: undefined, score: undefined,
+      ...item, reasons: undefined, score: undefined, description: undefined,
       reason: [...item.reasons].join("・"),
       url: `https://www.arkbfm.com/episode/${item.slug}`,
       hits: item.hits.sort((a, b) => (b.coverage || 1) - (a.coverage || 1) || a.start - b.start).slice(0, 3)
-        .map(hit => ({ ...hit, text: excerpt(hit.text, [query, ...variants, ...trigrams(query)]), timestamp: timestamp(hit.start) })),
+        .map(({ description, ...hit }) => ({ ...hit, text: excerpt(hit.text, [query, ...variants, ...trigrams(query)]), timestamp: timestamp(hit.start) })),
     }));
 }
 
@@ -264,4 +297,4 @@ export default {
   },
 };
 
-export { normalize, semanticQuery, trigrams, fuzzyTrigrams, editDistance };
+export { normalize, semanticQuery, trigrams, fuzzyTrigrams, editDistance, rerankCandidates };
