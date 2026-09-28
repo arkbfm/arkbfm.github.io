@@ -17,12 +17,13 @@
             </div>
           </header>
           <section class="card-body markdown">
-            <p style="text-align:center">
-              {% assign audio_urls = page.audio_url | split: ", " %}
+            <div class="episode-player" id="episode-player">
+              {% assign audio_urls = page.audio_url | split: "," %}
               {% for audio_id in audio_urls %}
-                <iframe src="https://open.spotify.com/embed/episode/{{ audio_id | strip }}" height="204px" width="100%" frameborder="0" scrolling="no" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                <iframe{% if audio_urls.size == 1 %} id="episode-spotify-fallback"{% endif %} src="https://open.spotify.com/embed/episode/{{ audio_id | strip }}" height="204" width="100%" title="{{ page.title | escape }} をSpotifyで再生" frameborder="0" scrolling="no" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
               {% endfor %}
-            </p>
+              {% if audio_urls.size == 1 %}<div id="episode-spotify-api" data-spotify-id="{{ audio_urls | first | strip }}"></div>{% endif %}
+            </div>
             <h2>
               内容紹介
             </h2>
@@ -66,5 +67,7 @@
       </div>
     </main>
     {% include footer.html %}
+    <script src="{{ site.github.url }}/js/episode-chapters.js"></script>
+    <script src="https://open.spotify.com/embed/iframe-api/v1" async></script>
   </body>
 </html>
