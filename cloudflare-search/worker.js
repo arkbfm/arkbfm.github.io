@@ -160,7 +160,7 @@ async function search(env, query) {
     return groups.get(row.episode);
   };
 
-  for (const variant of variants) {
+  const addLexicalVariant = async (variant, weight = 1) => {
     const term = variant.length < 3 ? `%${variant}%` : quoted(variant);
     const episodeSql = variant.length < 3
       ? `SELECT id episode,title,slug,published_at,actors,description,show_notes FROM episodes
@@ -174,9 +174,9 @@ async function search(env, query) {
       : episodeQuery.bind(term).all());
     episodeRows.results.forEach((row, index) => {
       const item = group(row), needle = normalize(variant);
-      if (normalize(row.title).includes(needle)) { item.score += 4 / (60 + index + 1); item.reasons.add("タイトル一致"); }
-      else if (normalize(row.description).includes(needle)) { item.score += 2 / (60 + index + 1); item.reasons.add("概要一致"); }
-      else { item.score += 1 / (60 + index + 1); item.reasons.add("ショーノート一致"); }
+      if (normalize(row.title).includes(needle)) { item.score += weight * 4 / (60 + index + 1); item.reasons.add("タイトル一致"); }
+      else if (normalize(row.description).includes(needle)) { item.score += weight * 2 / (60 + index + 1); item.reasons.add("概要一致"); }
+      else { item.score += weight * 1 / (60 + index + 1); item.reasons.add("ショーノート一致"); }
     });
 
     const segmentSql = variant.length < 3
@@ -188,10 +188,18 @@ async function search(env, query) {
     const segmentRows = await env.DB.prepare(segmentSql).bind(term).all();
     segmentRows.results.forEach((row, index) => {
       const item = group(row);
-      item.score += 1.5 / (60 + index + 1);
+      item.score += weight * 1.5 / (60 + index + 1);
       item.reasons.add("文字起こし一致");
       if (!item.hits.some(hit => hit.start === row.start)) item.hits.push({ ...row, fuzzy: false });
     });
+  };
+
+  for (const variant of variants) await addLexicalVariant(variant);
+  if (!groups.size) {
+    const split = query.match(/^(.{3,})[と、・\s]+(.{2,})$/u);
+    if (split) {
+      for (const part of [split[1], split[2]]) await addLexicalVariant(part.trim(), 0.8);
+    }
   }
 
   try {
@@ -247,7 +255,7 @@ async function search(env, query) {
 
   const ranked = [...groups.values()]
     .sort((a, b) => b.score - a.score || b.published_at.localeCompare(a.published_at));
-  const candidates = ranked.slice(0, 20);
+  const candidates = ranked.slice(0, 30);
   if (candidates.length > 1) {
     if (await rerankCandidates(env, meaning, candidates)) {
       ranked.sort((a, b) => b.score - a.score || b.published_at.localeCompare(a.published_at));
