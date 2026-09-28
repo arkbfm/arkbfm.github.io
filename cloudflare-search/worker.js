@@ -91,7 +91,8 @@ function addRerankScores(candidates, scores, minimum = 0, minRange = 0) {
 
 async function rerankCandidates(env, query, candidates) {
   const contexts = candidates.map(item => ({
-    text: [item.title, String(item.description || "").slice(0, 300),
+    text: [item.title, item.speakerMatch ? `話者: ${item.speakerMatch}` : "",
+      String(item.description || "").slice(0, 300),
       ...item.hits.slice(0, 2).map(hit => hit.text.slice(0, 180))].join("\n").slice(0, 700),
   }));
   try {
@@ -202,6 +203,19 @@ async function search(env, query) {
     }
   }
 
+  const speakerRows = await env.DB.prepare(
+    `SELECT e.id episode,e.title,e.slug,e.published_at,e.actors,e.description
+     FROM episodes e WHERE EXISTS (
+       SELECT 1 FROM segments s WHERE s.episode=e.id AND instr(lower(s.speaker), ?) > 0
+     ) LIMIT 250`
+  ).bind(normalized).all();
+  speakerRows.results.forEach((row, index) => {
+    const item = group(row);
+    item.score += 5 / (60 + index + 1);
+    item.speakerMatch = query;
+    item.reasons.add("話者名一致");
+  });
+
   try {
     const embedding = await env.AI.run(EMBEDDING_MODEL, {
       queries: [meaning],
@@ -265,7 +279,7 @@ async function search(env, query) {
   return ranked
     .slice(0, 20)
     .map(item => ({
-      ...item, reasons: undefined, score: undefined, description: undefined,
+      ...item, reasons: undefined, score: undefined, description: undefined, speakerMatch: undefined,
       reason: [...item.reasons].join("・"),
       url: `https://www.arkbfm.com/episode/${item.slug}`,
       hits: item.hits.sort((a, b) => (b.coverage || 1) - (a.coverage || 1) || a.start - b.start).slice(0, 3)
