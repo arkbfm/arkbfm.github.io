@@ -293,7 +293,7 @@ actors:
     url: https://twitter.com/
   zeeksphere:
     image_url: /images/actors/zeeksphere.png
-    name: ムミ
+    name: じく
     url: https://twitter.com/zeeksphere
   SesameElegy:
     image_url: /images/actors/SesameElegy.jpg
@@ -331,6 +331,7 @@ exclude:
   - Gemfile
   - Gemfile.lock
   - LICENSE.txt
+  - transcripts
 future: true
 google_analytics:
 hashtag: arkbfm

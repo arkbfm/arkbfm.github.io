@@ -74,13 +74,20 @@ def main() -> None:
             key = (episode["id"], chunk_id)
             assert key not in segment_keys, f"duplicate segment: {key}"
             segment_keys.add(key)
-            speakers = {segment.get("speaker") for segment in chunk}
+            identities = transcript.get("speaker_identities", {})
+            names = []
+            for segment in chunk:
+                identity = identities.get(segment.get("speaker"), {})
+                name = identity.get("name") if identity.get("status") == "confirmed" else None
+                if name and name not in names:
+                    names.append(name)
+            speaker_name = " / ".join(names) if names else None
             rows.append((
                 episode["id"], episode["title"], episode["post"],
                 spotify_ids[min(int(chunk[0].get("part", 1)) - 1, len(spotify_ids) - 1)],
                 int(chunk[0].get("part", 1)), chunk_id,
                 float(chunk[0]["start"]), float(chunk[-1]["end"]),
-                speakers.pop() if len(speakers) == 1 else None,
+                speaker_name,
                 " ".join(segment["text"] for segment in chunk),
             ))
 
@@ -155,6 +162,8 @@ def main() -> None:
          "metadata": {"kind": "episode", "episode": row[0]}}
         for row in episode_rows
     ]
+    with OUTPUT.open("a", encoding="utf-8") as output:
+        output.write(METADATA_MIGRATION.read_text(encoding="utf-8"))
     VECTOR_DOCUMENTS.write_text(json.dumps(documents, ensure_ascii=False), encoding="utf-8")
     print(f"wrote {OUTPUT.name}: {len(rows)} segments and {len(episode_rows)} episode metadata rows")
 
