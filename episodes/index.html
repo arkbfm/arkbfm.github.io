@@ -1,0 +1,21 @@
+---
+layout: default
+title: 全エピソード
+description: あらB.fm の全エピソード一覧。気になる話題は検索から探せます。
+permalink: /episodes/
+---
+
+<div class="container discovery-archive">
+  <section class="card discovery-section">
+    <p class="discovery-kicker">All episodes</p>
+    <h2>全エピソード</h2>
+    <p class="discovery-section-lead">新しい回から順に掲載しています。話題や出演者で探す場合は、ページ上部の検索を使ってください。</p>
+    {% for post in site.posts %}
+      <article class="discovery-archive-item">
+        <p class="discovery-meta">{{ post.date | date: "%Y年%m月%d日" }}{% if post.duration and post.duration != '00:00' %} · {{ post.duration }}{% endif %}</p>
+        <h3><a href="{{ post.url | prepend:site.github.url }}">{{ post.title | escape }}</a></h3>
+        <p>{{ post.description | escape }}</p>
+      </article>
+    {% endfor %}
+  </section>
+</div>

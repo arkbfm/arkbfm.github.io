@@ -11,12 +11,20 @@
           {{ site.description }}
         </div>
       </div>
+      {% unless page.url == '/' %}
       <div class="header-search">
         <form class="header-search-form" action="https://search.arkbfm.com/" method="get">
           <input type="search" name="q" placeholder="エピソードを検索" aria-label="エピソードを検索"
-                 class="header-search-input" autocomplete="off">
+                 class="header-search-input" autocomplete="off" required>
+          <button type="submit" class="header-search-button">検索</button>
         </form>
       </div>
+      {% endunless %}
     </div>
+    <nav class="container header-nav" aria-label="サイト内ナビゲーション">
+      <a href="{{ site.github.url }}/">ホーム</a>
+      <a href="{{ site.github.url }}/#start">初めて聴くなら</a>
+      <a href="{{ site.github.url }}/episodes/">全エピソード</a>
+    </nav>
   </div>
 </header>
