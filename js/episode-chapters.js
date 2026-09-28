@@ -49,7 +49,9 @@
         button.disabled = true;
         button.addEventListener('click', function () {
           if (!controller) return;
-          controller.seek(seconds);
+          // Loading with startAt preserves the chapter position when playback starts.
+          // Calling seek before the first play is ignored by Spotify's Embed.
+          controller.loadEntity('spotify:episode:' + apiElement.dataset.spotifyId, false, seconds);
           controller.play();
           player.scrollIntoView({ behavior: 'smooth', block: 'center' });
         });
@@ -78,9 +80,11 @@
       height: 204
     }, function (embedController) {
       controller = embedController;
-      apiElement.classList.add('is-ready');
-      fallback.remove();
-      playButtons.forEach(function (button) { button.disabled = false; });
+      controller.addListener('ready', function () {
+        apiElement.classList.add('is-ready');
+        fallback.remove();
+        playButtons.forEach(function (button) { button.disabled = false; });
+      });
     });
   };
 }());
