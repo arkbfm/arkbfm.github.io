@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 // Build the compact speaker lookup from the current production segments.
 import { readFileSync } from "node:fs";
+import { bumpSearchCacheVersion } from "./cache_version.mjs";
 
 const config = Object.fromEntries(readFileSync(new URL(".env", import.meta.url), "utf8")
   .split(/\r?\n/).filter(line => line && !line.startsWith("#"))
@@ -30,3 +31,5 @@ const checks = await query(`SELECT
 const { indexed, expected, extra } = checks[0];
 if (indexed !== expected || extra !== 0) throw new Error(`Speaker index mismatch: indexed=${indexed}, expected=${expected}, extra=${extra}`);
 console.log(`Verified ${indexed} distinct episode/speaker pairs`);
+await bumpSearchCacheVersion(account, token);
+console.log("invalidated search cache");

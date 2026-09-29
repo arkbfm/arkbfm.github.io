@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 import re
+import secrets
 from collections import Counter
 
 
@@ -57,6 +58,7 @@ def frontmatter(source: str, key: str) -> str:
 
 
 def main() -> None:
+    cache_version = secrets.token_hex(16)
     manifest = json.loads((TRANSCRIPTS / "manifest.json").read_text(encoding="utf-8"))
     manifest_posts = {episode["post"] for episode in manifest["episodes"]}
     rows = []
@@ -160,6 +162,7 @@ def main() -> None:
         output.write("CREATE VIRTUAL TABLE episodes_fts USING fts5(title,description,show_notes,content='episodes',content_rowid='rowid',tokenize='trigram');\n")
         output.write("CREATE TABLE search_aliases (term TEXT NOT NULL,replacement TEXT NOT NULL);\n")
         output.write("CREATE TABLE search_vocabulary (term TEXT PRIMARY KEY,frequency INTEGER NOT NULL);\n")
+        output.write("CREATE TABLE IF NOT EXISTS search_cache_version (id INTEGER PRIMARY KEY CHECK (id=1), version TEXT NOT NULL);\n")
         columns = "id,title,slug,description,show_notes,published_at,actors"
         for index in range(0, len(episode_rows), BATCH_SIZE):
             values = ",\n".join("(" + ",".join(map(quote, row)) + ")" for row in episode_rows[index:index + BATCH_SIZE])
@@ -175,6 +178,10 @@ def main() -> None:
         output.write("CREATE INDEX search_vocabulary_first_idx ON search_vocabulary(substr(term,1,1),length(term),frequency DESC);\n")
         output.write("CREATE INDEX search_vocabulary_last_idx ON search_vocabulary(substr(term,-1),length(term),frequency DESC);\n")
         output.write("INSERT INTO episodes_fts(episodes_fts) VALUES('rebuild');\n")
+        output.write(
+            "INSERT INTO search_cache_version (id,version) "
+            f"VALUES (1,{quote(cache_version)}) ON CONFLICT(id) DO UPDATE SET version=excluded.version;\n"
+        )
         output.write("SELECT count(*) AS episodes FROM episodes;\n")
     documents = [
         {"id": f"s:{row[0]}:{row[5]}", "text": row[9],

@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 // Prepare the existing Vectorize index for episode-only semantic retrieval.
 import { readFileSync } from 'node:fs';
+import { bumpSearchCacheVersion } from './cache_version.mjs';
 
 const config = Object.fromEntries(readFileSync(new URL('.env', import.meta.url), 'utf8').split(/\r?\n/)
   .filter(line => line && !line.startsWith('#')).map(line => line.split(/=(.*)/s).slice(0, 2)));
@@ -46,6 +47,8 @@ for (let attempt = 0; attempt < 30; attempt++) {
   }) });
   if (result.matches?.[0]?.id === probe.id) {
     console.log('Episode-only vector search is ready');
+    await bumpSearchCacheVersion(config.CLOUDFLARE_ACCOUNT_ID, config.CLOUDFLARE_API_TOKEN);
+    console.log('invalidated search cache');
     process.exit(0);
   }
   await new Promise(resolve => setTimeout(resolve, 2000));

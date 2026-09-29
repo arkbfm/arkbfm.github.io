@@ -26,7 +26,7 @@ node deploy.mjs --attach-domain
 スペル補正は語頭・語尾の式索引を使い、同頻度候補は元の登録順で並べる。トップページでよく使う2文字の話題は `short_segment_hits` に従来の `LIKE` の先頭200件を保存する。それ以外の短い語は従来どおり全文を照合する。既存DBへの適用順は `node apply_search_indexes.mjs --cache` → `node deploy.mjs` → `node apply_search_indexes.mjs --vocabulary`。全文再投入時は `build_import.py` が短語キャッシュを生成する。語彙索引はD1無料枠の1日10万行書き込みに収めるため `import.sql` から除外されるので、翌日の枠リセット後に `node apply_search_indexes.mjs --vocabulary` を実行する。
 話者検索はチャンク全件を走査せず、`episode_speakers` のエピソード別話者名を照合する。元の `segments.speaker` 文字列を重複だけ除いて保存するため、部分一致と検索結果の順序は維持する。既存DBでは `node apply_speaker_index.mjs` を実行してから `node deploy.mjs` を実行する。新規の全文投入では `build_import.py` が同じ表を生成する。
 
-`workers_dev` は無効。検索APIは1接続元あたり毎分30回に制限し、1件あたり最大280文字の抜粋だけを返す。同じ検索語の成功結果はエッジのCache APIに5分保存し、埋め込み・Jevの再実行を省く。キャッシュはデータセンター単位で、更新直後の検索結果には最大5分の遅れがある。レスポンスの `Server-Timing` に各段階の所要時間、`X-Search-Cache` に `HIT`/`MISS` を付ける。
+`workers_dev` は無効。検索APIは1接続元あたり毎分30回に制限し、1件あたり最大280文字の抜粋だけを返す。同じ検索語の成功結果はエッジのCache APIに1時間保存し、埋め込み・Jevの再実行を省く。キャッシュはデータセンター単位だが、検索のたびにD1の `search_cache_version` を読んでキーに含める。データ更新後に世代を変えると、全拠点で旧結果を即座に参照しなくなる（旧エントリは最大1時間で自然に消える）。世代の取得に失敗した場合はキャッシュを使わず通常検索を続ける。レスポンスの `Server-Timing` に各段階の所要時間、`X-Search-Cache` に `HIT`/`MISS` を付ける。
 
 ## 更新
 
@@ -37,9 +37,10 @@ python build_import.py
 npx wrangler d1 execute arkbfm-search --remote --file=metadata-migration.sql
 node index_vectors.mjs
 npx wrangler vectorize upsert arkbfm-search --file=vectors.ndjson
+node invalidate_search_cache.mjs
 ```
 
-`metadata-migration.sql` はエピソード情報と用語集だけを更新する。文字起こしを更新した場合は、全文を再投入する `import.sql` を使う。どちらも対象テーブルを作り直すため、検索中の更新を避ける。
+`metadata-migration.sql` はエピソード情報と用語集だけを更新する。文字起こしを更新した場合は、全文を再投入する `import.sql` を使う。生成SQLは適用完了時にキャッシュ世代を変更する。Vectorizeを直接更新した後や、手動でD1の検索対象を変えた後は `node invalidate_search_cache.mjs` を実行する。`deploy.mjs`・話者更新スクリプト・`ensure_episode_filter.mjs` も成功時に世代を変更する。対象テーブルを作り直す更新中は検索を避ける。
 
 ## 話者名付き抜粋
 

@@ -31,7 +31,7 @@ const headers = {
 };
 const EMBEDDING_MODEL = "@cf/qwen/qwen3-embedding-0.6b";
 const EMBEDDING_DIMENSIONS = 256;
-const SEARCH_CACHE_TTL_SECONDS = 300;
+const SEARCH_CACHE_TTL_SECONDS = 3600;
 const SHORT_SEGMENT_TERMS = new Set(["AI", "読書", "映画", "漫画", "音楽", "仕事", "旅行"]);
 
 function json(data, status = 200, extraHeaders = {}) {
@@ -410,11 +410,20 @@ export default {
       return json({ error: "検索語は2〜100文字で入力してください" }, 400);
     }
 
-    // Search results contain only the same short excerpts returned publicly.
-    const cache = globalThis.caches?.default;
+    // A D1 generation change makes old entries unreachable across data centers.
+    let cacheVersion;
+    try {
+      const versionRows = await env.DB.prepare(
+        "SELECT version FROM search_cache_version WHERE id=1"
+      ).all();
+      cacheVersion = versionRows.results[0]?.version;
+    } catch (error) {
+      console.error("search cache version unavailable", error);
+    }
+    const cache = cacheVersion ? globalThis.caches?.default : undefined;
     const cacheUrl = new URL(request.url);
-    cacheUrl.pathname = "/__search_cache/v1";
-    cacheUrl.search = new URLSearchParams({ q: query }).toString();
+    cacheUrl.pathname = "/__search_cache/v2";
+    cacheUrl.search = new URLSearchParams({ v: cacheVersion, q: query }).toString();
     const cacheKey = new Request(cacheUrl.toString(), { method: "GET" });
     const cacheStart = performance.now();
     let cached;
