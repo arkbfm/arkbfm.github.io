@@ -29,6 +29,19 @@ assert.equal(await worker.rerankCandidates(env, "query", candidates), "jev");
 assert.deepEqual(calls, ["typesafe/jev"]);
 assert(candidates[1].score > candidates[2].score);
 
+// Cloudflare's Jev binding can return an async result envelope.
+candidates = makeCandidates();
+calls = [];
+env = { AI: { run: async model => {
+  calls.push(model);
+  return { state: "Completed", result: { answers: {
+    candidate_0: { noul: 0.1 }, candidate_1: { noul: 0.8 }, candidate_2: { noul: 0.2 },
+  } } };
+} } };
+assert.equal(await worker.rerankCandidates(env, "query", candidates), "jev");
+assert.deepEqual(calls, ["typesafe/jev"]);
+assert(candidates[1].score > candidates[2].score);
+
 candidates = makeCandidates();
 calls = [];
 env = { AI: { run: async model => {
