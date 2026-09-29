@@ -31,10 +31,17 @@ const headers = {
 };
 const EMBEDDING_MODEL = "@cf/qwen/qwen3-embedding-0.6b";
 const EMBEDDING_DIMENSIONS = 256;
+const SEARCH_CACHE_TTL_SECONDS = 300;
 const SHORT_SEGMENT_TERMS = new Set(["AI", "読書", "映画", "漫画", "音楽", "仕事", "旅行"]);
 
-function json(data, status = 200) {
-  return new Response(JSON.stringify(data), { status, headers });
+function json(data, status = 200, extraHeaders = {}) {
+  return new Response(JSON.stringify(data), { status, headers: { ...headers, ...extraHeaders } });
+}
+
+async function timed(timings, name, task) {
+  const start = performance.now();
+  try { return await task(); }
+  finally { timings[name] = (timings[name] || 0) + performance.now() - start; }
 }
 
 function timestamp(seconds) {
@@ -125,7 +132,7 @@ function addRerankScores(candidates, scores, minimum = 0, minRange = 0) {
   return true;
 }
 
-async function rerankCandidates(env, query, candidates) {
+async function rerankCandidates(env, query, candidates, timings = {}) {
   const contexts = candidates.map(item => ({
     text: [item.title, item.speakerMatch ? `話者: ${item.speakerMatch}` : "",
       String(item.description || "").slice(0, 300),
@@ -140,21 +147,22 @@ async function rerankCandidates(env, query, candidates) {
         false: "検索意図と話題が異なる",
       },
     }]));
-    const result = await env.AI.run("typesafe/jev", {
+    const result = await timed(timings, "jev", () => env.AI.run("typesafe/jev", {
       state: { query, candidates: contexts.map((context, index) => ({ index, text: context.text })) },
       questions,
-    });
-    const scores = contexts.map((_, index) => result.answers?.[`candidate_${index}`]?.noul);
+    }));
+    const answers = result?.answers ?? result?.result?.answers ?? result?.result?.result?.answers;
+    const scores = contexts.map((_, index) => answers?.[`candidate_${index}`]?.noul);
     if (addRerankScores(candidates, scores, 0.2, 0.05)) return "jev";
   } catch (error) {
     console.error("Jev reranking unavailable", error);
   }
   try {
-    const result = await env.AI.run("@cf/baai/bge-reranker-base", {
+    const result = await timed(timings, "bge", () => env.AI.run("@cf/baai/bge-reranker-base", {
       query,
       contexts,
       top_k: candidates.length,
-    });
+    }));
     const scores = Array(candidates.length).fill(NaN);
     result.response.forEach(row => { scores[row.id] = row.score; });
     const sorted = [...scores].sort((a, b) => a - b);
@@ -166,7 +174,8 @@ async function rerankCandidates(env, query, candidates) {
   return null;
 }
 
-async function search(env, query) {
+async function search(env, query, timings = {}) {
+  const prepareStart = performance.now();
   const normalized = normalize(query);
   let meaning = semanticQuery(query);
   const aliasRows = await env.DB.prepare(
@@ -188,6 +197,8 @@ async function search(env, query) {
   }
   if (spelling.length) meaning = semanticQuery(spelling[0]);
   const variants = [...new Set([query, ...spelling, ...aliasRows.results.flatMap(row => [row.term, row.replacement])])];
+  timings.prepare = performance.now() - prepareStart;
+  const lexicalStart = performance.now();
   const groups = new Map();
   const group = row => {
     if (!groups.has(row.episode)) groups.set(row.episode, {
@@ -259,17 +270,19 @@ async function search(env, query) {
     item.reasons.add("話者名一致");
   });
 
+  timings.lexical = performance.now() - lexicalStart;
+  const semanticStart = performance.now();
   try {
-    const embedding = await env.AI.run(EMBEDDING_MODEL, {
+    const embedding = await timed(timings, "embedding", () => env.AI.run(EMBEDDING_MODEL, {
       queries: [meaning],
       instruction: "日本語ポッドキャストから、質問と関連する話題を検索してください",
-    });
+    }));
     const vector = embedding.data[0].slice(0, EMBEDDING_DIMENSIONS);
     // Reserve a small candidate pool for episode overviews; long transcripts have many chunk vectors.
-    const [allResult, episodeResult] = await Promise.allSettled([
+    const [allResult, episodeResult] = await timed(timings, "vector", () => Promise.allSettled([
       env.VECTORS.query(vector, { topK: 50, returnMetadata: "all" }),
       env.VECTORS.query(vector, { topK: 20, returnMetadata: "all", filter: { kind: "episode" } }),
-    ]);
+    ]));
     if (allResult.status === "rejected" && episodeResult.status === "rejected") {
       throw allResult.reason;
     }
@@ -291,7 +304,7 @@ async function search(env, query) {
       : env.DB.prepare(`SELECT s.episode,e.title,e.slug,e.published_at,e.actors,e.description,s.spotify_id,s.start,s.speaker,s.text,s.speaker_turns
                         FROM segments s JOIN episodes e ON e.id=s.episode
                         WHERE s.episode=? AND s.segment_id=?`).bind(match.metadata.episode, match.metadata.segment_id));
-    const rows = statements.length ? await env.DB.batch(statements) : [];
+    const rows = statements.length ? await timed(timings, "hydrate", () => env.DB.batch(statements)) : [];
     // Repeated chunk hits from one episode should not drown out other episodes.
     const semanticScores = new Map();
     rows.forEach((result, index) => result.results.forEach(row => {
@@ -309,6 +322,8 @@ async function search(env, query) {
     // Lexical search remains useful while AI or the vector index is unavailable.
     console.error("semantic search unavailable", error);
   }
+  timings.semantic = performance.now() - semanticStart;
+  const fuzzyStart = performance.now();
 
   if (groups.size < 10 && Array.from(normalized).length >= 4) {
     const grams = trigrams(query);
@@ -333,6 +348,7 @@ async function search(env, query) {
     });
   }
 
+  timings.fuzzy = performance.now() - fuzzyStart;
   const metadataGrams = trigrams(query.replace(/[?？!！]/g, ""));
   if (metadataGrams.length >= 2) {
     for (const item of groups.values()) {
@@ -350,7 +366,7 @@ async function search(env, query) {
     .sort((a, b) => b.score - a.score || b.published_at.localeCompare(a.published_at));
   const candidates = ranked.slice(0, 30);
   if (candidates.length > 1) {
-    if (await rerankCandidates(env, meaning, candidates)) {
+    if (await timed(timings, "rerank", () => rerankCandidates(env, meaning, candidates, timings))) {
       ranked.sort((a, b) => b.score - a.score || b.published_at.localeCompare(a.published_at));
     }
   }
@@ -372,7 +388,7 @@ async function search(env, query) {
 }
 
 export default {
-  async fetch(request, env) {
+  async fetch(request, env, ctx) {
     const url = new URL(request.url);
     if (request.method === "GET" && url.pathname === "/") {
       return new Response(HTML, { headers: { ...headers, "content-type": "text/html; charset=utf-8" } });
@@ -394,8 +410,39 @@ export default {
       return json({ error: "検索語は2〜100文字で入力してください" }, 400);
     }
 
+    // Search results contain only the same short excerpts returned publicly.
+    const cache = globalThis.caches?.default;
+    const cacheUrl = new URL(request.url);
+    cacheUrl.pathname = "/__search_cache/v1";
+    cacheUrl.search = new URLSearchParams({ q: query }).toString();
+    const cacheKey = new Request(cacheUrl.toString(), { method: "GET" });
+    const cacheStart = performance.now();
+    let cached;
+    try { cached = await cache?.match(cacheKey); }
+    catch (error) { console.error("search cache read unavailable", error); }
+    if (cached) {
+      return new Response(cached.body, { status: cached.status,
+        headers: { ...headers, "server-timing": `cache;dur=${(performance.now() - cacheStart).toFixed(1)}`,
+          "x-search-cache": "HIT" } });
+    }
+
     try {
-      return json({ results: await search(env, query) });
+      const start = performance.now();
+      const timings = {};
+      const results = await search(env, query, timings);
+      timings.total = performance.now() - start;
+      const serverTiming = Object.entries(timings)
+        .map(([name, duration]) => `${name};dur=${duration.toFixed(1)}`).join(", ");
+      const response = json({ results }, 200,
+        { "server-timing": serverTiming, "x-search-cache": "MISS" });
+      if (cache && ctx?.waitUntil) {
+        const entry = new Response(response.clone().body, { status: 200,
+          headers: { "content-type": "application/json; charset=utf-8",
+            "cache-control": `public, max-age=${SEARCH_CACHE_TTL_SECONDS}` } });
+        ctx.waitUntil(cache.put(cacheKey, entry)
+          .catch(error => console.error("search cache write unavailable", error)));
+      }
+      return response;
     } catch (error) {
       console.error(error);
       return json({ error: "検索に失敗しました" }, 500);
