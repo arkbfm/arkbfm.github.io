@@ -5,18 +5,37 @@
     {% include header.html %}
     <main class="main">
       <div class="container">
-        <article class="article card">
-          <header class="article-header card-header">
-            <h1 class="card-heading">
-              <a href="{{ page.url | prepend:site.github.url }}">
-                {{ page.title }}
-              </a>
-            </h1>
-            <div class="article-header-note">
-              {{ page.date | date: "%Y年%m月%d日" }}
+        {% assign ep = site.data.episode_index | where: "slug", page.slug | first %}
+        <article class="article">
+          <header class="ep-hero">
+            {% if ep %}{% include episode-visual.html ep=ep size="large" %}{% endif %}
+            <div class="ep-hero-text">
+              <h1 class="ep-hero-title">
+                <a href="{{ page.url | prepend:site.github.url }}">
+                  {% if ep %}<span class="ep-hero-number">Ep.{{ ep.number }}</span> {{ ep.subtitle }}{% else %}{{ page.title }}{% endif %}
+                </a>
+              </h1>
+              {% if ep %}
+                <p class="ep-hero-guests">
+                  {%- for guest_id in ep.guests -%}{% assign guest = site.actors[guest_id] %}<a href="{{ '/guest/' | append: guest_id | append: '/' | prepend:site.github.url }}">{{ guest.name | default: guest_id }}</a>{% unless forloop.last %}・{% endunless %}{%- endfor -%}
+                  {%- if ep.guests.size > 0 %}とあらB{% else %}あらB{% endif -%}
+                </p>
+                {% include episode-meta.html ep=ep %}
+                {% include episode-returns.html ep=ep %}
+              {% else %}
+                <p class="ep-meta"><span>{{ page.date | date: "%Y年%-m月%-d日" }}</span></p>
+              {% endif %}
             </div>
           </header>
           <section class="card-body markdown">
+            {% if page.questions %}
+              <div class="ep-questions-box">
+                <h2>この回で話していること</h2>
+                <ul class="ep-questions">
+                  {% for question in page.questions %}<li>{{ question }}</li>{% endfor %}
+                </ul>
+              </div>
+            {% endif %}
             <div class="episode-player" id="episode-player">
               {% assign audio_urls = page.audio_url | split: "," %}
               {% for audio_id in audio_urls %}
@@ -24,6 +43,27 @@
               {% endfor %}
               {% if audio_urls.size == 1 %}<div id="episode-spotify-api" data-spotify-id="{{ audio_urls | first | strip }}"></div>{% endif %}
             </div>
+            {% comment %}Draft quotes (unverified speaker or wording) only show in local builds.{% endcomment %}
+            {% if jekyll.environment == "production" %}{% assign quotes = page.quotes | where_exp: "quote", "quote.draft != true" %}{% else %}{% assign quotes = page.quotes %}{% endif %}
+            {% if quotes.size > 0 %}
+              <section class="ep-quotes" aria-labelledby="quotes-heading">
+                <h2 id="quotes-heading">ひとこと抜粋</h2>
+                {% for quote in quotes %}
+                  {% assign speaker = site.actors[quote.actor] %}
+                  {% assign quote_parts = quote.time | split: ':' %}
+                  {% assign quote_seconds = quote_parts[0] | times: 3600 | plus: 0 %}
+                  {% assign quote_minutes = quote_parts[1] | times: 60 %}
+                  {% assign quote_seconds = quote_seconds | plus: quote_minutes | plus: quote_parts[2] %}
+                  <figure class="ep-quote" data-seconds="{{ quote_seconds }}">
+                    <img src="{{ speaker.image_url | prepend:site.github.url }}" alt="" width="40" height="40" loading="lazy">
+                    <div>
+                      <blockquote>{{ quote.text }}</blockquote>
+                      <figcaption>{{ speaker.name | default: quote.actor }}<time>{{ quote.time }}</time>{% if quote.draft %}<span class="ep-quote-draft">要確認（公開されません）</span>{% endif %}</figcaption>
+                    </div>
+                  </figure>
+                {% endfor %}
+              </section>
+            {% endif %}
             <h2>
               内容紹介
             </h2>
@@ -36,10 +76,12 @@
             <div class="article-actors">
               {% for actor_id in page.actor_ids %}
                 {% assign actor = site.actors[actor_id] %}
-                <a href="{{ actor.url }}" class="actor" target="_blank">
+                {% assign actor_page = site.data.guests[actor_id] %}
+                <a href="{% if actor_page %}{{ '/guest/' | append: actor_id | append: '/' | prepend:site.github.url }}{% else %}{{ actor.url }}{% endif %}" class="actor"{% unless actor_page %} target="_blank"{% endunless %}>
                   <img src="{{ actor.image_url | prepend:site.github.url }}" alt="{{ actor.name }}" class="actor-image" width="72" height="72">
                   <br>
                   {{ actor.name }}
+                  {% if actor_page %}<small class="actor-count">出演{{ actor_page.count }}回</small>{% endif %}
                 </a>
               {% endfor %}
             </div>
@@ -58,10 +100,9 @@
               </ul>
             {% endif %}
           </section>
-          <footer class="article-footer">
-            <a class="twitter-share-button" href="https://twitter.com/intent/tweet?hashtags={{ site.hashtag }}&url={{ site.github.url }}{{ page.url }}&text={{ page.title }}">
-              Tweet
-            </a>
+          <footer class="article-footer ep-share">
+            <a class="ep-share-x" href="https://twitter.com/intent/tweet?hashtags={{ site.hashtag }}&url={{ site.url }}{{ page.url | uri_escape }}&text={{ page.title | uri_escape }}" target="_blank" rel="noopener noreferrer">Xで感想を書く</a>
+            <button type="button" class="ep-share-copy" data-copy-url="{{ site.url }}{{ page.url }}">リンクをコピー</button>
           </footer>
         </article>
       </div>

@@ -1,0 +1,10 @@
+{% comment %}Date, length and chapter count. Params: ep (episode_index entry), date (optional override).{% endcomment %}
+{%- assign meta_date = include.ep.date | date: "%Y年%-m月%-d日" -%}
+{%- capture meta_length -%}
+  {%- if include.ep.minutes -%}
+    {%- assign meta_hours = include.ep.minutes | divided_by: 60 -%}
+    {%- assign meta_minutes = include.ep.minutes | modulo: 60 -%}
+    約{% if meta_hours > 0 %}{{ meta_hours }}時間{% endif %}{% if meta_minutes > 0 or meta_hours == 0 %}{{ meta_minutes }}分{% endif %}
+  {%- endif -%}
+{%- endcapture -%}
+<p class="ep-meta"><span>{{ meta_date }}</span>{% if meta_length != '' %}<span>🎧 {{ meta_length }}</span>{% endif %}{% if include.ep.chapter_count > 0 %}<span>{{ include.ep.chapter_count }}チャプター</span>{% endif %}</p>

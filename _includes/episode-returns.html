@@ -1,0 +1,16 @@
+{% comment %}"Back after N months" / "first appearance" badges. Params: ep (episode_index entry).{% endcomment %}
+{% if include.ep.returns.size > 0 %}
+<ul class="ep-returns" aria-label="ゲストの出演歴">
+  {% for comeback in include.ep.returns %}
+    {% assign guest = site.actors[comeback.id] %}
+    <li>
+      {% if comeback.first %}
+        <span class="ep-badge ep-badge-new">初登場</span>{{ guest.name | default: comeback.id }}さん
+      {% else %}
+        {% assign prev_post = site.posts | where: "slug", comeback.prev | first %}
+        <span class="ep-badge">{{ comeback.gap }}</span>{{ guest.name | default: comeback.id }}さん、{{ comeback.count }}回目の出演{% if prev_post %}（前回 <a href="{{ prev_post.url | prepend:site.github.url }}">Ep.{{ comeback.prev | replace: '_', '.' }}</a>）{% endif %}
+      {% endif %}
+    </li>
+  {% endfor %}
+</ul>
+{% endif %}

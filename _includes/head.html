@@ -1,14 +1,16 @@
 <head>
   <meta charset="utf-8">
   <title>{% if page.title %}{{ page.title }} | {% endif %}{{ site.title }}</title>
-  <meta name="viewport" content="width=device-width">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#29bd9d">
   <meta name="description" content="{% if page.description %}{{ page.description }}{% else %}{{ site.description }}{% endif %}">
-  <meta name="twitter:card" content="summary">
+  {% if page.layout == 'article' %}{% capture share_image %}{{ site.url }}/images/og/{{ page.slug }}.jpg{% endcapture %}{% else %}{% capture share_image %}{{ site.url }}/images/artwork.png{% endcapture %}{% endif %}
+  <meta name="twitter:card" content="{% if page.layout == 'article' %}summary_large_image{% else %}summary{% endif %}">
+  <meta name="twitter:image" content="{{ share_image }}">
   <meta name="twitter:description" content="{% if page.description %}{{ page.description }}{% else %}{{ site.description }}{% endif %}">
-  <!-- meta name="twitter:image" content="{{ site.github.url }}/images/artwork.png" / -->
   <meta name="twitter:title" content="{% if page.title %}{{ page.title }} | {% endif %}{{ site.title }}">
   <meta property="og:description" content="{% if page.description %}{{ page.description }}{% else %}{{ site.description }}{% endif %}">
-  <meta property="og:image" content="{{ site.github.url }}/images/artwork.png">
+  <meta property="og:image" content="{{ share_image }}">
   <meta property="og:site_name" content="{{ site.title }}">
   <meta property="og:type" content="blog">
   <meta property="og:url" content="{{ site.github.url }}{{ page.url }}">

@@ -1,0 +1,1147 @@
+{
+ "xiPJ": {
+  "count": 28,
+  "first": "43",
+  "latest": "163",
+  "episodes": [
+   "163",
+   "161",
+   "158",
+   "151",
+   "149",
+   "139",
+   "133",
+   "129",
+   "118.5",
+   "118-2",
+   "118-1",
+   "111_5-2",
+   "111_5-1",
+   "103-2",
+   "103-1",
+   "95",
+   "84-2",
+   "84-1",
+   "78-2",
+   "78-1",
+   "77",
+   "74-2",
+   "74-1",
+   "72-2",
+   "72-1",
+   "69-2",
+   "67-2",
+   "69-1",
+   "67-1",
+   "64_5",
+   "63_5",
+   "62-2",
+   "62-1",
+   "59",
+   "56-3",
+   "56-2",
+   "56-1",
+   "53-2",
+   "53-1",
+   "45",
+   "43"
+  ],
+  "friends": [
+   "SesameElegy",
+   "morazumorazu",
+   "mutoreimu",
+   "Weisweiler",
+   "mof_mmm",
+   "miyauchi_it",
+   "a33554432",
+   "kurptoon"
+  ]
+ },
+ "mutoreimu": {
+  "count": 20,
+  "first": "21",
+  "latest": "164",
+  "episodes": [
+   "164",
+   "158_5",
+   "157",
+   "147_5",
+   "140",
+   "138_5",
+   "135-2",
+   "135-1",
+   "126",
+   "117-3",
+   "117-2",
+   "117-1",
+   "112",
+   "109",
+   "102-2",
+   "102-1",
+   "93",
+   "85-2",
+   "85-1",
+   "67-2",
+   "67-1",
+   "62-2",
+   "62-1",
+   "60-2",
+   "60-1",
+   "30",
+   "29",
+   "21"
+  ],
+  "friends": [
+   "morazumorazu",
+   "sprtfrst",
+   "xiPJ",
+   "mizuumi",
+   "kichisyumi",
+   "syu_ya"
+  ]
+ },
+ "morazumorazu": {
+  "count": 19,
+  "first": "1",
+  "latest": "158_5",
+  "episodes": [
+   "158_5",
+   "147_5",
+   "138_5",
+   "131_5-1",
+   "111_5-2",
+   "111_5-1",
+   "101_5",
+   "89_5-2",
+   "89_5-1",
+   "77_5-3",
+   "77_5-2",
+   "77_5-1",
+   "64-2",
+   "64-1",
+   "60-2",
+   "60-1",
+   "56-2",
+   "56-1",
+   "49",
+   "48",
+   "47",
+   "30",
+   "29",
+   "17",
+   "15",
+   "1"
+  ],
+  "friends": [
+   "mutoreimu",
+   "xiPJ",
+   "sprtfrst",
+   "go_o2",
+   "syu_ya"
+  ]
+ },
+ "Weisweiler": {
+  "count": 16,
+  "first": "36",
+  "latest": "159",
+  "episodes": [
+   "159",
+   "152",
+   "142",
+   "132",
+   "124",
+   "114",
+   "107",
+   "90-2",
+   "90-1",
+   "76",
+   "65",
+   "64_5",
+   "56-3",
+   "53-2",
+   "53-1",
+   "41",
+   "39",
+   "36"
+  ],
+  "friends": [
+   "xiPJ",
+   "manjimiya",
+   "IRFDK",
+   "kojinsathavasa"
+  ]
+ },
+ "Eigelpp": {
+  "count": 8,
+  "first": "58",
+  "latest": "163",
+  "episodes": [
+   "163",
+   "154",
+   "144",
+   "137",
+   "131",
+   "121-3",
+   "121-2",
+   "121-1",
+   "97-3",
+   "97-2",
+   "97-1",
+   "58"
+  ],
+  "friends": [
+   "xiPJ"
+  ]
+ },
+ "SesameElegy": {
+  "count": 7,
+  "first": "71",
+  "latest": "151",
+  "episodes": [
+   "151",
+   "118.5",
+   "115-3",
+   "115-2",
+   "115-1",
+   "103-2",
+   "103-1",
+   "84-2",
+   "84-1",
+   "78-2",
+   "78-1",
+   "71"
+  ],
+  "friends": [
+   "xiPJ",
+   "mof_mmm",
+   "kurptoon",
+   "chihiroiinamae",
+   "hiropon160"
+  ]
+ },
+ "hiropon160": {
+  "count": 6,
+  "first": "32",
+  "latest": "118.5",
+  "episodes": [
+   "118.5",
+   "113",
+   "87",
+   "68",
+   "33",
+   "32"
+  ],
+  "friends": [
+   "chihiroiinamae",
+   "xiPJ",
+   "SesameElegy"
+  ]
+ },
+ "kichisyumi": {
+  "count": 6,
+  "first": "23",
+  "latest": "164",
+  "episodes": [
+   "164",
+   "143",
+   "119-2",
+   "119-1",
+   "96-2",
+   "96-1",
+   "57-2",
+   "57-1",
+   "23"
+  ],
+  "friends": [
+   "shiroie_event",
+   "mutoreimu"
+  ]
+ },
+ "matyunmatyun": {
+  "count": 6,
+  "first": "6",
+  "latest": "134",
+  "episodes": [
+   "134",
+   "125",
+   "94",
+   "24",
+   "12",
+   "6"
+  ],
+  "friends": [
+   "katsuko_meumeu",
+   "imo_ben_"
+  ]
+ },
+ "miyauchi_it": {
+  "count": 6,
+  "first": "59",
+  "latest": "165",
+  "episodes": [
+   "165",
+   "141",
+   "133",
+   "104",
+   "74-2",
+   "74-1",
+   "59"
+  ],
+  "friends": [
+   "xiPJ",
+   "g23997601",
+   "gekihihi",
+   "syncat2"
+  ]
+ },
+ "shiroie_event": {
+  "count": 6,
+  "first": "42",
+  "latest": "122-2",
+  "episodes": [
+   "122-2",
+   "122-1",
+   "99",
+   "80",
+   "57-2",
+   "57-1",
+   "44",
+   "42"
+  ],
+  "friends": [
+   "sisisisisyamoo",
+   "kichisyumi"
+  ]
+ },
+ "sisisisisyamoo": {
+  "count": 6,
+  "first": "42",
+  "latest": "148",
+  "episodes": [
+   "148",
+   "122-2",
+   "122-1",
+   "99",
+   "80",
+   "44",
+   "42"
+  ],
+  "friends": [
+   "shiroie_event",
+   "asesama_"
+  ]
+ },
+ "sai_enlightened": {
+  "count": 5,
+  "first": "63",
+  "latest": "160",
+  "episodes": [
+   "160",
+   "136",
+   "106",
+   "88",
+   "63"
+  ],
+  "friends": [
+   "nowohyeah",
+   "buumm"
+  ]
+ },
+ "sprtfrst": {
+  "count": 5,
+  "first": "64-1",
+  "latest": "146",
+  "episodes": [
+   "146",
+   "140",
+   "112",
+   "85-2",
+   "85-1",
+   "64-2",
+   "64-1"
+  ],
+  "friends": [
+   "mutoreimu",
+   "morazumorazu",
+   "go_o2",
+   "mizuumi"
+  ]
+ },
+ "AHA_oretama": {
+  "count": 4,
+  "first": "4",
+  "latest": "92",
+  "episodes": [
+   "92",
+   "55",
+   "35",
+   "4"
+  ],
+  "friends": [
+   "yjmtsmt",
+   "MasashiU"
+  ]
+ },
+ "maraky99": {
+  "count": 4,
+  "first": "50",
+  "latest": "150",
+  "episodes": [
+   "150",
+   "100",
+   "51",
+   "50"
+  ],
+  "friends": []
+ },
+ "MasashiU": {
+  "count": 4,
+  "first": "2",
+  "latest": "145",
+  "episodes": [
+   "145",
+   "73-2",
+   "73-1",
+   "35",
+   "2"
+  ],
+  "friends": [
+   "watanabe",
+   "yjmtsmt",
+   "AHA_oretama"
+  ]
+ },
+ "muscle_azoson": {
+  "count": 4,
+  "first": "9",
+  "latest": "166",
+  "episodes": [
+   "166",
+   "123",
+   "83-2",
+   "83-1",
+   "9"
+  ],
+  "friends": []
+ },
+ "katsuko_meumeu": {
+  "count": 3,
+  "first": "7",
+  "latest": "70",
+  "episodes": [
+   "70",
+   "24",
+   "7"
+  ],
+  "friends": [
+   "eigenvector3",
+   "matyunmatyun"
+  ]
+ },
+ "kokomakige": {
+  "count": 3,
+  "first": "11",
+  "latest": "82-2",
+  "episodes": [
+   "82-2",
+   "82-1",
+   "52-4",
+   "52-3",
+   "52-2",
+   "52-1",
+   "11"
+  ],
+  "friends": []
+ },
+ "Q_chan_zzz": {
+  "count": 3,
+  "first": "10",
+  "latest": "81-2",
+  "episodes": [
+   "81-2",
+   "81-1",
+   "75",
+   "10"
+  ],
+  "friends": [
+   "saqui_emouvant",
+   "go_o2"
+  ]
+ },
+ "Romancing_park": {
+  "count": 3,
+  "first": "37",
+  "latest": "110-2",
+  "episodes": [
+   "110-2",
+   "110-1",
+   "38",
+   "37"
+  ],
+  "friends": []
+ },
+ "saikoro19937": {
+  "count": 3,
+  "first": "18",
+  "latest": "161",
+  "episodes": [
+   "161",
+   "105",
+   "18"
+  ],
+  "friends": [
+   "xiPJ",
+   "imo_ben_"
+  ]
+ },
+ "syu_ya": {
+  "count": 3,
+  "first": "3",
+  "latest": "21",
+  "episodes": [
+   "21",
+   "17",
+   "3"
+  ],
+  "friends": [
+   "morazumorazu",
+   "mutoreimu"
+  ]
+ },
+ "toko157": {
+  "count": 3,
+  "first": "13",
+  "latest": "86",
+  "episodes": [
+   "86",
+   "31",
+   "13"
+  ],
+  "friends": [
+   "buumm",
+   "mkmchng"
+  ]
+ },
+ "booandchang": {
+  "count": 2,
+  "first": "98-1",
+  "latest": "147",
+  "episodes": [
+   "147",
+   "98-2",
+   "98-1"
+  ],
+  "friends": []
+ },
+ "buumm": {
+  "count": 2,
+  "first": "31",
+  "latest": "88",
+  "episodes": [
+   "88",
+   "31"
+  ],
+  "friends": [
+   "toko157",
+   "sai_enlightened"
+  ]
+ },
+ "go_o2": {
+  "count": 2,
+  "first": "10",
+  "latest": "64-2",
+  "episodes": [
+   "64-2",
+   "64-1",
+   "10"
+  ],
+  "friends": [
+   "morazumorazu",
+   "sprtfrst",
+   "Q_chan_zzz"
+  ]
+ },
+ "imo_ben_": {
+  "count": 2,
+  "first": "12",
+  "latest": "105",
+  "episodes": [
+   "105",
+   "12"
+  ],
+  "friends": [
+   "saikoro19937",
+   "matyunmatyun"
+  ]
+ },
+ "Ioty47": {
+  "count": 2,
+  "first": "127",
+  "latest": "153",
+  "episodes": [
+   "153",
+   "127"
+  ],
+  "friends": [
+   "mistigrix0123"
+  ]
+ },
+ "kurptoon": {
+  "count": 2,
+  "first": "66",
+  "latest": "78-2",
+  "episodes": [
+   "78-2",
+   "78-1",
+   "66"
+  ],
+  "friends": [
+   "xiPJ",
+   "mof_mmm",
+   "SesameElegy"
+  ]
+ },
+ "mistigrix0123": {
+  "count": 2,
+  "first": "138",
+  "latest": "153",
+  "episodes": [
+   "153",
+   "138"
+  ],
+  "friends": [
+   "Ioty47"
+  ]
+ },
+ "mizuumi": {
+  "count": 2,
+  "first": "146",
+  "latest": "157",
+  "episodes": [
+   "157",
+   "146"
+  ],
+  "friends": [
+   "mutoreimu",
+   "sprtfrst"
+  ]
+ },
+ "mof_mmm": {
+  "count": 2,
+  "first": "72-1",
+  "latest": "78-2",
+  "episodes": [
+   "78-2",
+   "78-1",
+   "72-2",
+   "72-1"
+  ],
+  "friends": [
+   "xiPJ",
+   "SesameElegy",
+   "kurptoon"
+  ]
+ },
+ "RyoAkashi": {
+  "count": 2,
+  "first": "89",
+  "latest": "111",
+  "episodes": [
+   "111",
+   "89"
+  ],
+  "friends": []
+ },
+ "saqui_emouvant": {
+  "count": 2,
+  "first": "40",
+  "latest": "81-2",
+  "episodes": [
+   "81-2",
+   "81-1",
+   "40"
+  ],
+  "friends": [
+   "Q_chan_zzz"
+  ]
+ },
+ "takayutsch": {
+  "count": 2,
+  "first": "91",
+  "latest": "155",
+  "episodes": [
+   "155",
+   "91"
+  ],
+  "friends": []
+ },
+ "yasu_shinohara": {
+  "count": 2,
+  "first": "22",
+  "latest": "79",
+  "episodes": [
+   "79",
+   "22"
+  ],
+  "friends": []
+ },
+ "37min_": {
+  "count": 1,
+  "first": "128",
+  "latest": "128",
+  "episodes": [
+   "128"
+  ],
+  "friends": []
+ },
+ "a33554432": {
+  "count": 1,
+  "first": "69-1",
+  "latest": "69-2",
+  "episodes": [
+   "69-2",
+   "69-1"
+  ],
+  "friends": [
+   "xiPJ"
+  ]
+ },
+ "adsc3_141": {
+  "count": 1,
+  "first": "26",
+  "latest": "26",
+  "episodes": [
+   "26"
+  ],
+  "friends": []
+ },
+ "asesama_": {
+  "count": 1,
+  "first": "148",
+  "latest": "148",
+  "episodes": [
+   "148"
+  ],
+  "friends": [
+   "sisisisisyamoo"
+  ]
+ },
+ "ban20151031_2": {
+  "count": 1,
+  "first": "156",
+  "latest": "156",
+  "episodes": [
+   "156"
+  ],
+  "friends": []
+ },
+ "chihiroiinamae": {
+  "count": 1,
+  "first": "118.5",
+  "latest": "118.5",
+  "episodes": [
+   "118.5"
+  ],
+  "friends": [
+   "xiPJ",
+   "hiropon160",
+   "SesameElegy"
+  ]
+ },
+ "dr_Q_99": {
+  "count": 1,
+  "first": "28",
+  "latest": "28",
+  "episodes": [
+   "28"
+  ],
+  "friends": []
+ },
+ "echinusv": {
+  "count": 1,
+  "first": "20",
+  "latest": "20",
+  "episodes": [
+   "20"
+  ],
+  "friends": []
+ },
+ "eigenvector3": {
+  "count": 1,
+  "first": "70",
+  "latest": "70",
+  "episodes": [
+   "70"
+  ],
+  "friends": [
+   "katsuko_meumeu"
+  ]
+ },
+ "g23997601": {
+  "count": 1,
+  "first": "59",
+  "latest": "59",
+  "episodes": [
+   "59"
+  ],
+  "friends": [
+   "gekihihi",
+   "xiPJ",
+   "miyauchi_it"
+  ]
+ },
+ "gekihihi": {
+  "count": 1,
+  "first": "59",
+  "latest": "59",
+  "episodes": [
+   "59"
+  ],
+  "friends": [
+   "g23997601",
+   "xiPJ",
+   "miyauchi_it"
+  ]
+ },
+ "grace00455": {
+  "count": 1,
+  "first": "120-1",
+  "latest": "120-2",
+  "episodes": [
+   "120-2",
+   "120-1"
+  ],
+  "friends": []
+ },
+ "Grail1225": {
+  "count": 1,
+  "first": "54",
+  "latest": "54",
+  "episodes": [
+   "54"
+  ],
+  "friends": []
+ },
+ "Healthya_Univ": {
+  "count": 1,
+  "first": "130",
+  "latest": "130",
+  "episodes": [
+   "130"
+  ],
+  "friends": []
+ },
+ "IRFDK": {
+  "count": 1,
+  "first": "56-3",
+  "latest": "56-3",
+  "episodes": [
+   "56-3"
+  ],
+  "friends": [
+   "manjimiya",
+   "Weisweiler",
+   "xiPJ",
+   "kojinsathavasa"
+  ]
+ },
+ "Juri585": {
+  "count": 1,
+  "first": "63_5",
+  "latest": "63_5",
+  "episodes": [
+   "63_5"
+  ],
+  "friends": [
+   "Kamosoba_P14",
+   "xiPJ",
+   "ogi_0227",
+   "take__0814",
+   "lovemvno"
+  ]
+ },
+ "Kamosoba_P14": {
+  "count": 1,
+  "first": "63_5",
+  "latest": "63_5",
+  "episodes": [
+   "63_5"
+  ],
+  "friends": [
+   "xiPJ",
+   "Juri585",
+   "ogi_0227",
+   "take__0814",
+   "lovemvno"
+  ]
+ },
+ "kojinsathavasa": {
+  "count": 1,
+  "first": "56-3",
+  "latest": "56-3",
+  "episodes": [
+   "56-3"
+  ],
+  "friends": [
+   "manjimiya",
+   "Weisweiler",
+   "xiPJ",
+   "IRFDK"
+  ]
+ },
+ "KumikoMatsui": {
+  "count": 1,
+  "first": "61-1",
+  "latest": "61-2",
+  "episodes": [
+   "61-2",
+   "61-1"
+  ],
+  "friends": []
+ },
+ "ky0muk0_chan": {
+  "count": 1,
+  "first": "8",
+  "latest": "8",
+  "episodes": [
+   "8"
+  ],
+  "friends": []
+ },
+ "kyomuo": {
+  "count": 1,
+  "first": "108",
+  "latest": "108",
+  "episodes": [
+   "108"
+  ],
+  "friends": []
+ },
+ "Leukosaphir": {
+  "count": 1,
+  "first": "19",
+  "latest": "19",
+  "episodes": [
+   "19"
+  ],
+  "friends": []
+ },
+ "lovemvno": {
+  "count": 1,
+  "first": "63_5",
+  "latest": "63_5",
+  "episodes": [
+   "63_5"
+  ],
+  "friends": [
+   "Kamosoba_P14",
+   "xiPJ",
+   "Juri585",
+   "ogi_0227",
+   "take__0814"
+  ]
+ },
+ "manjimiya": {
+  "count": 1,
+  "first": "56-3",
+  "latest": "56-3",
+  "episodes": [
+   "56-3"
+  ],
+  "friends": [
+   "Weisweiler",
+   "xiPJ",
+   "IRFDK",
+   "kojinsathavasa"
+  ]
+ },
+ "mesirupedo": {
+  "count": 1,
+  "first": "34",
+  "latest": "34",
+  "episodes": [
+   "34"
+  ],
+  "friends": []
+ },
+ "mkmchng": {
+  "count": 1,
+  "first": "86",
+  "latest": "86",
+  "episodes": [
+   "86"
+  ],
+  "friends": [
+   "toko157"
+  ]
+ },
+ "nowohyeah": {
+  "count": 1,
+  "first": "63",
+  "latest": "63",
+  "episodes": [
+   "63"
+  ],
+  "friends": [
+   "sai_enlightened"
+  ]
+ },
+ "ogi_0227": {
+  "count": 1,
+  "first": "63_5",
+  "latest": "63_5",
+  "episodes": [
+   "63_5"
+  ],
+  "friends": [
+   "Kamosoba_P14",
+   "xiPJ",
+   "Juri585",
+   "take__0814",
+   "lovemvno"
+  ]
+ },
+ "oooTORIBALLooo": {
+  "count": 1,
+  "first": "14",
+  "latest": "14",
+  "episodes": [
+   "14"
+  ],
+  "friends": []
+ },
+ "otama_jacksy": {
+  "count": 1,
+  "first": "27",
+  "latest": "27",
+  "episodes": [
+   "27"
+  ],
+  "friends": []
+ },
+ "peococcc": {
+  "count": 1,
+  "first": "116-1",
+  "latest": "116-2",
+  "episodes": [
+   "116-2",
+   "116-1"
+  ],
+  "friends": []
+ },
+ "saba1024": {
+  "count": 1,
+  "first": "101",
+  "latest": "101",
+  "episodes": [
+   "101"
+  ],
+  "friends": []
+ },
+ "syncat2": {
+  "count": 1,
+  "first": "141",
+  "latest": "141",
+  "episodes": [
+   "141"
+  ],
+  "friends": [
+   "miyauchi_it"
+  ]
+ },
+ "take__0814": {
+  "count": 1,
+  "first": "63_5",
+  "latest": "63_5",
+  "episodes": [
+   "63_5"
+  ],
+  "friends": [
+   "Kamosoba_P14",
+   "xiPJ",
+   "Juri585",
+   "ogi_0227",
+   "lovemvno"
+  ]
+ },
+ "tjmlab": {
+  "count": 1,
+  "first": "16",
+  "latest": "16",
+  "episodes": [
+   "16"
+  ],
+  "friends": []
+ },
+ "toshakuukan": {
+  "count": 1,
+  "first": "5",
+  "latest": "5",
+  "episodes": [
+   "5"
+  ],
+  "friends": []
+ },
+ "umiske": {
+  "count": 1,
+  "first": "25",
+  "latest": "25",
+  "episodes": [
+   "25"
+  ],
+  "friends": []
+ },
+ "watanabe": {
+  "count": 1,
+  "first": "73-1",
+  "latest": "73-2",
+  "episodes": [
+   "73-2",
+   "73-1"
+  ],
+  "friends": [
+   "MasashiU"
+  ]
+ },
+ "yagihexe": {
+  "count": 1,
+  "first": "46",
+  "latest": "46",
+  "episodes": [
+   "46"
+  ],
+  "friends": []
+ },
+ "yamaken37": {
+  "count": 1,
+  "first": "162",
+  "latest": "162",
+  "episodes": [
+   "162"
+  ],
+  "friends": []
+ },
+ "yjmtsmt": {
+  "count": 1,
+  "first": "35",
+  "latest": "35",
+  "episodes": [
+   "35"
+  ],
+  "friends": [
+   "AHA_oretama",
+   "MasashiU"
+  ]
+ },
+ "zeeksphere": {
+  "count": 1,
+  "first": "77",
+  "latest": "77",
+  "episodes": [
+   "77"
+  ],
+  "friends": [
+   "xiPJ"
+  ]
+ }
+}

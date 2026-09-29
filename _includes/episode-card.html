@@ -1,0 +1,26 @@
+{% comment %}Episode card with a visual header. Params: slug, lead (optional text replacing the description).{% endcomment %}
+{% assign card_ep = site.data.episode_index | where: "slug", include.slug | first %}
+{% assign card_post = site.posts | where: "slug", include.slug | first %}
+{% if card_ep and card_post %}
+<article class="ep-card">
+  <a class="ep-card-link" href="{{ card_post.url | prepend:site.github.url }}">
+    {% include episode-visual.html ep=card_ep %}
+    <span class="ep-card-body">
+      <span class="ep-card-title">{{ card_ep.subtitle }}</span>
+      <span class="ep-card-guests">
+        {%- for guest_id in card_ep.guests -%}{% assign guest = site.actors[guest_id] %}{{ guest.name | default: guest_id }}{% unless forloop.last %}・{% endunless %}{%- endfor -%}
+        {%- if card_ep.guests.size > 0 %}とあらB{% else %}あらB{% endif -%}
+      </span>
+      {% include episode-meta.html ep=card_ep %}
+      {% if card_post.questions %}
+        <span class="ep-card-q" data-question-flip><span class="ep-card-q-icon" aria-hidden="true">Q</span><span class="ep-card-q-window">{% for question in card_post.questions %}<span class="ep-card-q-item{% if forloop.first %} is-active{% endif %}">{{ question }}</span>{% endfor %}</span></span>
+      {% else %}
+        <span class="ep-card-lead">{{ include.lead | default: card_post.description | escape }}</span>
+      {% endif %}
+      {% for comeback in card_ep.returns %}
+        {% if comeback.first %}{% assign guest = site.actors[comeback.id] %}<span class="ep-badge ep-badge-new">{{ guest.name | default: comeback.id }}さん初登場</span>{% endif %}
+      {% endfor %}
+    </span>
+  </a>
+</article>
+{% endif %}
