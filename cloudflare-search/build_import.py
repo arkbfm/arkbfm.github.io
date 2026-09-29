@@ -18,6 +18,7 @@ METADATA_MIGRATION = HERE / "metadata-migration.sql"
 BATCH_SIZE = 5
 DICTIONARY_BATCH_SIZE = 20
 CHUNK_CHARS = 800
+SHORT_SEGMENT_TERMS = ("AI", "読書", "映画", "漫画", "音楽", "仕事", "旅行")
 
 
 def quote(value) -> str:
@@ -125,6 +126,13 @@ def main() -> None:
             values = ",\n".join("(" + ",".join(map(quote, row)) + ")" for row in rows[index:index + BATCH_SIZE])
             output.write(f"INSERT INTO segments ({columns}) VALUES\n{values};\n")
         output.write("INSERT OR IGNORE INTO episode_speakers (episode, speaker) SELECT DISTINCT episode, speaker FROM segments WHERE speaker IS NOT NULL;\n")
+        for term in SHORT_SEGMENT_TERMS:
+            pattern = f"%{term}%"
+            output.write(
+                "INSERT INTO short_segment_hits (term, ordinal, segment_rowid) "
+                f"SELECT {quote(term)}, row_number() OVER (ORDER BY rowid), rowid "
+                f"FROM (SELECT rowid FROM segments WHERE text LIKE {quote(pattern)} ORDER BY rowid LIMIT 200);\n"
+            )
         output.write("INSERT INTO segments_fts(segments_fts) VALUES('rebuild');\n")
     with AUDIO_MIGRATION.open("w", encoding="utf-8", newline="\n") as output:
         output.write("ALTER TABLE segments ADD COLUMN spotify_id TEXT;\n")
@@ -163,6 +171,9 @@ def main() -> None:
         for index in range(0, len(vocabulary_rows), DICTIONARY_BATCH_SIZE):
             values = ",\n".join("(" + ",".join(map(quote, row)) + ")" for row in vocabulary_rows[index:index + DICTIONARY_BATCH_SIZE])
             output.write(f"INSERT INTO search_vocabulary (term,frequency) VALUES\n{values};\n")
+        # Metadata-only updates can build these indexes within the D1 free write budget.
+        output.write("CREATE INDEX search_vocabulary_first_idx ON search_vocabulary(substr(term,1,1),length(term),frequency DESC);\n")
+        output.write("CREATE INDEX search_vocabulary_last_idx ON search_vocabulary(substr(term,-1),length(term),frequency DESC);\n")
         output.write("INSERT INTO episodes_fts(episodes_fts) VALUES('rebuild');\n")
         output.write("SELECT count(*) AS episodes FROM episodes;\n")
     documents = [
@@ -175,7 +186,14 @@ def main() -> None:
         for row in episode_rows
     ]
     with OUTPUT.open("a", encoding="utf-8") as output:
-        output.write(METADATA_MIGRATION.read_text(encoding="utf-8"))
+        # Full imports already approach D1's 100k daily row-write allowance.
+        # Build the vocabulary indexes separately after the next quota reset.
+        metadata_sql = METADATA_MIGRATION.read_text(encoding="utf-8")
+        metadata_sql = "\n".join(
+            line for line in metadata_sql.splitlines()
+            if not line.startswith("CREATE INDEX search_vocabulary_")
+        ) + "\n"
+        output.write(metadata_sql)
     VECTOR_DOCUMENTS.write_text(json.dumps(documents, ensure_ascii=False), encoding="utf-8")
     print(f"wrote {OUTPUT.name}: {len(rows)} segments and {len(episode_rows)} episode metadata rows")
 

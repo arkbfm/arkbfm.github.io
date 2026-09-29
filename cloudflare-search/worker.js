@@ -31,6 +31,7 @@ const headers = {
 };
 const EMBEDDING_MODEL = "@cf/qwen/qwen3-embedding-0.6b";
 const EMBEDDING_DIMENSIONS = 256;
+const SHORT_SEGMENT_TERMS = new Set(["AI", "読書", "映画", "漫画", "音楽", "仕事", "旅行"]);
 
 function json(data, status = 200) {
   return new Response(JSON.stringify(data), { status, headers });
@@ -176,7 +177,7 @@ async function search(env, query) {
     const vocabulary = await env.DB.prepare(
       `SELECT term,frequency FROM search_vocabulary
        WHERE length(term) BETWEEN ? AND ? AND (substr(term,1,1)=? OR substr(term,-1)=?)
-       ORDER BY frequency DESC LIMIT 500`
+       ORDER BY frequency DESC, rowid ASC LIMIT 500`
     ).bind(Math.max(2, token.length - 1), token.length + 1, token[0], token.at(-1)).all();
     if (vocabulary.results.some(row => row.term === token)) continue;
     const corrections = vocabulary.results.map(row => ({ ...row, distance: editDistance(token, row.term) }))
@@ -215,13 +216,20 @@ async function search(env, query) {
       else { item.score += weight * 1 / (60 + index + 1); item.reasons.add("ショーノート一致"); }
     });
 
-    const segmentSql = variant.length < 3
+    // These common short queries retain the same first 200 segment rowids as LIKE.
+    const cacheTerm = variant.toLowerCase() === "ai" ? "AI" : variant;
+    const useShortCache = variant.length < 3 && SHORT_SEGMENT_TERMS.has(cacheTerm);
+    const segmentSql = useShortCache
       ? `SELECT s.episode,e.title,e.slug,e.published_at,e.actors,e.description,s.spotify_id,s.start,s.speaker,s.text,s.speaker_turns
-         FROM segments s JOIN episodes e ON e.id=s.episode WHERE s.text LIKE ? LIMIT 200`
-      : `SELECT s.episode,e.title,e.slug,e.published_at,e.actors,e.description,s.spotify_id,s.start,s.speaker,s.text,s.speaker_turns
-         FROM segments_fts f JOIN segments s ON s.rowid=f.rowid JOIN episodes e ON e.id=s.episode
-         WHERE segments_fts MATCH ? ORDER BY bm25(segments_fts) LIMIT 200`;
-    const segmentRows = await env.DB.prepare(segmentSql).bind(term).all();
+         FROM short_segment_hits h JOIN segments s ON s.rowid=h.segment_rowid JOIN episodes e ON e.id=s.episode
+         WHERE h.term=? ORDER BY h.ordinal LIMIT 200`
+      : variant.length < 3
+        ? `SELECT s.episode,e.title,e.slug,e.published_at,e.actors,e.description,s.spotify_id,s.start,s.speaker,s.text,s.speaker_turns
+           FROM segments s JOIN episodes e ON e.id=s.episode WHERE s.text LIKE ? LIMIT 200`
+        : `SELECT s.episode,e.title,e.slug,e.published_at,e.actors,e.description,s.spotify_id,s.start,s.speaker,s.text,s.speaker_turns
+           FROM segments_fts f JOIN segments s ON s.rowid=f.rowid JOIN episodes e ON e.id=s.episode
+           WHERE segments_fts MATCH ? ORDER BY bm25(segments_fts) LIMIT 200`;
+    const segmentRows = await env.DB.prepare(segmentSql).bind(useShortCache ? cacheTerm : term).all();
     segmentRows.results.forEach((row, index) => {
       const item = group(row);
       item.score += weight * 1.5 / (60 + index + 1);
