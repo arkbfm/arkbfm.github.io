@@ -1,6 +1,7 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { bumpSearchCacheVersion } from './cache_version.mjs';
 const root=new URL('.',import.meta.url);
 const config=Object.fromEntries(readFileSync(new URL('.env',root),'utf8').split(/\r?\n/)
   .filter(line=>line&&!line.startsWith('#')).map(line=>line.split(/=(.*)/s).slice(0,2)));
@@ -35,3 +36,5 @@ console.log('speaker turn migration complete');
 const final=await query('SELECT count(*) AS missing FROM segments WHERE speaker_turns IS NULL');
 if(final[0].results[0].missing!==0)throw new Error(`Speaker turns missing on ${final[0].results[0].missing} rows`);
 console.log('verified all search chunks have speaker turns');
+await bumpSearchCacheVersion(config.CLOUDFLARE_ACCOUNT_ID, config.CLOUDFLARE_API_TOKEN);
+console.log('invalidated search cache');

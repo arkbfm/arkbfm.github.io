@@ -50,3 +50,4 @@ CREATE VIRTUAL TABLE episodes_fts USING fts5(
 );
 CREATE TABLE search_aliases (term TEXT NOT NULL, replacement TEXT NOT NULL);
 CREATE TABLE search_vocabulary (term TEXT PRIMARY KEY, frequency INTEGER NOT NULL);
+CREATE TABLE IF NOT EXISTS search_cache_version (id INTEGER PRIMARY KEY CHECK (id=1), version TEXT NOT NULL);

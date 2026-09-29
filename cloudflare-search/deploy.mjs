@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import { readFileSync } from "node:fs";
+import { bumpSearchCacheVersion } from "./cache_version.mjs";
 
 for (const line of readFileSync(new URL(".env", import.meta.url), "utf8").split(/\r?\n/)) {
   const match = line.match(/^([^#=]+)=(.*)$/);
@@ -47,6 +48,8 @@ const response = await fetch(`https://api.cloudflare.com/client/v4/accounts/${ac
 const result = await response.json();
 if (!response.ok || !result.success) throw new Error(JSON.stringify(result.errors || result));
 console.log("uploaded Worker arkbfm-search");
+await bumpSearchCacheVersion(account, token);
+console.log("invalidated search cache");
 
 if (process.argv.includes("--attach-domain") || process.argv.includes("--detach-domain")) {
   const api = async (path, options = {}) => {
