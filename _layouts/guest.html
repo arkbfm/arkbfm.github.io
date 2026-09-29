@@ -1,0 +1,44 @@
+---
+layout: default
+---
+{% assign guest = site.actors[page.actor_id] %}
+{% assign stats = site.data.guests[page.actor_id] %}
+{% assign first_post = site.posts | where: "slug", stats.first | first %}
+<div class="container discovery-archive">
+  <section class="guest-hero">
+    <img src="{{ guest.image_url | prepend:site.github.url }}" alt="" width="128" height="128">
+    <div>
+      <p class="discovery-kicker">出演者</p>
+      <h2>{{ guest.name }}さん</h2>
+      <p class="guest-hero-stats"><strong>{{ stats.count }}</strong>回出演{% if first_post %} · 初登場は<a href="{{ first_post.url | prepend:site.github.url }}">Ep.{{ stats.first | replace: '_', '.' }}</a>（{{ first_post.date | date: "%Y年%-m月" }}）{% endif %}</p>
+      <p class="guest-hero-links">
+        <a href="https://search.arkbfm.com/?q={{ guest.name | uri_escape }}">{{ guest.name }}さんの発言を検索</a>
+        {% if guest.url and guest.url != 'https://twitter.com/' %}<a href="{{ guest.url }}" target="_blank" rel="noopener noreferrer">SNS ↗</a>{% endif %}
+      </p>
+    </div>
+  </section>
+
+  {% if stats.friends.size > 0 %}
+    <section class="discovery-section" aria-labelledby="friends-heading">
+      <h2 id="friends-heading" class="guest-subheading">よく一緒に出ている人</h2>
+      <div class="guest-grid">
+        {% for friend_id in stats.friends %}
+          {% assign friend = site.actors[friend_id] %}
+          <a href="{{ '/guest/' | append: friend_id | append: '/' | prepend:site.github.url }}" class="guest-chip">
+            <img src="{{ friend.image_url | prepend:site.github.url }}" alt="" width="56" height="56" loading="lazy">
+            <span class="guest-chip-name">{{ friend.name }}</span>
+          </a>
+        {% endfor %}
+      </div>
+    </section>
+  {% endif %}
+
+  <section class="discovery-section" aria-labelledby="appearances-heading">
+    <h2 id="appearances-heading" class="guest-subheading">出演回（新しい順）</h2>
+    <div class="ep-grid">
+      {% for slug in stats.episodes %}
+        {% include episode-card.html slug=slug %}
+      {% endfor %}
+    </div>
+  </section>
+</div>

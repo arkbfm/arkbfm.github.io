@@ -1,0 +1,14 @@
+{% comment %}Episode number and guest faces, shared by cards and the episode page. Params: ep (episode_index entry), size.{% endcomment %}
+{% assign ep_number_parts = include.ep.number | split: '.' %}
+{% assign ep_tone = ep_number_parts.first | split: '-' | first | plus: 0 | modulo: 3 %}
+<div class="ep-visual ep-visual-tone-{{ ep_tone }}{% if include.size %} ep-visual-{{ include.size }}{% endif %}" aria-hidden="true">
+  <span class="ep-visual-number"><small>Ep.</small>{{ include.ep.number }}</span>
+  <span class="ep-visual-faces">
+    {% for guest_id in include.ep.guests limit:4 %}
+      {% assign guest = site.actors[guest_id] %}
+      {% if guest.image_url %}<img src="{{ guest.image_url | prepend:site.github.url }}" alt="" width="44" height="44" loading="lazy">{% else %}<span class="ep-visual-initial">{{ guest.name | default: guest_id | slice: 0 }}</span>{% endif %}
+    {% endfor %}
+    {% assign host = site.actors.ark_B %}
+    <img class="ep-visual-host" src="{{ host.image_url | prepend:site.github.url }}" alt="" width="44" height="44" loading="lazy">
+  </span>
+</div>

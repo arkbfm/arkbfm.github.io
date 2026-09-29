@@ -1,0 +1,24 @@
+---
+layout: default
+title: 出演者
+description: あらB.fm に出演したゲストの一覧。出演回数の多い順に並べています。
+permalink: /guests/
+---
+
+<div class="container discovery-archive">
+  <section class="discovery-section">
+    <p class="discovery-kicker">出演者</p>
+    <h2>出演者から探す</h2>
+    <p class="discovery-section-lead">これまでに{{ site.data.guests.size }}人のゲストと話しました。出演回数の多い順です。</p>
+    <div class="guest-grid guest-grid-all">
+      {% for entry in site.data.guests %}
+        {% assign guest_id = entry[0] %}{% assign guest = site.actors[guest_id] %}
+        <a href="{{ '/guest/' | append: guest_id | append: '/' | prepend:site.github.url }}" class="guest-chip">
+          <img src="{{ guest.image_url | prepend:site.github.url }}" alt="" width="56" height="56" loading="lazy">
+          <span class="guest-chip-name">{{ guest.name }}</span>
+          <span class="guest-chip-count">{{ entry[1].count }}回</span>
+        </a>
+      {% endfor %}
+    </div>
+  </section>
+</div>

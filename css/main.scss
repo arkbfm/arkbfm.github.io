@@ -20,3 +20,6 @@
 @import "blocks/markdown";
 @import "blocks/responsive";
 @import "blocks/utilities";
+
+// Brand layer, loaded last so it can restyle the blocks above.
+@import "blocks/theme";

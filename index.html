@@ -3,113 +3,121 @@ layout: default
 ---
 
 {% assign latest = site.posts | first %}
+{% assign latest_ep = site.data.episode_index | where: "slug", latest.slug | first %}
 <div class="container discovery-home">
-  <section class="card discovery-intro" aria-labelledby="intro-heading">
-    <p class="discovery-kicker">あらB.fmを探す</p>
-    <h2 id="intro-heading">気になる話から、聴いてみる。</h2>
-    <p>番組の話題や出演者の名前で、聴きたい回を見つけてください。</p>
+  <section class="home-hero" aria-labelledby="intro-heading">
+    <p class="home-hero-kicker">ゲストと一緒にくだをまくポッドキャスト</p>
+    <h2 id="intro-heading">今夜は誰と、<br>何の話で、くだをまく？</h2>
+    <p class="home-hero-lead">{{ site.data.episode_index.size }}回分の雑談から、気になる話や人を探してみてください。どこから聴いても、だいたい脱線しています。</p>
     <form class="discovery-search" action="https://search.arkbfm.com/" method="get" role="search">
       <label class="visually-hidden" for="home-search">話題・出演者からエピソードを探す</label>
       <input id="home-search" type="search" name="q" placeholder="話題・出演者からエピソードを探す" required>
       <button type="submit">検索</button>
     </form>
     <div class="discovery-chips" aria-label="話題から探す">
-      <a href="https://search.arkbfm.com/?q=AI">AI</a>
-      <a href="https://search.arkbfm.com/?q=読書">本</a>
-      <a href="https://search.arkbfm.com/?q=映画">映画</a>
-      <a href="https://search.arkbfm.com/?q=漫画">漫画</a>
-      <a href="https://search.arkbfm.com/?q=ゲーム">ゲーム</a>
-      <a href="https://search.arkbfm.com/?q=音楽">音楽</a>
-      <a href="https://search.arkbfm.com/?q=仕事">仕事</a>
-      <a href="https://search.arkbfm.com/?q=旅行">旅行</a>
+      {% for topic in site.data.topics %}
+        <a href="https://search.arkbfm.com/?q={{ topic.q | uri_escape }}" aria-label="{{ topic.label }}（ショーノートに出てくる回 {{ topic.count }}本）">{{ topic.label }}<span>{{ topic.count }}</span></a>
+      {% endfor %}
+    </div>
+    <div class="home-random">
+      <a class="home-random-button" href="{{ '/episodes/' | prepend:site.github.url }}" data-random-scene data-index="{{ '/episode-index.json' | prepend:site.github.url }}">🎲 適当な場面から聴く</a>
+      <span>ランダムな回の、ランダムなチャプターに飛びます。</span>
     </div>
   </section>
 
-  <section class="card discovery-section discovery-latest" aria-labelledby="latest-heading">
+  <section class="home-latest" aria-labelledby="latest-heading">
     <div class="discovery-section-heading">
       <div>
-        <p class="discovery-kicker">New episode</p>
+        <p class="discovery-kicker">できたて</p>
         <h2 id="latest-heading">最新回</h2>
       </div>
-      <a href="{{ latest.url | prepend:site.github.url }}">ショーノートを見る →</a>
+      <a href="{{ latest.url | prepend:site.github.url }}">ショーノートを読む →</a>
     </div>
     {% assign latest_audio = latest.audio_url | split: ',' | first | strip %}
-    <div class="discovery-latest-layout">
+    <div class="home-latest-layout">
+      <a class="home-latest-visual" href="{{ latest.url | prepend:site.github.url }}">{% include episode-visual.html ep=latest_ep size="large" %}</a>
       <div>
-        <h3 class="discovery-latest-title"><a href="{{ latest.url | prepend:site.github.url }}">{{ latest.title | escape }}</a></h3>
-        <p class="discovery-meta">{{ latest.date | date: "%Y年%m月%d日" }}{% if latest.duration and latest.duration != '00:00' %} · {{ latest.duration }}{% endif %}</p>
-        <p class="discovery-latest-description">{{ latest.description | escape }}</p>
-        {% if latest_audio != '' %}<a class="discovery-latest-open" href="https://open.spotify.com/episode/{{ latest_audio }}" target="_blank" rel="noopener noreferrer">Spotifyで聴く ↗</a>{% endif %}
+        <h3 class="home-latest-title"><a href="{{ latest.url | prepend:site.github.url }}">{{ latest_ep.subtitle }}</a></h3>
+        {% include episode-meta.html ep=latest_ep %}
+        {% if latest.questions %}
+          <ul class="ep-questions ep-questions-compact" aria-label="この回で話していること">
+            {% for question in latest.questions %}<li>{{ question }}</li>{% endfor %}
+          </ul>
+        {% else %}
+          <p class="discovery-latest-description">{{ latest.description | escape }}</p>
+        {% endif %}
+        {% include episode-returns.html ep=latest_ep %}
       </div>
-      {% if latest_audio != '' %}
-        <iframe class="discovery-player" src="https://open.spotify.com/embed/episode/{{ latest_audio }}" width="100%" height="152" title="{{ latest.title | escape }} をSpotifyで再生" loading="lazy" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
-      {% endif %}
     </div>
+    {% if latest_audio != '' %}
+      <iframe class="discovery-player" src="https://open.spotify.com/embed/episode/{{ latest_audio }}" width="100%" height="152" title="{{ latest.title | escape }} をSpotifyで再生" loading="lazy" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
+    {% endif %}
   </section>
 
-  <section class="card discovery-section" id="start" aria-labelledby="start-heading">
+  <section class="discovery-section" id="start" aria-labelledby="start-heading">
     <div class="discovery-section-heading">
       <div>
-        <p class="discovery-kicker">Start here</p>
+        <p class="discovery-kicker">はじめまして</p>
         <h2 id="start-heading">初めて聴くなら</h2>
       </div>
     </div>
     <p class="discovery-section-lead">よく見つけられ、じっくり聴かれた回から、話題の違う3本を選びました。</p>
-    <div class="discovery-grid">
+    <div class="ep-grid">
       {% for feature in site.data.featured_episodes %}
-        <article class="discovery-feature">
-          <span class="discovery-feature-category">{{ feature.category }} · Ep. {{ feature.episode }}</span>
-          <h3><a href="{{ feature.url | prepend:site.github.url }}">{{ feature.title }}</a></h3>
-          <p>{{ feature.description }}</p>
-          <ul class="discovery-feature-highlights" aria-label="この回の話題">
-            {% for highlight in feature.highlights %}<li>{{ highlight }}</li>{% endfor %}
-          </ul>
-          <div class="discovery-feature-actions">
-            <a href="{{ feature.url | prepend:site.github.url }}">ショーノート →</a>
-            <a href="https://open.spotify.com/episode/{{ feature.audio_id }}" target="_blank" rel="noopener noreferrer" aria-label="Ep. {{ feature.episode }} をSpotifyで聴く">Spotifyで聴く ↗</a>
-          </div>
-        </article>
+        {% assign feature_slug = feature.url | split: '/' | last %}
+        {% include episode-card.html slug=feature_slug lead=feature.description %}
       {% endfor %}
     </div>
   </section>
 
-  <section class="card discovery-section" id="guests" aria-labelledby="guests-heading">
+  <section class="discovery-section" aria-labelledby="popular-heading">
     <div class="discovery-section-heading">
       <div>
-        <p class="discovery-kicker">Guests</p>
-        <h2 id="guests-heading">出演者から探す</h2>
+        <p class="discovery-kicker">聴きごたえ</p>
+        <h2 id="popular-heading">じっくり聴かれている回</h2>
       </div>
     </div>
-    {% assign guest_ids = 'xiPJ,mutoreimu,morazumorazu,miyauchi_it,muscle_azoson,sprtfrst' | split: ',' %}
-    <div class="discovery-guests">
-      {% for guest_id in guest_ids %}
-        {% assign guest = site.actors[guest_id] %}
-        {% if guest %}
-          <a href="https://search.arkbfm.com/?q={{ guest.name }}" class="discovery-guest">
-            <img src="{{ guest.image_url | prepend:site.github.url }}" alt="" width="48" height="48" loading="lazy">
-            <span>{{ guest.name }}</span>
-          </a>
-        {% endif %}
+    <p class="discovery-section-lead">配信後30日間の平均再生時間が長かった回です。</p>
+    <div class="ep-grid">
+      {% for item in site.data.popular_episodes %}
+        {% include episode-card.html slug=item.slug %}
       {% endfor %}
     </div>
   </section>
 
-  <section class="card discovery-section" aria-labelledby="recent-heading">
+  <section class="discovery-section" id="guests" aria-labelledby="guests-heading">
     <div class="discovery-section-heading">
       <div>
-        <p class="discovery-kicker">Recent episodes</p>
+        <p class="discovery-kicker">常連さん</p>
+        <h2 id="guests-heading">出演者から探す</h2>
+      </div>
+      <a href="{{ '/guests/' | prepend:site.github.url }}">全{{ site.data.guests.size }}人を見る →</a>
+    </div>
+    <div class="guest-grid">
+      {% for entry in site.data.guests limit:14 %}
+        {% assign guest_id = entry[0] %}{% assign guest = site.actors[guest_id] %}
+        <a href="{{ '/guest/' | append: guest_id | append: '/' | prepend:site.github.url }}" class="guest-chip">
+          <img src="{{ guest.image_url | prepend:site.github.url }}" alt="" width="56" height="56" loading="lazy">
+          <span class="guest-chip-name">{{ guest.name }}</span>
+          <span class="guest-chip-count">{{ entry[1].count }}回</span>
+        </a>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section class="discovery-section" aria-labelledby="recent-heading">
+    <div class="discovery-section-heading">
+      <div>
+        <p class="discovery-kicker">さかのぼる</p>
         <h2 id="recent-heading">最近のエピソード</h2>
       </div>
       <a href="{{ '/episodes/' | prepend:site.github.url }}">すべて見る →</a>
     </div>
-    <div class="discovery-recent-list">
-      {% for post in site.posts limit:12 %}
-        <article class="discovery-recent-item">
-          <p class="discovery-meta">{{ post.date | date: "%Y年%m月%d日" }}{% if post.duration and post.duration != '00:00' %} · {{ post.duration }}{% endif %}</p>
-          <h3><a href="{{ post.url | prepend:site.github.url }}">{{ post.title | escape }}</a></h3>
-          <p>{{ post.description | escape }}</p>
-        </article>
+    <div class="ep-grid">
+      {% for post in site.posts offset:1 limit:9 %}
+        {% include episode-card.html slug=post.slug %}
       {% endfor %}
     </div>
   </section>
 </div>
+<script src="{{ '/js/random-scene.js' | prepend:site.github.url }}" defer></script>

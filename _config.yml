@@ -327,6 +327,15 @@ author: ark_B
 description: あらB.fm はゲストと一緒にくだをまく様子をお届けするポッドキャストです。
 description_long: あらB.fm はゲストと一緒にくだをまく様子をお届けするポッドキャストです。
 email: arkbb3@gmail.com
+collections:
+  guests:
+    output: true
+    permalink: /guest/:name/
+defaults:
+  - scope:
+      type: guests
+    values:
+      layout: guest
 exclude:
   - Gemfile
   - Gemfile.lock
