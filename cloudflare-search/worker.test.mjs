@@ -46,3 +46,20 @@ try {
 assert.deepEqual(calls, ["typesafe/jev", "@cf/baai/bge-reranker-base"]);
 assert(candidates[2].score > candidates[0].score);
 console.log("Jev reranking and fallback checks passed");
+
+const firstTurn = "あらBが話します😀";
+const secondTurn = "ピジェが答えます。検索語はここです。";
+const mixedHit = {
+  text: firstTurn + " " + secondTurn, speaker: "あらB / ピジェ", start: 10,
+  speaker_turns: JSON.stringify([
+    [Array.from(firstTurn).length, "あらB", 10],
+    [Array.from(secondTurn).length, "ピジェ", 20],
+  ]),
+};
+const lines = worker.labeledExcerpt(mixedHit, ["検索語"]);
+assert.equal(lines[0].speaker, "ピジェ");
+assert.equal(lines[0].start, 20);
+assert(lines[0].text.includes("検索語"));
+assert.equal(worker.labeledExcerpt({ ...mixedHit, speaker_turns: null }, ["検索語"])[0].speaker,
+  "あらB / ピジェ");
+console.log("speaker turn excerpt checks passed");

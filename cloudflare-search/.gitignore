@@ -8,3 +8,4 @@ vectors.ndjson
 .npm-cache/
 .wrangler/
 node_modules/
+speaker-turns-migration.sql

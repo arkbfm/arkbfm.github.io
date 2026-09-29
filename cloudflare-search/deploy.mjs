@@ -10,6 +10,19 @@ const account = process.env.CLOUDFLARE_ACCOUNT_ID;
 const token = process.env.CLOUDFLARE_API_TOKEN;
 if (!account || !token) throw new Error("CLOUDFLARE_ACCOUNT_ID and CLOUDFLARE_API_TOKEN are required");
 
+// The Worker reads per-turn speaker labels; do not deploy before D1 has them.
+const readinessResponse = await fetch(`https://api.cloudflare.com/client/v4/accounts/${account}/d1/database/390de978-7db4-409c-9b55-e3f221b2b6a5/query`, {
+  method: "POST",
+  headers: { authorization: `Bearer ${token}`, "content-type": "application/json" },
+  body: JSON.stringify({ sql: "SELECT count(*) AS missing FROM segments WHERE speaker_turns IS NULL" }),
+});
+const readiness = await readinessResponse.json();
+if (!readinessResponse.ok || !readiness.success) {
+  throw new Error(`Speaker turn readiness check failed: ${JSON.stringify(readiness.errors || readiness)}`);
+}
+const missing = readiness.result?.[0]?.results?.[0]?.missing;
+if (missing !== 0) throw new Error(`Cannot deploy: ${missing} search chunks lack speaker labels`);
+
 const metadata = {
   main_module: "worker.js",
   compatibility_date: "2026-09-16",
