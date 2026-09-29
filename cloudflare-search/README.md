@@ -23,6 +23,7 @@ node deploy.mjs --attach-domain
 `ensure_episode_filter.mjs` は既存の索引に `kind` メタデータ索引を作成し、エピソード概要ベクトルだけを再登録する。繰り返し実行可能。検索時には通常の上位50文書に加え、概要だけの上位20文書を取得する。概要検索が失敗した場合は通常の検索を続ける。
 
 大量の検索評価はリモートD1ではなくローカルSQLiteで行う。Workers FreeのD1行読み取り枠は1日500万行で、超過するとUTC 0時のリセットまで検索が失敗する。
+スペル補正は語頭・語尾の式索引を使い、同頻度候補は元の登録順で並べる。トップページでよく使う2文字の話題は `short_segment_hits` に従来の `LIKE` の先頭200件を保存する。それ以外の短い語は従来どおり全文を照合する。既存DBへの適用順は `node apply_search_indexes.mjs --cache` → `node deploy.mjs` → `node apply_search_indexes.mjs --vocabulary`。全文再投入時は `build_import.py` が短語キャッシュを生成する。語彙索引はD1無料枠の1日10万行書き込みに収めるため `import.sql` から除外されるので、翌日の枠リセット後に `node apply_search_indexes.mjs --vocabulary` を実行する。
 話者検索はチャンク全件を走査せず、`episode_speakers` のエピソード別話者名を照合する。元の `segments.speaker` 文字列を重複だけ除いて保存するため、部分一致と検索結果の順序は維持する。既存DBでは `node apply_speaker_index.mjs` を実行してから `node deploy.mjs` を実行する。新規の全文投入では `build_import.py` が同じ表を生成する。
 
 `workers_dev` は無効。検索APIは1接続元あたり毎分30回に制限し、1件あたり最大280文字の抜粋だけを返す。

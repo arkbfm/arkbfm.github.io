@@ -5,6 +5,7 @@ DROP TABLE IF EXISTS episodes_fts;
 DROP TABLE IF EXISTS episodes;
 DROP TABLE IF EXISTS search_aliases;
 DROP TABLE IF EXISTS search_vocabulary;
+DROP TABLE IF EXISTS short_segment_hits;
 
 CREATE TABLE segments (
   rowid INTEGER PRIMARY KEY,
@@ -24,6 +25,7 @@ CREATE TABLE segments (
 
 CREATE INDEX segments_episode_idx ON segments (episode, part, start);
 CREATE TABLE episode_speakers (episode TEXT NOT NULL, speaker TEXT NOT NULL, PRIMARY KEY (episode, speaker));
+CREATE TABLE short_segment_hits (term TEXT NOT NULL, ordinal INTEGER NOT NULL, segment_rowid INTEGER NOT NULL, PRIMARY KEY (term, ordinal));
 CREATE VIRTUAL TABLE segments_fts USING fts5(
   text,
   content='segments',
