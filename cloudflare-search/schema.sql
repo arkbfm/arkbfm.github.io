@@ -1,5 +1,6 @@
 DROP TABLE IF EXISTS segments_fts;
 DROP TABLE IF EXISTS segments;
+DROP TABLE IF EXISTS episode_speakers;
 DROP TABLE IF EXISTS episodes_fts;
 DROP TABLE IF EXISTS episodes;
 DROP TABLE IF EXISTS search_aliases;
@@ -17,10 +18,12 @@ CREATE TABLE segments (
   end REAL NOT NULL,
   speaker TEXT,
   text TEXT NOT NULL,
+  speaker_turns TEXT,
   UNIQUE (episode, segment_id)
 );
 
 CREATE INDEX segments_episode_idx ON segments (episode, part, start);
+CREATE TABLE episode_speakers (episode TEXT NOT NULL, speaker TEXT NOT NULL, PRIMARY KEY (episode, speaker));
 CREATE VIRTUAL TABLE segments_fts USING fts5(
   text,
   content='segments',

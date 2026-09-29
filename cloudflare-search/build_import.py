@@ -40,6 +40,16 @@ def chunks(segments: list[dict]):
         yield chunk
 
 
+def speaker_turns(chunk: list[dict], identities: dict) -> str:
+    """Store each turn's codepoint length, confirmed name, and start time."""
+    turns = []
+    for segment in chunk:
+        identity = identities.get(segment.get("speaker"), {})
+        name = identity.get("name") if identity.get("status") == "confirmed" else None
+        turns.append([len(segment["text"]), name, float(segment["start"])])
+    return json.dumps(turns, ensure_ascii=False, separators=(",", ":"))
+
+
 def frontmatter(source: str, key: str) -> str:
     match = re.search(rf"^{re.escape(key)}:\s*(.*)$", source, re.MULTILINE)
     return match.group(1).strip().strip('"') if match else ""
@@ -89,6 +99,7 @@ def main() -> None:
                 float(chunk[0]["start"]), float(chunk[-1]["end"]),
                 speaker_name,
                 " ".join(segment["text"] for segment in chunk),
+                speaker_turns(chunk, identities),
             ))
 
     for post_path in sorted((ROOT / "_posts").glob("[0-9]*.md")):
@@ -109,10 +120,11 @@ def main() -> None:
 
     with OUTPUT.open("w", encoding="utf-8", newline="\n") as output:
         output.write((HERE / "schema.sql").read_text(encoding="utf-8") + "\n")
-        columns = "episode,title,post,spotify_id,part,segment_id,start,end,speaker,text"
+        columns = "episode,title,post,spotify_id,part,segment_id,start,end,speaker,text,speaker_turns"
         for index in range(0, len(rows), BATCH_SIZE):
             values = ",\n".join("(" + ",".join(map(quote, row)) + ")" for row in rows[index:index + BATCH_SIZE])
             output.write(f"INSERT INTO segments ({columns}) VALUES\n{values};\n")
+        output.write("INSERT OR IGNORE INTO episode_speakers (episode, speaker) SELECT DISTINCT episode, speaker FROM segments WHERE speaker IS NOT NULL;\n")
         output.write("INSERT INTO segments_fts(segments_fts) VALUES('rebuild');\n")
     with AUDIO_MIGRATION.open("w", encoding="utf-8", newline="\n") as output:
         output.write("ALTER TABLE segments ADD COLUMN spotify_id TEXT;\n")

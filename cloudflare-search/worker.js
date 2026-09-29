@@ -4,7 +4,7 @@ const HTML = `<!doctype html>
 <link rel="stylesheet" href="https://www.arkbfm.com/css/main.css"><link rel="shortcut icon" href="https://www.arkbfm.com/favicon.ico">
 <style>
 .search-card{max-width:960px}.search-note,#meta,.attrs,.kind{color:rgba(0,0,0,.54)}#meta{margin-top:8px}
-.result{padding:22px 0}.result+.result{border-top:1px solid #eee}.title{font-size:1.5rem}.attrs,.kind{font-size:.86rem;margin:4px 0 9px}.hit{border-top:1px solid #eee;padding-top:12px;margin-top:12px}.text{line-height:1.7}mark{background:#ffe28a}
+.result{padding:22px 0}.result+.result{border-top:1px solid #eee}.title{font-size:1.5rem}.attrs,.kind{font-size:.86rem;margin:4px 0 9px}.hit{border-top:1px solid #eee;padding-top:12px;margin-top:12px}.text{line-height:1.7}.turn+.turn{margin-top:6px}.turn-speaker{font-weight:700}mark{background:#ffe28a}
 .play{font:inherit;cursor:pointer;color:#fff;background:#1c3c7c;border:0;border-radius:4px;margin-top:10px;padding:7px 11px}.player{position:sticky;bottom:8px;margin-top:16px}
 @media(max-width:767px){.title{font-size:1.25rem}}
 </style></head><body><header class="header"><div class="header-overlay"><div class="container header-container"><div class="header-left"><h1 class="header-heading"><a href="https://www.arkbfm.com/"><span class="header-heading-ja">あら</span><span class="header-heading-en">B.fm</span></a></h1><div class="header-description">あらBがテクノロジー、音楽、映画などについてゲストを招いて話すポッドキャストです。</div></div><div class="header-search"><form class="header-search-form" id="form" action="/" method="get"><input type="search" id="q" name="q" minlength="2" maxlength="100" required autofocus placeholder="エピソードを検索" aria-label="エピソードを検索" class="header-search-input" autocomplete="off"></form></div></div></div></header>
@@ -16,7 +16,7 @@ document.querySelector('#results').addEventListener('click',e=>{const button=e.t
 document.querySelector('#form').addEventListener('submit',async e=>{e.preventDefault();const q=document.querySelector('#q').value.trim();if(q.length<2)return;history.replaceState(null,'','/?q='+encodeURIComponent(q));
 const meta=document.querySelector('#meta'),results=document.querySelector('#results');meta.textContent='検索中…';results.innerHTML='';
 try{const response=await fetch('/api/search',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({q})});const data=await response.json();if(!response.ok)throw new Error(data.error||'検索に失敗しました');
-meta.textContent=data.results.length+'エピソード';results.innerHTML=data.results.map(x=>'<article class="result"><a class="title" href="'+esc(x.url)+'">'+esc(x.title)+'</a><div class="attrs">'+esc(x.published_at)+' · '+esc(x.actors)+'</div><div class="kind">'+esc(x.reason)+'</div>'+x.hits.map(h=>'<div class="hit"><div class="attrs">'+esc(h.timestamp)+' · '+esc(h.speaker||'話者不明')+(h.fuzzy?' · あいまい一致':'')+'</div><div class="text">'+highlight(h.text,q)+'</div><button class="play" data-spotify="'+esc(h.spotify_id)+'" data-start="'+Number(h.start)+'">Spotifyプレイヤーを表示（'+esc(h.timestamp)+'〜）</button></div>').join('')+'</article>').join('')||'<p>一致するエピソードはありませんでした。</p>';
+meta.textContent=data.results.length+'エピソード';results.innerHTML=data.results.map(x=>'<article class="result"><a class="title" href="'+esc(x.url)+'">'+esc(x.title)+'</a><div class="attrs">'+esc(x.published_at)+' · '+esc(x.actors)+'</div><div class="kind">'+esc(x.reason)+'</div>'+x.hits.map(h=>'<div class="hit"><div class="attrs">'+esc(h.timestamp)+(h.fuzzy?' · あいまい一致':'')+'</div><div class="text">'+(h.lines?.length?h.lines.map(line=>'<div class="turn"><span class="turn-speaker">'+esc(line.speaker||'話者不明')+':</span> '+highlight(line.text,q)+'</div>').join(''):'<div class="turn"><span class="turn-speaker">'+esc(h.speaker||'話者不明')+':</span> '+highlight(h.text,q)+'</div>')+'</div><button class="play" data-spotify="'+esc(h.spotify_id)+'" data-start="'+Number(h.start)+'">Spotifyプレイヤーを表示（'+esc(h.timestamp)+'〜）</button></div>').join('')+'</article>').join('')||'<p>一致するエピソードはありませんでした。</p>';
 }catch(error){meta.textContent=error.message;}});
 const initialQuery=new URLSearchParams(location.search).get('q');if(initialQuery){document.querySelector('#q').value=initialQuery;document.querySelector('#form').requestSubmit()}
 </script><footer class="footer"><div class="container"><div class="footer-copyright">© 2021 <a href="https://www.arkbfm.com/">あらB.fm</a></div></div></footer></body></html>`;
@@ -69,14 +69,49 @@ const editDistance = (left, right) => {
   }
   return row.at(-1);
 };
-const excerpt = (text, needles) => {
-  if (text.length <= 280) return text;
+const excerpt = (text, needles, limit = 280) => {
+  const chars = Array.from(text);
+  if (chars.length <= limit) return text;
   const positions = needles.map(needle => normalize(text).indexOf(normalize(needle))).filter(index => index >= 0);
-  const start = Math.max(0, (positions[0] || 0) - 100);
+  const start = Math.max(0, (positions[0] || 0) - Math.min(100, Math.floor(limit / 3)));
   const prefix = start ? "…" : "";
-  const suffix = start + 280 - prefix.length < text.length ? "…" : "";
-  return `${prefix}${text.slice(start, start + 280 - prefix.length - suffix.length)}${suffix}`;
+  const suffix = start + limit - prefix.length < chars.length ? "…" : "";
+  return `${prefix}${chars.slice(start, start + limit - prefix.length - suffix.length).join("")}${suffix}`;
 };
+
+function labeledExcerpt(hit, needles, limit = 280) {
+  let packed;
+  try { packed = JSON.parse(hit.speaker_turns || "null"); } catch { packed = null; }
+  if (!Array.isArray(packed) || !packed.length) {
+    return [{ speaker: hit.speaker, start: hit.start, text: excerpt(hit.text, needles) }];
+  }
+  const chars = Array.from(hit.text);
+  let offset = 0;
+  const turns = packed.map(([length, speaker, start]) => {
+    const text = chars.slice(offset, offset + length).join("");
+    offset += length + 1;
+    return { speaker: speaker || "話者不明", start, text };
+  });
+  if (offset - 1 !== chars.length || turns.some(turn => !turn.text)) {
+    return [{ speaker: hit.speaker, start: hit.start, text: excerpt(hit.text, needles) }];
+  }
+  const normalizedNeedles = needles.map(normalize).filter(needle => needle.length >= 2);
+  const score = turn => Math.max(0, ...normalizedNeedles
+    .filter(needle => normalize(turn.text).includes(needle)).map(needle => needle.length));
+  let best = 0;
+  for (let index = 1; index < turns.length; index++) {
+    if (score(turns[index]) > score(turns[best])) best = index;
+  }
+  const chosen = turns[best];
+  const firstLimit = best + 1 < turns.length ? Math.min(200, limit) : limit;
+  const lines = [{ ...chosen, text: excerpt(chosen.text, needles, firstLimit) }];
+  const remaining = limit - Array.from(lines[0].text).length;
+  if (remaining >= 30 && best + 1 < turns.length) {
+    const next = turns[best + 1];
+    lines.push({ ...next, text: excerpt(next.text, needles, remaining) });
+  }
+  return lines;
+}
 
 function addRerankScores(candidates, scores, minimum = 0, minRange = 0) {
   if (scores.length !== candidates.length || scores.some(score => !Number.isFinite(score))) return false;
@@ -181,9 +216,9 @@ async function search(env, query) {
     });
 
     const segmentSql = variant.length < 3
-      ? `SELECT s.episode,e.title,e.slug,e.published_at,e.actors,e.description,s.spotify_id,s.start,s.speaker,s.text
+      ? `SELECT s.episode,e.title,e.slug,e.published_at,e.actors,e.description,s.spotify_id,s.start,s.speaker,s.text,s.speaker_turns
          FROM segments s JOIN episodes e ON e.id=s.episode WHERE s.text LIKE ? LIMIT 200`
-      : `SELECT s.episode,e.title,e.slug,e.published_at,e.actors,e.description,s.spotify_id,s.start,s.speaker,s.text
+      : `SELECT s.episode,e.title,e.slug,e.published_at,e.actors,e.description,s.spotify_id,s.start,s.speaker,s.text,s.speaker_turns
          FROM segments_fts f JOIN segments s ON s.rowid=f.rowid JOIN episodes e ON e.id=s.episode
          WHERE segments_fts MATCH ? ORDER BY bm25(segments_fts) LIMIT 200`;
     const segmentRows = await env.DB.prepare(segmentSql).bind(term).all();
@@ -206,7 +241,7 @@ async function search(env, query) {
   const speakerRows = await env.DB.prepare(
     `SELECT e.id episode,e.title,e.slug,e.published_at,e.actors,e.description
      FROM episodes e WHERE EXISTS (
-       SELECT 1 FROM segments s WHERE s.episode=e.id AND instr(lower(s.speaker), ?) > 0
+       SELECT 1 FROM episode_speakers s WHERE s.episode=e.id AND instr(lower(s.speaker), ?) > 0
      ) LIMIT 250`
   ).bind(normalized).all();
   speakerRows.results.forEach((row, index) => {
@@ -221,24 +256,47 @@ async function search(env, query) {
       queries: [meaning],
       instruction: "日本語ポッドキャストから、質問と関連する話題を検索してください",
     });
-    const matches = await env.VECTORS.query(embedding.data[0].slice(0, EMBEDDING_DIMENSIONS), {
-      topK: 50, returnMetadata: "all",
-    });
-    const statements = matches.matches.map(match => match.metadata.kind === "episode"
+    const vector = embedding.data[0].slice(0, EMBEDDING_DIMENSIONS);
+    // Reserve a small candidate pool for episode overviews; long transcripts have many chunk vectors.
+    const [allResult, episodeResult] = await Promise.allSettled([
+      env.VECTORS.query(vector, { topK: 50, returnMetadata: "all" }),
+      env.VECTORS.query(vector, { topK: 20, returnMetadata: "all", filter: { kind: "episode" } }),
+    ]);
+    if (allResult.status === "rejected" && episodeResult.status === "rejected") {
+      throw allResult.reason;
+    }
+    if (episodeResult.status === "rejected") console.error("episode vector search unavailable", episodeResult.reason);
+    const matches = [];
+    const seen = new Set();
+    for (const [result, weight] of [[episodeResult, 1.5], [allResult, 1.25]]) {
+      if (result.status !== "fulfilled") continue;
+      result.value.matches.forEach((match, index) => {
+        if (!seen.has(match.id)) {
+          seen.add(match.id);
+          matches.push({ ...match, semanticScore: weight / (60 + index + 1) });
+        }
+      });
+    }
+    const statements = matches.map(match => match.metadata.kind === "episode"
       ? env.DB.prepare(`SELECT id episode,title,slug,published_at,actors,description,show_notes
                         FROM episodes WHERE id=?`).bind(match.metadata.episode)
-      : env.DB.prepare(`SELECT s.episode,e.title,e.slug,e.published_at,e.actors,e.description,s.spotify_id,s.start,s.speaker,s.text
+      : env.DB.prepare(`SELECT s.episode,e.title,e.slug,e.published_at,e.actors,e.description,s.spotify_id,s.start,s.speaker,s.text,s.speaker_turns
                         FROM segments s JOIN episodes e ON e.id=s.episode
                         WHERE s.episode=? AND s.segment_id=?`).bind(match.metadata.episode, match.metadata.segment_id));
     const rows = statements.length ? await env.DB.batch(statements) : [];
+    // Repeated chunk hits from one episode should not drown out other episodes.
+    const semanticScores = new Map();
     rows.forEach((result, index) => result.results.forEach(row => {
       const item = group(row);
-      item.score += 1.25 / (60 + index + 1);
+      semanticScores.set(item.episode, Math.max(
+        semanticScores.get(item.episode) || 0, matches[index].semanticScore
+      ));
       item.reasons.add("意味一致");
       if (row.text && !item.hits.some(hit => hit.start === row.start)) {
         item.hits.push({ ...row, semantic: true });
       }
     }));
+    for (const [episode, score] of semanticScores) groups.get(episode).score += score;
   } catch (error) {
     // Lexical search remains useful while AI or the vector index is unavailable.
     console.error("semantic search unavailable", error);
@@ -249,7 +307,7 @@ async function search(env, query) {
     const candidates = fuzzyTrigrams(query);
     const fuzzyTerm = candidates.map(quoted).join(" OR ");
     const fuzzyRows = await env.DB.prepare(
-      `SELECT s.episode,e.title,e.slug,e.published_at,e.actors,e.description,s.spotify_id,s.start,s.speaker,s.text
+      `SELECT s.episode,e.title,e.slug,e.published_at,e.actors,e.description,s.spotify_id,s.start,s.speaker,s.text,s.speaker_turns
        FROM segments_fts f JOIN segments s ON s.rowid=f.rowid JOIN episodes e ON e.id=s.episode
        WHERE segments_fts MATCH ? ORDER BY bm25(segments_fts) LIMIT 200`
     ).bind(fuzzyTerm).all();
@@ -265,6 +323,19 @@ async function search(env, query) {
       item.reasons.add("あいまい一致");
       if (!item.hits.some(hit => hit.start === row.start)) item.hits.push({ ...row, fuzzy: true, coverage });
     });
+  }
+
+  const metadataGrams = trigrams(query.replace(/[?？!！]/g, ""));
+  if (metadataGrams.length >= 2) {
+    for (const item of groups.values()) {
+      const metadata = normalize([item.title, item.actors, item.description].join(" "));
+      const hits = metadataGrams.filter(gram => metadata.includes(gram)).length;
+      const coverage = hits / metadataGrams.length;
+      if (hits >= 2 && coverage >= 0.35) {
+        item.score += 0.10 * coverage * coverage;
+        item.reasons.add("概要一致");
+      }
+    }
   }
 
   const ranked = [...groups.values()]
@@ -283,7 +354,12 @@ async function search(env, query) {
       reason: [...item.reasons].join("・"),
       url: `https://www.arkbfm.com/episode/${item.slug}`,
       hits: item.hits.sort((a, b) => (b.coverage || 1) - (a.coverage || 1) || a.start - b.start).slice(0, 3)
-        .map(({ description, ...hit }) => ({ ...hit, text: excerpt(hit.text, [query, ...variants, ...trigrams(query)]), timestamp: timestamp(hit.start) })),
+        .map(({ description, speaker_turns, ...hit }) => {
+          const lines = labeledExcerpt({ ...hit, speaker_turns }, [query, ...variants, ...trigrams(query)]);
+          const start = lines[0]?.start ?? hit.start;
+          return { ...hit, start, timestamp: timestamp(start), lines,
+            text: lines.map(line => line.text).join(" ") };
+        }),
     }));
 }
 
@@ -319,4 +395,4 @@ export default {
   },
 };
 
-export { normalize, semanticQuery, trigrams, fuzzyTrigrams, editDistance, rerankCandidates };
+export { normalize, semanticQuery, trigrams, fuzzyTrigrams, editDistance, rerankCandidates, labeledExcerpt };
