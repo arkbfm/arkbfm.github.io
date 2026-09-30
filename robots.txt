@@ -5,5 +5,7 @@ sitemap: false
 ---
 User-agent: *
 Allow: /
+# Captions exist for the players to show while an answer plays, not to be read or searched as text.
+Disallow: /listen/captions/
 
 Sitemap: {{ site.url }}/sitemap.xml
