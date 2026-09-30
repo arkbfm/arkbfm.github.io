@@ -36,15 +36,19 @@
                 </ul>
               </div>
             {% endif %}
-            {% comment %}Moments (questions, chapters, quotes) play in the listening feed; this embed plays the whole episode.{% endcomment %}
-            <div class="episode-player" id="episode-player" data-slug="{{ page.slug }}" data-listen="{{ '/listen/' | relative_url }}">
+            {% comment %}Moments (questions, chapters, quotes) play in the listening feed; this compact embed plays the whole
+            episode. Later audio parts fold away, so the chapters stay close to the questions on a phone.{% endcomment %}
+            <section class="episode-player" id="episode-player" data-slug="{{ page.slug }}" data-listen="{{ '/listen/' | relative_url }}" aria-labelledby="episode-player-heading">
+              <h2 id="episode-player-heading" class="episode-player-heading">全編を聴く <small>Spotify</small></h2>
               {% assign audio_urls = page.audio_url | split: "," %}
               {% for audio_id in audio_urls %}
+                {% if forloop.index == 2 %}<details class="episode-player-more"><summary>パート2{% if audio_urls.size > 2 %}〜{{ audio_urls.size }}{% endif %}を開く</summary>{% endif %}
                 <div class="episode-player-part">
-                  <iframe src="https://open.spotify.com/embed/episode/{{ audio_id | strip }}" height="204" width="100%" title="{{ page.title | escape }}{% if audio_urls.size > 1 %} パート{{ forloop.index }}{% endif %} をSpotifyで再生" frameborder="0" scrolling="no" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                  <iframe src="https://open.spotify.com/embed/episode/{{ audio_id | strip }}" height="152" width="100%" title="{{ page.title | escape }}{% if audio_urls.size > 1 %} パート{{ forloop.index }}{% endif %} をSpotifyで再生" frameborder="0" scrolling="no" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
                 </div>
+                {% if forloop.last and forloop.index > 1 %}</details>{% endif %}
               {% endfor %}
-            </div>
+            </section>
             {% comment %}Draft quotes (unverified speaker or wording) only show in local builds.{% endcomment %}
             {% if jekyll.environment == "production" %}{% assign quotes = page.quotes | where_exp: "quote", "quote.draft != true" %}{% else %}{% assign quotes = page.quotes %}{% endif %}
             {% if quotes.size > 0 %}
@@ -127,6 +131,6 @@
       </div>
     </main>
     {% include footer.html %}
-    <script src="{{ site.github.url }}/js/episode-chapters.js"></script>
+    <script src="{{ site.github.url }}/js/episode-chapters.js?v={{ site.time | date: '%s' }}"></script>
   </body>
 </html>

@@ -18,7 +18,8 @@
   <meta property="og:type" content="blog">
   <meta property="og:url" content="{{ page.url | replace: '.html', '' | absolute_url }}">
   <link rel="alternate" type="application/rss+xml" href="{{ site.github.url }}/feed.xml">
-  <link rel="stylesheet" href="{{ site.github.url }}/css/main.css">
+  {% comment %}?v= is the build time: a returning visitor gets the new CSS and scripts right after a deploy.{% endcomment %}
+  <link rel="stylesheet" href="{{ site.github.url }}/css/main.css?v={{ site.time | date: '%s' }}">
   <link rel="shortcut icon" type="image/x-icon" href="{{ site.github.url }}/favicon.ico">
   {% include structured-data.html %}
   {% include analytics.html %}

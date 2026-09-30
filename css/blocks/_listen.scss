@@ -272,6 +272,8 @@
   margin: 6px 0 0;
   padding: 4px 12px;
 }
+// Where this visit has been: the episodes the chain passed through.
+.listen-trail { font-family: var(--font-display); font-size: .75rem; margin: 6px 0 0; opacity: .8; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .listen-kicker {
   font-family: var(--font-display);
   font-size: 1.1rem;
@@ -370,6 +372,7 @@
 }
 .listen-follow[hidden] { display: none; }
 .listen-done { justify-content: center; }
+.listen-done-summary { background: #fff; border-radius: 12px; color: var(--c-ink); font-weight: bold; margin: 10px 0; padding: 8px 12px; }
 .listen-done-follow { color: inherit; font-weight: bold; margin-top: 12px; text-decoration: underline; }
 .listen-done-themes { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
 .listen-done-themes button,
@@ -496,6 +499,9 @@
 .is-entering-up { animation: listen-in-up .35s cubic-bezier(.2, .8, .2, 1); }
 .is-entering-down { animation: listen-in-down .35s cubic-bezier(.2, .8, .2, 1); }
 
+// Jumping into another episode: the card arrives with a quick spin-in.
+.listen-card.is-warp { animation: listen-warp .55s cubic-bezier(.2, .8, .2, 1); }
+@keyframes listen-warp { from { filter: blur(6px); opacity: 0; transform: scale(.82) rotate(-3deg); } 60% { filter: none; transform: scale(1.03) rotate(.5deg); } to { opacity: 1; transform: none; } }
 @keyframes listen-in-up { from { opacity: 0; transform: translateY(40%); } to { opacity: 1; transform: none; } }
 @keyframes listen-in-down { from { opacity: 0; transform: translateY(-40%); } to { opacity: 1; transform: none; } }
 @keyframes listen-peek { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }

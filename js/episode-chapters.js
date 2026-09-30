@@ -109,7 +109,8 @@
       details.appendChild(remainingList);
       nav.appendChild(details);
     }
-    if (player) player.insertAdjacentElement('afterend', nav);
+    // Chapters come before the full-episode player: jumping to a moment is what most visitors want.
+    if (player) player.insertAdjacentElement('beforebegin', nav);
     else headings[0].parentNode.insertBefore(nav, headings[0]);
   }
 
@@ -195,7 +196,7 @@
       banner.appendChild(jump);
       requestedChapter.heading.classList.add('is-requested');
     }
-    player.insertAdjacentElement('beforebegin', banner);
+    (article.querySelector('.episode-toc') || player).insertAdjacentElement('beforebegin', banner);
   }
 
   var copyButton = document.querySelector('[data-copy-url]');

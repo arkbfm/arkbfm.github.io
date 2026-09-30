@@ -7,6 +7,6 @@
       {{ content }}
     </main>
     {% include footer.html %}
-    <script src="{{ site.github.url }}/js/question-flip.js" defer></script>
+    <script src="{{ site.github.url }}/js/question-flip.js?v={{ site.time | date: '%s' }}" defer></script>
   </body>
 </html>

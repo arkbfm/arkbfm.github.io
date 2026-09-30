@@ -4,6 +4,6 @@
   {% comment %}Full-screen listening feed: no site header, so a clip fills the phone screen.{% endcomment %}
   <body class="listen-body">
     {{ content }}
-    <script src="{{ '/js/listen.js' | relative_url }}"></script>
+    <script src="{{ '/js/listen.js' | relative_url }}?v={{ site.time | date: '%s' }}"></script>
   </body>
 </html>
