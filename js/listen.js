@@ -319,44 +319,61 @@
     return captionsFor(clip.slug).then(function (file) {
       if (!file) return clip;
       clip.speakers = file.speakers;
-      clip.lines = file.lines.filter(function (line) {
-        return line[0] === clip.part && line[1] >= clip.start - 5 && line[1] < clip.end;
-      });
+      var inClip = function (entry) { return entry[0] === clip.part && entry[1] >= clip.start - 5 && entry[1] < clip.end; };
+      clip.lines = file.lines.filter(inClip);
+      // Where the voice changes (scripts/build_captions.py): the speaking face follows these, mid-line too.
+      var turns = file.turns || [];
+      clip.turns = turns.filter(inClip);
+      // The voice already talking when the clip starts.
+      var before = turns.filter(function (turn) { return turn[0] === clip.part && turn[1] < clip.start - 5; }).pop();
+      if (before) clip.turns.unshift(before);
       return clip;
     });
   }
 
+  // The latest entry at or before `at` in a time-ordered list of [part, time, ...].
+  function latestAt(list, at) {
+    var index = -1;
+    for (var i = 0; i < list.length && list[i][1] <= at; i += 1) index = i;
+    return index;
+  }
+
   function showCaption(clip, at) {
     if (clip !== current || !clip.lines || !clip.lines.length) return;
-    var index = -1;
-    for (var i = 0; i < clip.lines.length && clip.lines[i][1] <= at; i += 1) index = i;
-    if (index < 0) index = 0;
-    if (index === clip.shownLine) return;
-    clip.shownLine = index;
-    var line = clip.lines[index];
-    var speaker = (clip.speakers || {})[line[2]] || null;
     var box = card.querySelector('.listen-captions');
     if (!box) return;
-    box.hidden = false;
+    var index = Math.max(0, latestAt(clip.lines, at));
+    if (index !== clip.shownLine) {
+      clip.shownLine = index;
+      box.hidden = false;
+      var text = box.querySelector('.listen-line');
+      text.textContent = captionText(clip.lines[index][3], '​');
+      restart(text, 'is-new');
+    }
+    // Who is talking right now: the voice-change points when the file has them, else the line's speaker.
+    var turn = clip.turns && clip.turns.length ? clip.turns[latestAt(clip.turns, at)] : null;
+    showSpeaker(clip, turn ? turn[2] : clip.lines[index][2]);
+  }
+
+  function showSpeaker(clip, key) {
+    if (key === clip.shownSpeaker) return;
+    clip.shownSpeaker = key;
+    var speaker = (clip.speakers || {})[key] || null;
+    var box = card.querySelector('.listen-captions');
     var face = box.querySelector('.listen-speaker-face');
     face.hidden = !(speaker && speaker[1]);
     if (speaker && speaker[1]) face.src = speaker[1];
     box.querySelector('.listen-speaker-name').textContent = speaker ? speaker[0] : '';
-    var text = box.querySelector('.listen-line');
-    text.textContent = captionText(line[3], '​');
-    restart(text, 'is-new');
     // Light up whoever is talking among the faces in the card's header, and dim the others.
     var faces = card.querySelector('.listen-faces');
     if (faces) faces.classList.toggle('has-speaker', !!(speaker && speaker[1]));
-    var changed = line[2] !== clip.shownSpeaker;
-    clip.shownSpeaker = line[2];
     Array.prototype.forEach.call(card.querySelectorAll('[data-face]'), function (image) {
       var speaking = !!speaker && image.getAttribute('data-face') === speaker[1];
       image.classList.toggle('is-speaking', speaking);
       // A new voice makes its face hop, as in podclip's clips.
-      if (speaking && changed) restart(image, 'is-hop');
+      if (speaking) restart(image, 'is-hop');
     });
-    if (changed && speaker) restart(face, 'is-hop');
+    if (speaker) restart(face, 'is-hop');
   }
 
   // Caption files mark where a line may wrap (between BudouX phrases) with "|": a zero-width space
