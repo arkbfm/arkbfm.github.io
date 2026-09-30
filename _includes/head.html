@@ -1,11 +1,14 @@
 <head>
   <meta charset="utf-8">
-  <title>{% if page.title %}{{ page.title }} | {% endif %}{{ site.title }}</title>
+  <title>{% if page.title %}{{ page.title }} | {{ site.title }}{% elsif page.url == '/' %}{{ site.title }} | ゲストと一緒にくだをまくポッドキャスト{% else %}{{ site.title }}{% endif %}</title>
+  {% comment %}One address per page: /episode/166 and /episode/166.html serve the same file.{% endcomment %}
+  {% if page.url == '/404.html' %}<meta name="robots" content="noindex">{% else %}<link rel="canonical" href="{{ page.url | replace: '.html', '' | absolute_url }}">{% endif %}
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#29bd9d">
   <meta name="description" content="{% if page.description %}{{ page.description }}{% else %}{{ site.description }}{% endif %}">
-  {% if page.layout == 'article' %}{% capture share_image %}{{ site.url }}/images/og/{{ page.slug }}.jpg{% endcapture %}{% else %}{% capture share_image %}{{ site.url }}/images/artwork.png{% endcapture %}{% endif %}
-  <meta name="twitter:card" content="{% if page.layout == 'article' %}summary_large_image{% else %}summary{% endif %}">
+  {% comment %}Episode and question pages share the episode's image; question pages (clip) carry the question as their title.{% endcomment %}
+  {% if page.layout == 'article' %}{% capture share_image %}{{ site.url }}/images/og/{{ page.slug }}.jpg{% endcapture %}{% elsif page.layout == 'clip' %}{% capture share_image %}{{ site.url }}/images/og/{{ page.episode }}.jpg{% endcapture %}{% else %}{% capture share_image %}{{ site.url }}/images/artwork.png{% endcapture %}{% endif %}
+  <meta name="twitter:card" content="{% if page.layout == 'article' or page.layout == 'clip' %}summary_large_image{% else %}summary{% endif %}">
   <meta name="twitter:image" content="{{ share_image }}">
   <meta name="twitter:description" content="{% if page.description %}{{ page.description }}{% else %}{{ site.description }}{% endif %}">
   <meta name="twitter:title" content="{% if page.title %}{{ page.title }} | {% endif %}{{ site.title }}">
@@ -13,9 +16,10 @@
   <meta property="og:image" content="{{ share_image }}">
   <meta property="og:site_name" content="{{ site.title }}">
   <meta property="og:type" content="blog">
-  <meta property="og:url" content="{{ site.github.url }}{{ page.url }}">
+  <meta property="og:url" content="{{ page.url | replace: '.html', '' | absolute_url }}">
   <link rel="alternate" type="application/rss+xml" href="{{ site.github.url }}/feed.xml">
   <link rel="stylesheet" href="{{ site.github.url }}/css/main.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mediaelement/2.23.4/mediaelementplayer.min.css">
   <link rel="shortcut icon" type="image/x-icon" href="{{ site.github.url }}/favicon.ico">
+  {% include structured-data.html %}
+  {% include analytics.html %}
 </head>

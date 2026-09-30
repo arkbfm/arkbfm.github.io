@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html lang={{ site.language }}>
+  {% include head.html %}
+  {% comment %}Full-screen listening feed: no site header, so a clip fills the phone screen.{% endcomment %}
+  <body class="listen-body">
+    {{ content }}
+    <script src="{{ '/js/listen.js' | relative_url }}"></script>
+    <script src="https://open.spotify.com/embed/iframe-api/v1" async></script>
+  </body>
+</html>

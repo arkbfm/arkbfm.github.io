@@ -9,7 +9,7 @@ layout: default
     <img src="{{ guest.image_url | prepend:site.github.url }}" alt="" width="128" height="128">
     <div>
       <p class="discovery-kicker">出演者</p>
-      <h2>{{ guest.name }}さん</h2>
+      <h1>{{ guest.name }}さん</h1>
       <p class="guest-hero-stats"><strong>{{ stats.count }}</strong>回出演{% if first_post %} · 初登場は<a href="{{ first_post.url | prepend:site.github.url }}">Ep.{{ stats.first | replace: '_', '.' }}</a>（{{ first_post.date | date: "%Y年%-m月" }}）{% endif %}</p>
       <p class="guest-hero-links">
         <a href="https://search.arkbfm.com/?q={{ guest.name | uri_escape }}">{{ guest.name }}さんの発言を検索</a>

@@ -1,0 +1,395 @@
+// Theme map on the home page: each tile opens the listening feed on its theme.
+.theme-map { margin: 40px 0; }
+.theme-grid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); margin-top: 16px; }
+.theme-tile {
+  background: var(--c-tint);
+  border: 2px solid transparent;
+  border-radius: 18px;
+  color: var(--c-ink);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px 18px;
+  transition: transform .15s ease, border-color .15s ease;
+  &:hover, &:focus { border-color: var(--c-teal); color: var(--c-ink); transform: translateY(-2px); }
+  .ep-card-q { background: #fff; }
+}
+.theme-tile-head { align-items: center; display: flex; gap: 10px; font-size: 1.15rem; }
+.theme-tile-emoji { font-size: 1.6rem; line-height: 1; }
+.theme-tile-lead { color: var(--c-muted); font-size: .85rem; line-height: 1.5; }
+.theme-tile-meta { color: var(--c-accent); font-size: .8rem; font-weight: bold; margin-top: auto; }
+@media (prefers-reduced-motion: reduce) { .theme-tile { transition: none; } }
+// Theme shortcuts in the home hero: wrap on wide screens, one swipeable row on phones.
+.home-hero .discovery-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; width: 100%; }
+.home-hero .discovery-chips a { flex: none; white-space: nowrap; }
+@media (max-width: 599px) {
+  .home-hero .discovery-chips { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 6px; scrollbar-width: none; }
+}
+
+.theme-more {
+  margin-top: 14px;
+  summary { color: var(--c-accent); cursor: pointer; font-weight: bold; }
+}
+// On phones the map must fit a glance: two columns of emoji, name, a flipping sample question and size.
+// The sample does more to make a tile worth pressing than the lead, so the lead goes.
+@media (max-width: 599px) {
+  .theme-grid { gap: 10px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .theme-tile { gap: 6px; padding: 12px; }
+  .theme-tile-head { flex-direction: column; align-items: flex-start; gap: 4px; font-size: 1rem; }
+  .theme-tile-lead, .theme-tile .ep-card-q-icon { display: none; }
+  .theme-tile .ep-card-q { padding: 6px 8px; }
+  .theme-tile .ep-card-q-window { font-size: .75rem; min-height: 4.5em; }
+  .theme-tile-meta { font-size: .72rem; }
+  .theme-tile-episodes { display: none; }
+}
+
+// 404 page.
+.not-found { max-width: 760px; padding-bottom: 48px; padding-top: 40px; }
+.not-found-themes { display: flex; flex-wrap: wrap; gap: 8px; margin: 20px 0; }
+
+// Question share page (/q/<id>/).
+.clip-page { max-width: 720px; padding-bottom: 48px; padding-top: 32px; }
+.clip-question { font-size: clamp(1.6rem, 6vw, 2.4rem); font-weight: bold; line-height: 1.35; margin: 4px 0 10px; }
+.page-title { font-weight: bold; }
+.clip-where { color: var(--c-muted); font-size: .9rem; font-weight: bold; a { color: var(--c-accent); } }
+.clip-visual { display: block; margin: 18px 0; max-width: 420px; }
+.clip-actions { align-items: center; display: flex; flex-wrap: wrap; gap: 12px 18px; margin: 18px 0 8px; }
+.clip-episode-link { color: var(--c-accent); font-weight: bold; text-decoration: underline; }
+.clip-note { color: var(--c-muted); font-size: .85rem; }
+.clip-notes {
+  background: var(--c-tint);
+  border-radius: 14px;
+  margin-top: 24px;
+  padding: 16px 20px;
+  h2 { font-size: 1rem; margin: 0 0 8px; }
+  ul { list-style: disc; margin: 0; padding-left: 1.2em; }
+  li { font-size: .9rem; line-height: 1.7; }
+}
+.clip-related {
+  margin-top: 32px;
+  h3 { font-size: 1.1rem; margin-bottom: 10px; }
+  ul { list-style: none; margin: 0; padding: 0; }
+  li { margin-bottom: 10px; }
+  a {
+    border: 1px solid var(--c-line);
+    border-radius: 12px;
+    color: var(--c-ink);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 10px 14px;
+    &:hover, &:focus { border-color: var(--c-teal); }
+  }
+  span { color: var(--c-muted); font-size: .8rem; }
+  small { color: var(--c-muted); display: block; font-size: .8rem; margin: 4px 0 0 14px; }
+}
+
+// The listening feed (/listen/): one clip per screen, like a short-video app.
+.listen-body { background: var(--c-ink); margin: 0; overflow: hidden; }
+
+.listen {
+  color: #fff;
+  display: grid;
+  // minmax(0, …) keeps long questions and the player from widening the column past the screen.
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr) auto auto;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  margin: 0 auto;
+  max-width: 560px;
+  overscroll-behavior: contain;
+  position: relative;
+  touch-action: pan-x;
+}
+
+.listen-top {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+  padding: 12px 16px 4px;
+}
+.listen-home {
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  span { color: var(--c-teal); }
+  &:hover, &:focus { color: var(--c-cream); }
+}
+.listen-theme {
+  background: rgba(255, 255, 255, .12);
+  border: 1px solid rgba(255, 255, 255, .3);
+  border-radius: 999px;
+  color: #fff;
+  cursor: pointer;
+  font: inherit;
+  font-size: .8rem;
+  font-weight: bold;
+  max-width: 50%;
+  overflow: hidden;
+  padding: 3px 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  &::after { content: ' ▾'; opacity: .7; }
+}
+.listen-stats { background: rgba(255, 255, 255, .12); border-radius: 999px; font-size: .75rem; font-weight: bold; margin-left: auto; padding: 3px 10px; }
+.listen-stats:empty { display: none; }
+
+.listen-stage { min-height: 0; padding: 8px 16px; position: relative; }
+
+.listen-card {
+  // The artwork's composition: white splat top-left, cream splat bottom-right. Text keeps clear of both.
+  background:
+    url($splat-white) no-repeat left -34px top -26px / 160px auto,
+    url($splat-cream) no-repeat right -24px bottom -24px / 120px auto,
+    var(--c-teal);
+  border-radius: 24px;
+  color: var(--c-ink);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  height: 100%;
+  overflow: hidden;
+  padding: 22px 22px 18px;
+  position: relative;
+}
+.listen-tone-1 { background-color: var(--c-accent); color: #fff; }
+.listen-loading { margin: auto; }
+
+.listen-progress {
+  background: rgba(12, 46, 39, .15);
+  height: 5px;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  span { background: var(--c-ink); display: block; height: 100%; transform: scaleX(0); transform-origin: left; transition: transform .5s linear; }
+}
+.listen-tone-1 .listen-progress span { background: var(--c-cream); }
+
+.listen-episode {
+  align-items: center;
+  color: inherit;
+  display: flex;
+  gap: 10px;
+  // Starts right of the white splat and the question starts below its drips.
+  min-height: 84px;
+  padding-left: 96px;
+  &:hover, &:focus { color: inherit; text-decoration: underline; }
+}
+.listen-number {
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  -webkit-text-stroke: 1px var(--c-ink);
+  paint-order: stroke fill;
+  text-shadow: 0 2px 0 var(--c-ink);
+  white-space: nowrap;
+}
+.listen-episode-title { flex: 1; font-size: .85rem; font-weight: bold; line-height: 1.3; }
+.listen-faces { display: flex; flex-direction: row-reverse; }
+.listen-faces img { background: #fff; border: 2px solid #fff; border-radius: 50%; height: 36px; margin-left: -10px; object-fit: cover; width: 36px; }
+
+.listen-reason {
+  align-self: flex-start;
+  background: var(--c-ink);
+  border-radius: 999px;
+  color: #fff;
+  font-size: .8rem;
+  font-weight: bold;
+  margin: 6px 0 0;
+  padding: 4px 12px;
+}
+.listen-kicker {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  margin: auto 0 0;
+}
+.listen-question {
+  font-size: clamp(1.6rem, 7vw, 2.3rem);
+  font-weight: bold;
+  line-height: 1.35;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.listen-meta { font-size: .8rem; font-weight: bold; margin: 0; opacity: .75; }
+// Bottom row: time left on the left, clear of the cream splat; the Spotify link just above the splat.
+.listen-foot { align-items: center; display: flex; gap: 12px; margin-top: auto; padding-right: 64px; }
+.listen-remaining { font-family: var(--font-display); font-size: 1rem; }
+.listen-spotify {
+  color: inherit;
+  font-size: .75rem;
+  font-weight: bold;
+  opacity: .8;
+  text-decoration: underline;
+  &:hover, &:focus { color: inherit; opacity: 1; }
+}
+
+.listen-toast {
+  background: var(--c-coral);
+  border-radius: 999px;
+  color: var(--c-ink);
+  font-weight: 900;
+  left: 50%;
+  margin: 0;
+  padding: 8px 18px;
+  position: absolute;
+  top: 24px;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  animation: listen-peek .3s ease-out;
+}
+.listen-toast[hidden] { display: none; }
+
+.listen-follow {
+  background: #1ed760;
+  border-radius: 999px;
+  color: var(--c-ink);
+  font-size: .85rem;
+  font-weight: bold;
+  left: 50%;
+  padding: 8px 16px;
+  position: absolute;
+  top: 70px;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  animation: listen-peek .3s ease-out;
+  &:hover, &:focus { color: var(--c-ink); }
+}
+.listen-follow[hidden] { display: none; }
+.listen-done { justify-content: center; }
+.listen-done-follow { color: inherit; font-weight: bold; margin-top: 12px; text-decoration: underline; }
+.listen-done-themes { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.listen-done-themes button,
+.listen-sheet-list button {
+  background: #fff;
+  border: 0;
+  border-radius: 999px;
+  color: var(--c-ink);
+  cursor: pointer;
+  font: inherit;
+  font-size: .85rem;
+  font-weight: bold;
+  padding: 8px 14px;
+}
+
+.listen-sheet {
+  background: var(--c-ink);
+  display: flex;
+  flex-direction: column;
+  inset: 0;
+  position: absolute;
+  z-index: 3;
+}
+.listen-sheet[hidden] { display: none; }
+.listen-sheet-head {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  padding: 16px;
+  button { background: none; border: 0; color: #fff; cursor: pointer; font-size: 1.6rem; line-height: 1; }
+}
+.listen-sheet-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow-y: auto;
+  padding: 0 16px 24px;
+  button { border-radius: 14px; display: flex; flex-direction: column; gap: 2px; padding: 10px 14px; text-align: left; }
+  small { color: var(--c-muted); font-size: .75rem; font-weight: normal; }
+  .listen-theme-all { background: var(--c-teal); }
+}
+
+.listen-next {
+  background: #fff;
+  border-radius: 16px;
+  bottom: 20px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .25);
+  color: var(--c-ink);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  left: 30px;
+  padding: 10px 14px;
+  position: absolute;
+  right: 30px;
+  animation: listen-peek .4s ease-out;
+  strong { font-size: .95rem; line-height: 1.4; }
+  small { color: var(--c-muted); font-size: .75rem; }
+}
+.listen-next[hidden] { display: none; }
+.listen-next-label { color: var(--c-accent); font-size: .75rem; font-weight: bold; }
+
+.listen-controls {
+  align-items: center;
+  display: flex;
+  gap: clamp(8px, 3vw, 14px);
+  justify-content: center;
+  padding: 10px 16px 6px;
+}
+.listen-button {
+  align-items: center;
+  background: rgba(255, 255, 255, .12);
+  border: 0;
+  border-radius: 50%;
+  color: #fff;
+  cursor: pointer;
+  display: inline-flex;
+  font: inherit;
+  flex: none;
+  font-size: 1.1rem;
+  font-weight: bold;
+  height: clamp(40px, 11vw, 48px);
+  justify-content: center;
+  width: clamp(40px, 11vw, 48px);
+  &:hover, &:focus { background: rgba(255, 255, 255, .24); color: #fff; }
+  &:disabled { cursor: default; opacity: .4; }
+}
+.listen-play { background: var(--c-teal); color: var(--c-ink); font-size: 1.4rem; height: clamp(52px, 15vw, 64px); width: clamp(52px, 15vw, 64px); }
+.listen-play:hover, .listen-play:focus { background: var(--c-cream); color: var(--c-ink); }
+.listen-open { font-size: .85rem; }
+
+// Spotify's player stays visible (small) at the bottom: it is the actual source of the audio.
+.listen-player { padding: 0 16px 12px; iframe { border: 0; border-radius: 12px; display: block; } }
+
+.listen-start {
+  align-items: center;
+  background: rgba(12, 46, 39, .82);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  inset: 0;
+  justify-content: center;
+  padding: 24px;
+  position: absolute;
+  text-align: center;
+  button {
+    background: var(--c-teal);
+    border: 0;
+    border-radius: 999px;
+    color: var(--c-ink);
+    cursor: pointer;
+    font: inherit;
+    font-size: 1.2rem;
+    font-weight: bold;
+    padding: 16px 28px;
+    animation: listen-pulse 1.6s ease-in-out infinite;
+  }
+  p { font-size: .85rem; line-height: 1.7; margin: 0; opacity: .9; }
+  .listen-start-note { font-size: .75rem; max-width: 30em; opacity: .7; }
+}
+.listen-start[hidden] { display: none; }
+
+.is-entering-up { animation: listen-in-up .35s cubic-bezier(.2, .8, .2, 1); }
+.is-entering-down { animation: listen-in-down .35s cubic-bezier(.2, .8, .2, 1); }
+
+@keyframes listen-in-up { from { opacity: 0; transform: translateY(40%); } to { opacity: 1; transform: none; } }
+@keyframes listen-in-down { from { opacity: 0; transform: translateY(-40%); } to { opacity: 1; transform: none; } }
+@keyframes listen-peek { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
+@keyframes listen-pulse { 50% { transform: scale(1.05); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .listen-progress span { transition: none; }
+  .listen-next, .listen-start button { animation: none; }
+}

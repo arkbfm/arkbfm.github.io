@@ -32,9 +32,12 @@
               <div class="ep-questions-box">
                 <h2>この回で話していること</h2>
                 <ul class="ep-questions">
-                  {% for question in page.questions %}<li{% if question.time %} data-time="{{ question.time }}"{% endif %}{% if question.part %} data-part="{{ question.part }}"{% endif %}>{{ question.text | default: question }}</li>{% endfor %}
+                  {% for question in page.questions %}<li{% if question.time %} data-time="{{ question.time }}"{% endif %}{% if question.end %} data-end="{{ question.end }}"{% endif %}{% if question.part %} data-part="{{ question.part }}"{% endif %}>{{ question.text | default: question }}</li>{% endfor %}
                 </ul>
               </div>
+              {% comment %}Where other episodes talk about each question's subject, offered when its answer ends.{% endcomment %}
+              {% assign question_related = site.data.question_related[page.slug] %}
+              {% if question_related %}<script type="application/json" id="question-related" data-episode-base="{{ '/episode/' | prepend:site.github.url }}">{{ question_related | jsonify }}</script>{% endif %}
             {% endif %}
             <div class="episode-player" id="episode-player">
               {% assign audio_urls = page.audio_url | split: "," %}
@@ -89,6 +92,23 @@
               {% endfor %}
             </div>
             {{ content }}
+            {% comment %}Every question this episode answers, each linking to its share page (/q/<id>/), so search engines reach them too.{% endcomment %}
+            {% assign chapter_questions = site.data.chapter_questions[page.slug] | where_exp: "question", "question.hidden != true" %}
+            {% if page.questions or chapter_questions.size > 0 %}
+              <section class="ep-all-questions" aria-labelledby="all-questions-heading">
+                <h2 id="all-questions-heading">この回で聴ける問い</h2>
+                <ol>
+                  {% for question in page.questions %}{% if question.time %}
+                    {% capture question_page %}{{ page.slug | append: '-' | append: forloop.index | slugify }}{% endcapture %}
+                    <li data-time="{{ question.time }}"{% if question.end %} data-end="{{ question.end }}"{% endif %}{% if question.part %} data-part="{{ question.part }}"{% endif %}><time>{{ question.time }}</time><a href="{{ '/q/' | append: question_page | append: '/' | relative_url }}">{{ question.text }}</a></li>
+                  {% endif %}{% endfor %}
+                  {% for question in site.data.chapter_questions[page.slug] %}{% unless question.hidden %}
+                    {% capture question_page %}{{ page.slug | append: '-c' | append: forloop.index | slugify }}{% endcapture %}
+                    <li data-time="{{ question.time }}" data-end="{{ question.end }}"{% if question.part %} data-part="{{ question.part }}"{% endif %}><time>{{ question.time }}</time><a href="{{ '/q/' | append: question_page | append: '/' | relative_url }}">{{ question.text }}</a></li>
+                  {% endunless %}{% endfor %}
+                </ol>
+              </section>
+            {% endif %}
             {% assign episode_key = page.url | split: "/" | last %}
             {% assign related_episodes = site.data.related_episodes[episode_key] %}
             {% if related_episodes.size > 0 %}

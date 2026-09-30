@@ -1,0 +1,19 @@
+{% comment %}
+GA4, loaded only in production builds with a measurement ID (G-…) in _config.yml's google_analytics, so
+local previews never count. arkbfmTrack(name, params) is always defined; without GA4 it does nothing, so
+page scripts can report events unconditionally.
+{% endcomment %}
+{% if site.google_analytics and jekyll.environment == "production" %}
+<script async src="https://www.googletagmanager.com/gtag/js?id={{ site.google_analytics }}"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag('js', new Date());
+  gtag('config', '{{ site.google_analytics }}');
+</script>
+{% endif %}
+<script>
+  window.arkbfmTrack = function (name, params) {
+    if (typeof window.gtag === 'function') window.gtag('event', name, params || {});
+  };
+</script>

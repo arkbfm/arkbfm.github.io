@@ -6,7 +6,6 @@ layout: default
 {% assign latest_ep = site.data.episode_index | where: "slug", latest.slug | first %}
 <div class="container discovery-home">
   <section class="home-hero" aria-labelledby="intro-heading">
-    <p class="home-hero-kicker">ゲストと一緒にくだをまくポッドキャスト</p>
     <h2 id="intro-heading">今夜は誰と、<br>何の話で、くだをまく？</h2>
     <p class="home-hero-lead">{{ site.data.episode_index.size }}回分の雑談から、気になる話や人を探してみてください。どこから聴いても、だいたい脱線しています。</p>
     <form class="discovery-search" action="https://search.arkbfm.com/" method="get" role="search">
@@ -14,14 +13,16 @@ layout: default
       <input id="home-search" type="search" name="q" placeholder="話題・出演者からエピソードを探す" required>
       <button type="submit">検索</button>
     </form>
-    <div class="discovery-chips" aria-label="話題から探す">
-      {% for topic in site.data.topics %}
-        <a href="https://search.arkbfm.com/?q={{ topic.q | uri_escape }}" aria-label="{{ topic.label }}（ショーノートに出てくる回 {{ topic.count }}本）">{{ topic.label }}<span>{{ topic.count }}</span></a>
-      {% endfor %}
-    </div>
     <div class="home-random">
-      <a class="home-random-button" href="{{ '/episodes/' | prepend:site.github.url }}" data-random-scene data-index="{{ '/episode-index.json' | prepend:site.github.url }}">🎲 適当な場面から聴く</a>
-      <span>ランダムな回の、ランダムなチャプターに飛びます。</span>
+      <a class="home-random-button home-listen-button" href="{{ '/listen/' | relative_url }}">▶ つまみ聴き</a>
+      <span>「問い」への答えだけを、次々に。答えが終わると、同じテーマを話す別の回へつながります。</span>
+    </div>
+    {% comment %}Theme shortcuts: one click starts the feed on a theme; the full map is further down.{% endcomment %}
+    <div class="discovery-chips" aria-label="テーマから聴く">
+      {% for theme in site.data.themes limit:8 %}
+        <a href="{{ '/listen/' | relative_url }}?theme={{ theme.id }}">{{ theme.emoji }} {{ theme.label }}<span>{{ theme.clips.size }}</span></a>
+      {% endfor %}
+      <a href="#theme-map-heading">すべてのテーマ ↓</a>
     </div>
   </section>
 
@@ -54,6 +55,8 @@ layout: default
       <iframe class="discovery-player" src="https://open.spotify.com/embed/episode/{{ latest_audio }}" width="100%" height="152" title="{{ latest.title | escape }} をSpotifyで再生" loading="lazy" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
     {% endif %}
   </section>
+
+  {% include theme-map.html %}
 
   <section class="discovery-section" id="start" aria-labelledby="start-heading">
     <div class="discovery-section-heading">
@@ -121,4 +124,3 @@ layout: default
     </div>
   </section>
 </div>
-<script src="{{ '/js/random-scene.js' | prepend:site.github.url }}" defer></script>

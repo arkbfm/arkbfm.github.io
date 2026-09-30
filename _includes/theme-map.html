@@ -1,0 +1,23 @@
+{% comment %}Theme map: every theme from _data/themes.json as a tile that opens the listening feed on it. The largest nine show; the rest fold away.{% endcomment %}
+{% if site.data.themes.size > 0 %}
+<section class="theme-map" aria-labelledby="theme-map-heading">
+  <div class="discovery-section-heading">
+    <div>
+      <p class="discovery-kicker">テーマから聴く</p>
+      <h2 id="theme-map-heading">気になるテーマを押すだけ</h2>
+    </div>
+  </div>
+  <p class="discovery-section-lead">押すと、そのテーマの「問い」への答えが次々に流れます。答えが終わると、同じ話をしている別の回へ芋づる式に。</p>
+  <div class="theme-grid">
+    {% for theme in site.data.themes limit:9 %}{% include theme-tile.html theme=theme %}{% endfor %}
+  </div>
+  {% if site.data.themes.size > 9 %}
+    <details class="theme-more">
+      <summary>残り{{ site.data.themes.size | minus: 9 }}テーマを見る</summary>
+      <div class="theme-grid">
+        {% for theme in site.data.themes offset:9 %}{% include theme-tile.html theme=theme %}{% endfor %}
+      </div>
+    </details>
+  {% endif %}
+</section>
+{% endif %}

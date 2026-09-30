@@ -2,11 +2,13 @@
   <div class="header-overlay">
     <div class="container header-container">
       <div class="header-left">
-        <h1 class="header-heading">
+        {% comment %}The site name is the page's h1 only on the home page; elsewhere the page's own title is.{% endcomment %}
+        {% if page.url == '/' %}{% assign heading_tag = 'h1' %}{% else %}{% assign heading_tag = 'p' %}{% endif %}
+        <{{ heading_tag }} class="header-heading">
           <a href="{{ site.github.url }}/">
             <span class="header-heading-ja">あら</span><span class="header-heading-en">B.fm</span>
           </a>
-        </h1>
+        </{{ heading_tag }}>
         <div class="header-description">
           {{ site.description }}
         </div>
@@ -23,6 +25,7 @@
     </div>
     <nav class="container header-nav" aria-label="サイト内ナビゲーション">
       <a href="{{ site.github.url }}/">ホーム</a>
+      <a href="{{ '/listen/' | relative_url }}">つまみ聴き</a>
       <a href="{{ site.github.url }}/#start">初めて聴くなら</a>
       <a href="{{ site.github.url }}/episodes/">全エピソード</a>
       <a href="{{ site.github.url }}/guests/">出演者</a>

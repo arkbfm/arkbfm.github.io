@@ -1,0 +1,48 @@
+---
+layout: listen
+title: つまみ聴き
+description: あらB.fm の「問い」への答えだけを、次々に聴けるフィード。答えが終わると、同じテーマを話している別の回へつながります。
+permalink: /listen/
+---
+<h1 class="visually-hidden">つまみ聴き：あらB.fm の「問い」への答えを次々に聴く</h1>
+<main class="listen" id="listen" data-clips="{{ '/listen/clips.json' | relative_url }}" data-episode-base="{{ '/episode/' | relative_url }}" data-share-base="{{ '/q/' | relative_url }}" data-follow="https://open.spotify.com/show/7lPzrpCgD358gJArLLSgSw">
+  <header class="listen-top">
+    <a class="listen-home" href="{{ '/' | relative_url }}"><span>あら</span>B.fm</a>
+    <button type="button" class="listen-theme" data-listen-theme aria-haspopup="dialog">テーマ</button>
+    <span class="listen-stats" data-listen-stats aria-live="polite"></span>
+  </header>
+
+  <div class="listen-stage" data-listen-stage>
+    <article class="listen-card" data-listen-card aria-live="polite">
+      <p class="listen-loading">読み込み中…</p>
+    </article>
+    <aside class="listen-next" data-listen-next hidden></aside>
+    <p class="listen-toast" data-listen-toast role="status" hidden></p>
+    <a class="listen-follow" data-listen-follow target="_blank" rel="noopener" hidden>気に入ったら Spotify でフォロー →</a>
+  </div>
+
+  <div class="listen-controls">
+    <button type="button" class="listen-button" data-listen-prev aria-label="前のクリップ">↑</button>
+    <button type="button" class="listen-button" data-listen-replay aria-label="このクリップをもう一度">↺</button>
+    <button type="button" class="listen-button listen-play" data-listen-play aria-label="再生" disabled>▶</button>
+    <button type="button" class="listen-button" data-listen-next-button aria-label="次のクリップ">↓</button>
+    <button type="button" class="listen-button" data-listen-share aria-label="この問いを共有">⤴</button>
+    <a class="listen-button listen-open" data-listen-open href="{{ '/episodes/' | relative_url }}" aria-label="この回のページを開く">回</a>
+  </div>
+
+  <div class="listen-player"><div data-listen-player></div></div>
+
+  <div class="listen-sheet" data-listen-themes role="dialog" aria-label="テーマを選ぶ" hidden>
+    <div class="listen-sheet-head">
+      <strong>テーマから聴く</strong>
+      <button type="button" data-listen-theme-close aria-label="閉じる">×</button>
+    </div>
+    <div class="listen-sheet-list" data-listen-theme-list></div>
+  </div>
+
+  <div class="listen-start" data-listen-start hidden>
+    <button type="button" data-listen-begin>▶ タップして聴きはじめる</button>
+    <p>答えが終わると、同じテーマを話している別の回へ自動でつながります。<br>上にスワイプ（↓キー）で次へ。</p>
+    <p class="listen-start-note">再生中は画面を点けたままにします。画面をロックすると止まることがあるので、ながら聴きは「Spotifyで全編」からどうぞ。</p>
+  </div>
+</main>
