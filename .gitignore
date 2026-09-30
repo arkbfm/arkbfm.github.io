@@ -6,3 +6,4 @@ _posts/html/
 *:Zone.Identifier
 /transcripts/
 /verify_out.txt
+__pycache__/

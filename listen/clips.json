@@ -1,0 +1,42 @@
+---
+layout: null
+permalink: /listen/clips.json
+---
+{%- comment -%}
+Everything the listening feed needs: each episode's audio parts and faces, every clip (the headline
+questions in front matter, id "slug.N", and the chapter questions in _data/chapter_questions.json,
+id "slug.cN") with the span that answers it, where other episodes talk about the same subject, and the
+themes of the home page's theme map. Paths are root-relative so the feed works over http and https.
+{%- endcomment -%}
+{"episodes":{
+{%- for post in site.posts -%}
+{%- assign ep = site.data.episode_index | where: "slug", post.slug | first -%}
+{%- assign audio = post.audio_url | split: "," -%}
+{{ post.slug | jsonify }}:{"n":{{ ep.number | default: post.slug | jsonify }},"t":{{ ep.subtitle | default: post.title | jsonify }},"a":[{% for audio_id in audio %}{{ audio_id | strip | jsonify }}{% unless forloop.last %},{% endunless %}{% endfor %}],"g":[{% for guest_id in ep.guests limit:4 %}{% assign guest = site.actors[guest_id] %}[{{ guest.name | default: guest_id | jsonify }},{{ guest.image_url | default: "" | jsonify }}]{% unless forloop.last %},{% endunless %}{% endfor %}]}{% unless forloop.last %},{% endunless %}
+{%- endfor -%}
+},"clips":[
+{%- assign first_clip = true -%}
+{%- for post in site.posts -%}
+{%- for question in post.questions -%}
+{%- if question.time and question.end -%}
+{%- unless first_clip %},{% endunless -%}
+{%- assign first_clip = false -%}
+{"i":{{ post.slug | append: "." | append: forloop.index | jsonify }},"s":{{ post.slug | jsonify }},"x":{{ question.text | jsonify }},"t":{{ question.time | jsonify }},"e":{{ question.end | jsonify }}{% if question.part %},"p":{{ question.part }}{% endif %},"h":1}
+{%- endif -%}
+{%- endfor -%}
+{%- endfor -%}
+{%- for pair in site.data.chapter_questions -%}
+{%- assign slug = pair[0] -%}
+{%- for question in pair[1] -%}
+{%- unless question.hidden -%}
+{%- unless first_clip %},{% endunless -%}
+{%- assign first_clip = false -%}
+{"i":{{ slug | append: ".c" | append: forloop.index | jsonify }},"s":{{ slug | jsonify }},"x":{{ question.text | jsonify }},"t":{{ question.time | jsonify }},"e":{{ question.end | jsonify }}{% if question.part %},"p":{{ question.part }}{% endif %},"c":{{ question.chapter | jsonify }}}
+{%- endunless -%}
+{%- endfor -%}
+{%- endfor -%}
+],"related":{{ site.data.clip_related | jsonify }},"themes":[
+{%- for theme in site.data.themes -%}
+{"id":{{ theme.id | jsonify }},"label":{{ theme.label | jsonify }},"lead":{{ theme.lead | jsonify }},"emoji":{{ theme.emoji | jsonify }},"clips":{{ theme.clips | jsonify }}}{% unless forloop.last %},{% endunless %}
+{%- endfor -%}
+],"host":{{ site.actors.ark_B.image_url | jsonify }}}

@@ -27,12 +27,31 @@
     return parts.length > 1 ? 'パート' + (part + 1) + ' ' : '';
   }
 
-  function playFrom(seconds, part) {
+  // Where other episodes talk about each question's subject (one list per question).
+  var relatedElement = document.getElementById('question-related');
+  var relatedSpots = relatedElement ? JSON.parse(relatedElement.textContent) : [];
+  var episodeBase = relatedElement ? relatedElement.getAttribute('data-episode-base') : '';
+
+  // A clip is playback that should stop where its topic ends: { part, start, end, related }.
+  var activeClip = null;
+  var clipPanel = null;
+
+  // GA4 events (see _includes/analytics.html); a no-op without a measurement ID.
+  function track(name, params) {
+    if (window.arkbfmTrack) window.arkbfmTrack(name, params);
+  }
+
+  var episodeSlug = decodeURIComponent(window.location.pathname.split('/').pop());
+
+  function playFrom(seconds, part, clip) {
     var target = parts[part];
     if (!target || !target.controller) return;
+    track('episode_play', { episode: episodeSlug, kind: clip ? (clip.index ? 'question' : 'topic') : 'chapter', question: clip && clip.index || 0 });
     parts.forEach(function (other) {
       if (other !== target && other.controller) other.controller.pause();
     });
+    if (clipPanel) clipPanel.remove();
+    activeClip = clip && clip.end !== null ? { part: part, start: seconds, end: clip.end, related: clip.related || [], q: clip.index || null, started: false } : null;
     // Loading with startAt preserves the chapter position when playback starts.
     // Calling seek before the first play is ignored by Spotify's Embed.
     target.controller.loadEntity('spotify:episode:' + target.spotifyId, false, seconds);
@@ -41,16 +60,106 @@
   }
 
   // Returns null when the part has no player, so callers simply skip the button.
-  function playButton(seconds, part, text, label) {
+  function playButton(seconds, part, text, label, clip) {
     if (!parts[part]) return null;
     var button = document.createElement('button');
     button.type = 'button';
     button.textContent = text;
     button.setAttribute('aria-label', label);
     button.disabled = true;
-    button.addEventListener('click', function () { playFrom(seconds, part); });
+    button.addEventListener('click', function () { playFrom(seconds, part, clip); });
     playButtons.push({ button: button, part: part });
     return button;
+  }
+
+  function spotUrl(spot) {
+    return episodeBase + spot.slug + '?t=' + spot.time + (spot.part ? '&p=' + spot.part : '') +
+      (spot.end ? '&e=' + spot.end : '') + (spot.q ? '&q=' + spot.q : '');
+  }
+
+  // Shown when a clip reaches its end: carry on here, or hear the same subject in another episode.
+  function showClipEnd(clip) {
+    if (clipPanel) clipPanel.remove();
+    track('episode_clip_end', { episode: episodeSlug, question: clip.q || 0, related: clip.related.length });
+    clipPanel = document.createElement('div');
+    clipPanel.className = 'ep-clip-end';
+    clipPanel.setAttribute('role', 'status');
+    var head = document.createElement('p');
+    var title = document.createElement('strong');
+    title.textContent = 'この話題はここまで';
+    head.appendChild(title);
+    var resume = document.createElement('button');
+    resume.type = 'button';
+    resume.textContent = '▶ 続きを聴く';
+    resume.addEventListener('click', function () {
+      clipPanel.remove();
+      parts[clip.part].controller.resume();
+    });
+    head.appendChild(resume);
+    if (clip.q && episodeBase) {
+      // The feed picks up from this question and keeps following the subject on its own.
+      var feed = document.createElement('a');
+      feed.className = 'ep-clip-end-feed';
+      feed.href = episodeBase.replace(/episode\/$/, 'listen/') + '?c=' + encodeURIComponent(episodeSlug + '.' + clip.q);
+      feed.textContent = 'つまみ聴きで続ける →';
+      feed.addEventListener('click', function () { track('episode_to_feed', { episode: episodeSlug, question: clip.q }); });
+      head.appendChild(feed);
+    }
+    clipPanel.appendChild(head);
+    if (clip.related.length) {
+      var lead = document.createElement('p');
+      lead.className = 'ep-clip-end-lead';
+      lead.textContent = '関連するテーマを話している箇所';
+      clipPanel.appendChild(lead);
+      var list = document.createElement('ul');
+      clip.related.forEach(function (spot) {
+        var item = document.createElement('li');
+        var link = document.createElement('a');
+        link.href = spotUrl(spot);
+        link.addEventListener('click', function () {
+          track('episode_related_click', { episode: episodeSlug, to_episode: spot.slug, to_clip: spot.id || '' });
+        });
+        var episode = document.createElement('span');
+        episode.textContent = spot.episode + (spot.question ? ' ／ ' + spot.chapter : '');
+        var chapter = document.createElement('strong');
+        chapter.textContent = spot.question || spot.chapter;
+        var time = document.createElement('time');
+        time.textContent = (spot.part ? 'パート' + spot.part + ' ' : '') + spot.time + '〜';
+        link.appendChild(chapter);
+        link.appendChild(episode);
+        link.appendChild(time);
+        if (spot.reason) {
+          var reason = document.createElement('small');
+          reason.textContent = spot.reason;
+          link.appendChild(reason);
+        }
+        item.appendChild(link);
+        list.appendChild(item);
+      });
+      clipPanel.appendChild(list);
+    }
+    parts[clip.part].element.insertAdjacentElement('afterend', clipPanel);
+  }
+
+  function watchClip(index, data) {
+    var clip = activeClip;
+    if (!clip || clip.part !== index || !data || data.isPaused) return;
+    var position = data.position / 1000;
+    if (!clip.started) {
+      // Updates from before the jump still report the old position; wait until playback reaches the clip.
+      if (position >= clip.start - 5 && position < clip.end) clip.started = true;
+      return;
+    }
+    if (position < clip.start - 5 || position > clip.end + 30) {
+      // The listener sought elsewhere, so they are no longer following this topic.
+      activeClip = null;
+      return;
+    }
+    if (position >= clip.end) {
+      activeClip = null;
+      parts[index].controller.pause();
+      showClipEnd(clip);
+    }
   }
 
   if (headings.length) {
@@ -135,35 +244,62 @@
     return value.split(':').reduce(function (total, part) { return total * 60 + Number(part); }, 0);
   }
 
-  // Each question plays from the part of the talk that answers it.
-  var questions = Array.prototype.map.call(article.querySelectorAll('.ep-questions li'), function (item) {
+  // Each question plays the part of the talk that answers it, then offers related talk elsewhere.
+  var questions = Array.prototype.map.call(article.querySelectorAll('.ep-questions li'), function (item, index) {
     var question = {
       item: item,
       text: item.textContent.trim(),
       seconds: parseTime(item.getAttribute('data-time')),
-      part: (Number(item.getAttribute('data-part')) || 1) - 1
+      end: parseTime(item.getAttribute('data-end')),
+      part: (Number(item.getAttribute('data-part')) || 1) - 1,
+      related: relatedSpots[index] || [],
+      index: index + 1
     };
-    var button = question.seconds !== null && playButton(question.seconds, question.part, '▶ ここから聴く', question.text + ' の答えから聴く');
+    var button = question.seconds !== null && playButton(question.seconds, question.part, '▶ ここから聴く', question.text + ' の答えから聴く', question);
     if (button) item.appendChild(button);
     return question;
   });
 
-  // ?t= comes from the random scene button and from question links
-  // (?p= is the 1-based audio part, ?q= the question's 1-based position).
+  // The full question list (headline and chapter questions) plays each answer's span as well, and reads
+  // in the order of the talk: the template lists the headline questions first.
+  var allQuestions = article.querySelector('.ep-all-questions ol');
+  if (allQuestions) {
+    Array.prototype.slice.call(allQuestions.children).map(function (item) {
+      return { item: item, order: (Number(item.getAttribute('data-part')) || 1) * 1e6 + (parseTime(item.getAttribute('data-time')) || 0) };
+    }).sort(function (a, b) { return a.order - b.order; }).forEach(function (entry) { allQuestions.appendChild(entry.item); });
+  }
+  Array.prototype.forEach.call(article.querySelectorAll('.ep-all-questions li'), function (item) {
+    var seconds = parseTime(item.getAttribute('data-time'));
+    var part = (Number(item.getAttribute('data-part')) || 1) - 1;
+    var text = item.querySelector('a').textContent;
+    var button = seconds !== null && playButton(seconds, part, '▶', text + ' の答えを聴く', { end: parseTime(item.getAttribute('data-end')), related: [] });
+    if (button) item.insertBefore(button, item.firstChild);
+  });
+
+  // ?t= comes from the random scene button, question links and related spots
+  // (?p= is the 1-based audio part, ?q= the question's 1-based position, ?e= where the topic ends).
   var requested = parseTime((window.location.search.match(/[?&]t=([\d:]+)/) || [])[1]);
+  var requestedEnd = parseTime((window.location.search.match(/[?&]e=([\d:]+)/) || [])[1]);
   var requestedPart = (Number((window.location.search.match(/[?&]p=(\d+)/) || [])[1]) || 1) - 1;
   var requestedQuestion = questions[Number((window.location.search.match(/[?&]q=(\d+)/) || [])[1]) - 1] || null;
   var requestedChapter = requested !== null ? chapterAt(requested, requestedPart) : null;
-  if (requested !== null && player && (requestedQuestion || requestedChapter)) {
+  if (requested !== null && player && (requestedQuestion || requestedChapter || requestedEnd !== null)) {
     var banner = document.createElement('div');
     banner.className = 'ep-scene-banner';
     var text = document.createElement('p');
     var label = document.createElement('span');
     var strong = document.createElement('strong');
+    var where = partLabel(requestedPart) + formatTime(requested) + (requestedChapter ? '（' + requestedChapter.title + '）' : '');
+    var bannerClip = null;
     if (requestedQuestion) {
-      label.textContent = 'Q この問いの答えから ' + partLabel(requestedPart) + formatTime(requested) + (requestedChapter ? '（' + requestedChapter.title + '）' : '');
+      label.textContent = 'Q この問いの答えから ' + where;
       strong.textContent = requestedQuestion.text;
       requestedQuestion.item.classList.add('is-requested');
+      bannerClip = { end: requestedEnd !== null ? requestedEnd : requestedQuestion.end, related: requestedQuestion.related, index: requestedQuestion.index };
+    } else if (requestedEnd !== null) {
+      label.textContent = '関連する話題から ' + partLabel(requestedPart) + formatTime(requested) + '〜' + formatTime(requestedEnd);
+      strong.textContent = requestedChapter ? requestedChapter.title : 'この場面';
+      bannerClip = { end: requestedEnd, related: [] };
     } else {
       label.textContent = '🎲 ランダムに選んだ場面';
       strong.textContent = formatTime(requestedChapter.seconds) + ' ' + requestedChapter.title;
@@ -171,7 +307,7 @@
     text.appendChild(label);
     text.appendChild(strong);
     banner.appendChild(text);
-    var bannerButton = playButton(requested, requestedPart, '▶ ここから聴く', partLabel(requestedPart) + formatTime(requested) + ' から聴く');
+    var bannerButton = playButton(requested, requestedPart, '▶ ここから聴く', partLabel(requestedPart) + formatTime(requested) + ' から聴く', bannerClip);
     if (bannerButton) banner.appendChild(bannerButton);
     if (requestedChapter) {
       var jump = document.createElement('a');
@@ -208,6 +344,7 @@
         height: 204
       }, function (embedController) {
         part.controller = embedController;
+        embedController.addListener('playback_update', function (event) { watchClip(index, event.data); });
         embedController.addListener('ready', function () {
           part.api.classList.add('is-ready');
           if (part.fallback) part.fallback.remove();

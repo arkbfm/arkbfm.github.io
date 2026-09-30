@@ -1,0 +1,12 @@
+{% comment %}schema.org data for search engines: the show on the home page, the episode on episode pages.{% endcomment %}
+{% capture series %}{"@type":"PodcastSeries","name":{{ site.title | jsonify }},"url":{{ '/' | absolute_url | jsonify }},"webFeed":"https://anchor.fm/s/319a2820/podcast/rss"}{% endcapture %}
+{% if page.url == '/' %}
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"PodcastSeries","name":{{ site.title | jsonify }},"description":{{ site.description | jsonify }},"url":{{ '/' | absolute_url | jsonify }},"image":{{ '/images/artwork.png' | absolute_url | jsonify }},"webFeed":"https://anchor.fm/s/319a2820/podcast/rss","inLanguage":"ja","author":{"@type":"Person","name":"あらB"}}
+</script>
+{% elsif page.layout == 'article' %}
+{% assign ep = site.data.episode_index | where: "slug", page.slug | first %}
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"PodcastEpisode","name":{{ page.title | jsonify }},"description":{{ page.description | jsonify }},"url":{{ page.url | absolute_url | jsonify }},"datePublished":{{ page.date | date: "%Y-%m-%d" | jsonify }},"image":{{ '/images/og/' | append: page.slug | append: '.jpg' | absolute_url | jsonify }},"inLanguage":"ja"{% if ep.minutes %},"timeRequired":"PT{{ ep.minutes }}M"{% endif %}{% if ep.number %},"episodeNumber":{{ ep.number | jsonify }}{% endif %},"partOfSeries":{{ series }}{% if page.actor_ids %},"actor":[{% for actor_id in page.actor_ids %}{"@type":"Person","name":{{ site.actors[actor_id].name | default: actor_id | jsonify }}}{% unless forloop.last %},{% endunless %}{% endfor %}]{% endif %}}
+</script>
+{% endif %}

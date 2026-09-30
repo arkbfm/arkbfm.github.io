@@ -1,0 +1,11 @@
+{% comment %}One theme of the theme map. Params: theme (an entry of _data/themes.json).{% endcomment %}
+{% assign theme = include.theme %}
+{% assign hours = theme.minutes | divided_by: 60 %}
+<a class="theme-tile ep-card" href="{{ '/listen/' | relative_url }}?theme={{ theme.id }}">
+  <span class="theme-tile-head"><span class="theme-tile-emoji" aria-hidden="true">{{ theme.emoji }}</span><strong>{{ theme.label }}</strong></span>
+  <span class="theme-tile-lead">{{ theme.lead }}</span>
+  {% if theme.samples.size > 0 %}
+    <span class="ep-card-q" data-question-flip><span class="ep-card-q-icon" aria-hidden="true">Q</span><span class="ep-card-q-window">{% for sample in theme.samples %}<span class="ep-card-q-item{% if forloop.first %} is-active{% endif %}">{{ sample }}</span>{% endfor %}</span></span>
+  {% endif %}
+  <span class="theme-tile-meta">{{ theme.clips.size }}本 · {% if hours > 0 %}約{{ hours }}時間{% else %}約{{ theme.minutes }}分{% endif %}<span class="theme-tile-episodes"> · {{ theme.episodes }}回から</span></span>
+</a>

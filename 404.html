@@ -1,0 +1,26 @@
+---
+layout: default
+title: ページが見つかりません
+permalink: /404.html
+sitemap: false
+---
+{% comment %}GitHub Pages serves this for any missing address; send the visitor somewhere worth hearing instead of a dead end.{% endcomment %}
+<div class="container not-found">
+  <p class="discovery-kicker">404</p>
+  <h1 class="page-title">このページは見つかりませんでした</h1>
+  <p>リンクが古くなったか、問いが整理されたのかもしれません。かわりに、ここから聴いてみてください。</p>
+  <div class="home-random">
+    <a class="home-random-button home-listen-button" href="{{ '/listen/' | relative_url }}">▶ つまみ聴き</a>
+    <a class="clip-episode-link" href="{{ '/episodes/' | relative_url }}">全エピソードを見る</a>
+  </div>
+  <div class="discovery-chips not-found-themes" aria-label="テーマから聴く">
+    {% for theme in site.data.themes %}
+      <a href="{{ '/listen/' | relative_url }}?theme={{ theme.id }}">{{ theme.emoji }} {{ theme.label }}<span>{{ theme.clips.size }}</span></a>
+    {% endfor %}
+  </div>
+  <form class="discovery-search" action="https://search.arkbfm.com/" method="get" role="search">
+    <label class="visually-hidden" for="not-found-search">話題・出演者からエピソードを探す</label>
+    <input id="not-found-search" type="search" name="q" placeholder="話題・出演者からエピソードを探す" required>
+    <button type="submit">検索</button>
+  </form>
+</div>

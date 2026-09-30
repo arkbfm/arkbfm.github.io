@@ -1,9 +1,10 @@
-"""Give each episode question a start time so the site can play the part that answers it.
+"""Give each episode question the span of talk that answers it, so the site can play just that part.
 
 A question is matched to the chapter whose heading and notes share its words, then to the first
 transcript segment in that chapter that mentions them (transcripts/proofread, falling back to raw).
 Questions that already have a time are left alone, so hand-picked times survive reruns.
 Episodes published as several audio files also get the question's part (1-based), since each file restarts at 0.
+The end is where the chapter ends, or for long chapters where the subject stops coming up; it is kept when present too.
 
     python scripts/locate_questions.py            # write times into _posts
     python scripts/locate_questions.py --dry-run  # print the report only
@@ -32,6 +33,12 @@ STOP = {"どうだった", "とは", "どんな", "どうやって", "ってど�
 SNAP_SECONDS = 45
 # Start a little before the matched segment so the answer is not cut mid-sentence.
 LEAD_SECONDS = 3
+# Answers run to the end of their chapter unless it is longer than this; then the talk decides.
+CHAPTER_CLIP_SECONDS = 10 * 60
+# Bounds on an answer, and how long the subject may go unmentioned before the answer is over.
+MIN_CLIP_SECONDS = 90
+MAX_CLIP_SECONDS = 20 * 60
+TOPIC_GAP_SECONDS = 240
 
 
 def hms(total: int) -> str:
@@ -70,8 +77,8 @@ def read_questions(front: str) -> list[dict]:
         return []
     questions = []
     for line in block.group(1).splitlines():
-        item = re.match(r"^\s+-\s+(?:(text|time|part):\s*)?(.*)$", line)
-        field = re.match(r"^\s+(text|time|part):\s*(.*)$", line)
+        item = re.match(r"^\s+-\s+(?:(text|time|part|end):\s*)?(.*)$", line)
+        field = re.match(r"^\s+(text|time|part|end):\s*(.*)$", line)
         if item:
             questions.append({})
             key, value = item.group(1) or "text", item.group(2)
@@ -95,6 +102,8 @@ def write_questions(front: str, questions: list[dict], newline: str) -> str:
         lines.append("  - text: " + scalar(question["text"]))
         if question.get("time"):
             lines.append(f'    time: "{question["time"]}"')
+        if question.get("end"):
+            lines.append(f'    end: "{question["end"]}"')
         if question.get("part"):
             lines.append(f'    part: {question["part"]}')
     block = newline.join(lines)
@@ -117,7 +126,7 @@ def chapters_of(body: str, parts: int) -> list[dict]:
                 break
         end = heads[index + 1].start() if index + 1 < len(heads) else len(body)
         notes = LINK_RE.sub(r"\1", body[head.start():end])
-        chapters.append({"s": start, "p": part, "title": LINK_RE.sub(r"\1", match.group(4)).strip(), "text": normalize(notes)})
+        chapters.append({"s": start, "p": part, "title": LINK_RE.sub(r"\1", match.group(4)).strip(), "raw": notes, "text": normalize(notes)})
     return chapters
 
 
@@ -127,7 +136,7 @@ def load_segments(slug: str) -> list[dict]:
         if path.exists():
             data = json.loads(path.read_text(encoding="utf-8"))
             # Transcripts of multi-file episodes number their parts from 1 and restart the clock in each.
-            return [{"start": seg["start"], "p": seg.get("part", 1) - 1, "text": normalize(seg.get("text", ""))}
+            return [{"start": seg["start"], "end": seg["end"], "p": seg.get("part", 1) - 1, "text": normalize(seg.get("text", ""))}
                     for seg in data.get("segments", [])]
     return []
 
@@ -203,6 +212,37 @@ def locate(question: str, chapters: list[dict], segments: list[dict], bullets: l
     return None, 0, "", ""
 
 
+def seconds_of(value: str) -> int:
+    hours, minutes, secs = (int(part) for part in value.split(":"))
+    return hours * 3600 + minutes * 60 + secs
+
+
+def answer_end(start: int, part: int, chapters: list[dict], segments: list[dict], terms: list[str]) -> int:
+    """Where the talk that starts at `start` moves on: its chapter's end, or where the subject stops coming up."""
+    following = [chapter["s"] for chapter in chapters if chapter["p"] == part and chapter["s"] > start]
+    in_part = [seg for seg in segments if seg["p"] == part]
+    limit = following[0] if following else (in_part[-1]["end"] if in_part else start + MAX_CLIP_SECONDS)
+    limit = min(limit, start + MAX_CLIP_SECONDS)
+    if limit <= start:
+        # Show notes can run past the audio; fall back to a fixed length rather than an empty span.
+        limit = start + CHAPTER_CLIP_SECONDS
+    if limit - start < MIN_CLIP_SECONDS:
+        # A chapter only seconds long is a heading for what follows; let the answer run on.
+        part_end = in_part[-1]["end"] if in_part else math.inf
+        return int(min(start + MIN_CLIP_SECONDS, max(part_end, start + 1)))
+    if limit - start <= CHAPTER_CLIP_SECONDS or not terms or not in_part:
+        return int(limit)
+    last = start
+    for seg in in_part:
+        if seg["start"] < start:
+            continue
+        if seg["start"] >= limit or seg["start"] - last > TOPIC_GAP_SECONDS:
+            break
+        if any(term in seg["text"] for term in terms):
+            last = seg["end"]
+    return int(min(limit, max(last + LEAD_SECONDS, start + MIN_CLIP_SECONDS)))
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--dry-run", action="store_true")
@@ -217,7 +257,7 @@ def main() -> None:
         source = path.read_bytes().decode("utf-8")
         front, rest, newline = split_front(source)
         questions = read_questions(front)
-        if not questions or all(question.get("time") for question in questions):
+        if not questions or all(question.get("time") and question.get("end") for question in questions):
             continue
         audio = re.search(r"^audio_url:[ \t]*(.*)$", front, re.MULTILINE)
         parts = len([value for value in audio.group(1).split(",") if value.strip()]) if audio else 0
@@ -228,13 +268,18 @@ def main() -> None:
         segments = load_segments(slug)
         bullets = bullets_of(rest)
         for question in questions:
+            terms = terms_of(question["text"]) or sorted(bigrams(question["text"]))
             if question.get("time"):
+                if not question.get("end"):
+                    part = int(question.get("part") or 1) - 1
+                    question["end"] = hms(answer_end(seconds_of(question["time"]), part, chapters, segments, terms))
                 continue
             start, part, where, snippet = locate(question["text"], chapters, segments, bullets)
             if start is not None:
                 question["time"] = hms(start)
                 if parts > 1:
                     question["part"] = part + 1
+                question["end"] = hms(answer_end(start, part, chapters, segments, terms))
             print(f"{slug}\t{question.get('part', '')}\t{question.get('time', '-')}\t{question['text']}\t[{where}] {snippet}")
 
         if not args.dry_run:
