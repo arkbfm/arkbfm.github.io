@@ -263,11 +263,15 @@
 
   // "いまの会話": the current caption line with the few before it, each with its speaker's face.
   var TALK_SHOWN = 5;
+  // Faces match the card's: each line shows whoever the card showed while it was on screen (the last
+  // voice, if it changed mid-line), recorded in clip.lineSpeakers.
   function renderTalk(clip, index) {
     talkList.textContent = '';
     if (!clip.lines) return;
-    clip.lines.slice(Math.max(0, index - TALK_SHOWN + 1), index + 1).forEach(function (line, offset, shown) {
-      var speaker = (clip.speakers || {})[line[2]] || null;
+    var first = Math.max(0, index - TALK_SHOWN + 1);
+    clip.lines.slice(first, index + 1).forEach(function (line, offset, shown) {
+      var key = (clip.lineSpeakers || {})[first + offset];
+      var speaker = (clip.speakers || {})[key === undefined ? line[2] : key] || null;
       var item = element('li', offset === shown.length - 1 ? 'is-current' : '');
       if (speaker && speaker[1]) {
         var face = element('img');
@@ -409,21 +413,25 @@
     var box = card.querySelector('.listen-captions');
     if (!box) return;
     var index = Math.max(0, latestAt(clip.lines, at));
-    if (index !== clip.shownLine) {
+    var lineChanged = index !== clip.shownLine;
+    if (lineChanged) {
       clip.shownLine = index;
       box.hidden = false;
       var text = box.querySelector('.listen-line');
       text.textContent = captionText(clip.lines[index][3], '​');
       restart(text, 'is-new');
-      renderTalk(clip, index);
     }
     // Who is talking right now: the voice-change points when the file has them, else the line's speaker.
     var turn = clip.turns && clip.turns.length ? clip.turns[latestAt(clip.turns, at)] : null;
-    showSpeaker(clip, turn ? turn[2] : clip.lines[index][2]);
+    var speakerChanged = showSpeaker(clip, turn ? turn[2] : clip.lines[index][2]);
+    clip.lineSpeakers = clip.lineSpeakers || {};
+    clip.lineSpeakers[index] = clip.shownSpeaker;
+    if (lineChanged || speakerChanged) renderTalk(clip, index);
   }
 
+  // Returns whether the speaker changed.
   function showSpeaker(clip, key) {
-    if (key === clip.shownSpeaker) return;
+    if (key === clip.shownSpeaker) return false;
     clip.shownSpeaker = key;
     var speaker = (clip.speakers || {})[key] || null;
     var box = card.querySelector('.listen-captions');
@@ -441,6 +449,7 @@
       if (speaking) restart(image, 'is-hop');
     });
     if (speaker) restart(face, 'is-hop');
+    return true;
   }
 
   // Caption files mark where a line may wrap (between BudouX phrases) with "|": a zero-width space
@@ -601,6 +610,7 @@
     load(clip);
     clip.shownLine = null;
     clip.shownSpeaker = null;
+    clip.lineSpeakers = {};
     talkList.textContent = '';
     attachCaptions(clip).then(function () { showCaption(clip, clip.from); });
     // Line up the next clip now, so the side panel can show it from the start: the one ahead in the
