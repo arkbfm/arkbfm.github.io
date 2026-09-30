@@ -343,16 +343,34 @@
     if (speaker && speaker[1]) face.src = speaker[1];
     box.querySelector('.listen-speaker-name').textContent = speaker ? speaker[0] : '';
     var text = box.querySelector('.listen-line');
-    text.textContent = line[3];
-    if (!reduceMotion) {
-      text.classList.remove('is-new');
-      void text.offsetWidth; // restart the fade-in
-      text.classList.add('is-new');
-    }
-    // Light up whoever is talking among the faces in the card's header.
+    text.textContent = captionText(line[3], '​');
+    restart(text, 'is-new');
+    // Light up whoever is talking among the faces in the card's header, and dim the others.
+    var faces = card.querySelector('.listen-faces');
+    if (faces) faces.classList.toggle('has-speaker', !!(speaker && speaker[1]));
+    var changed = line[2] !== clip.shownSpeaker;
+    clip.shownSpeaker = line[2];
     Array.prototype.forEach.call(card.querySelectorAll('[data-face]'), function (image) {
-      image.classList.toggle('is-speaking', !!speaker && image.getAttribute('data-face') === speaker[1]);
+      var speaking = !!speaker && image.getAttribute('data-face') === speaker[1];
+      image.classList.toggle('is-speaking', speaking);
+      // A new voice makes its face hop, as in podclip's clips.
+      if (speaking && changed) restart(image, 'is-hop');
     });
+    if (changed && speaker) restart(face, 'is-hop');
+  }
+
+  // Caption files mark where a line may wrap (between BudouX phrases) with "|": a zero-width space
+  // on screen, nothing in quoted text.
+  function captionText(text, gap) {
+    return text.split('|').join(gap);
+  }
+
+  // Replays a one-shot animation class.
+  function restart(node, className) {
+    if (reduceMotion || !node) return;
+    node.classList.remove(className);
+    void node.offsetWidth;
+    node.classList.add(className);
   }
 
   // "つづきから": remember the clip and position, so the next visit can pick up where this one stopped.
@@ -498,6 +516,7 @@
     }
     load(clip);
     clip.shownLine = null;
+    clip.shownSpeaker = null;
     attachCaptions(clip).then(function () { showCaption(clip, clip.from); });
     track('listen_clip_start', {
       clip_id: keyOf(clip), episode: clip.slug, via: how || clip.via || 'first', theme: theme ? theme.id : 'all', headline: clip.headline
@@ -548,6 +567,8 @@
 
   function showPaused() {
     paused = audio.paused;
+    // The speaking face only bobs while the audio actually plays.
+    root.classList.toggle('is-paused', paused);
     playButton.textContent = paused ? '▶' : '❚❚';
     playButton.setAttribute('aria-label', paused ? '再生' : '一時停止');
   }
@@ -631,7 +652,7 @@
       var line = (clip.lines || []).filter(function (item) { return item[1] >= from - 2; })[0];
       if (!line) return;
       var speaker = (clip.speakers || {})[line[2]];
-      teaser.textContent = '「' + line[3] + '…」' + (speaker ? '　— ' + speaker[0] : '');
+      teaser.textContent = '「' + captionText(line[3], '') + '…」' + (speaker ? '　— ' + speaker[0] : '');
       teaser.hidden = false;
     });
     startScreen.hidden = false;

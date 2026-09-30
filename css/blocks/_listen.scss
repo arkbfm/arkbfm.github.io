@@ -312,15 +312,27 @@
   line-height: 1.5;
   margin: 2px 0 0;
   overflow: hidden;
+  // Lines wrap only at the zero-width spaces between BudouX phrases, evenly when there are two.
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+  word-break: keep-all;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 4;
 }
 .listen-line.is-new { animation: listen-line-in .35s ease-out; }
 @keyframes listen-line-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 
-// Whoever is talking stands out among the header faces.
-.listen-faces img { transition: transform .2s ease, box-shadow .2s ease; }
-.listen-faces img.is-speaking { box-shadow: 0 0 0 3px var(--c-cream); transform: scale(1.18); z-index: 1; }
+// Speaking faces, after podclip's clips: a hop when a voice starts (up and a small rebound, .35s), a
+// gentle bob while it talks (1.6 times a second), the others dimmed. The hop moves `translate` and the
+// bob `transform`, so the two run together.
+.listen-faces img { transition: transform .2s ease, box-shadow .2s ease, filter .2s ease; }
+.listen-faces.has-speaker img:not(.is-speaking) { filter: brightness(.55) saturate(.7); }
+.listen-faces img.is-speaking { box-shadow: 0 0 0 3px var(--c-cream); transform: scale(1.18); z-index: 1; animation: listen-bob-large .625s ease-in-out infinite; }
+.listen-faces img.is-speaking.is-hop { animation: listen-hop .35s ease-out, listen-bob-large .625s ease-in-out infinite; }
+.listen-speaker-face.is-hop { animation: listen-hop .35s ease-out; }
+.listen.is-paused .listen-faces img.is-speaking { animation-play-state: paused; }
+@keyframes listen-hop { 0% { translate: 0 0; } 30% { translate: 0 -5px; } 60% { translate: 0 -10px; } 85% { translate: 0 -6px; } 100% { translate: 0 0; } }
+@keyframes listen-bob-large { 0%, 100% { transform: scale(1.18) translateY(0); } 50% { transform: scale(1.18) translateY(-2px); } }
 
 // Start screen hook: the first question and the opening words of its answer.
 .listen-hook-kicker { color: var(--c-teal); font-size: .85rem; font-weight: bold; }
@@ -508,7 +520,7 @@
 @keyframes listen-pulse { 50% { transform: scale(1.05); } }
 
 @media (prefers-reduced-motion: reduce) {
-  .listen-faces img { transition: none; }
+  .listen-faces img, .listen-faces img.is-speaking { animation: none; transition: none; }
   .listen-progress span { transition: none; }
   .listen-next, .listen-start button { animation: none; }
 }
