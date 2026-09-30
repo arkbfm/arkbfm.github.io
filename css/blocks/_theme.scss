@@ -339,7 +339,7 @@ body { background-color: var(--c-tint); color: var(--c-ink); }
   padding: 12px 18px;
   p { flex: 1 1 260px; margin: 0; }
   p span { display: block; font-size: .8rem; font-weight: bold; }
-  button {
+  a.ep-play, a.ep-play:hover, a.ep-play:focus {
     background: var(--c-ink);
     border: 0;
     border-radius: 999px;
@@ -348,9 +348,9 @@ body { background-color: var(--c-tint); color: var(--c-ink); }
     font: inherit;
     font-weight: bold;
     padding: 6px 16px;
-    &:disabled { opacity: .5; cursor: default; }
+    text-decoration: none;
   }
-  a, a:hover, a:focus { color: var(--c-ink); font-size: .9rem; text-decoration: underline; }
+  a:not(.ep-play), a:not(.ep-play):hover, a:not(.ep-play):focus { color: var(--c-ink); font-size: .9rem; text-decoration: underline; }
 }
 .markdown h2.is-requested { background: var(--c-cream); border-radius: 8px; padding-left: 8px; }
 
@@ -381,7 +381,7 @@ body { background-color: var(--c-tint); color: var(--c-ink); }
     margin-top: 4px;
   }
   time { font-variant-numeric: tabular-nums; }
-  button {
+  a.ep-play {
     background: none;
     border: 0;
     color: var(--c-accent);
@@ -390,7 +390,6 @@ body { background-color: var(--c-tint); color: var(--c-ink); }
     font-weight: bold;
     padding: 0;
     text-decoration: underline;
-    &:disabled { color: var(--c-muted); cursor: default; text-decoration: none; }
   }
 }
 
@@ -466,32 +465,6 @@ body { background-color: var(--c-tint); color: var(--c-ink); }
   .ep-card-link .ep-visual, .guest-chip img, .discovery-chips a, .home-random-button { transition: none; }
   .home-random-button.is-rolling { animation: none; }
 }
-// "Now playing" above the episode player: the question whose answer plays, progress, captions with a face.
-.ep-now {
-  background: var(--c-ink);
-  border-radius: 14px;
-  color: #fff;
-  margin-bottom: 10px;
-  padding: 12px 14px;
-  text-align: left;
-}
-.ep-now[hidden] { display: none; }
-.ep-now-label { color: var(--c-teal); font-size: .75rem; font-weight: bold; margin: 0; }
-.ep-now-text { font-size: 1.05rem; font-weight: bold; line-height: 1.45; margin: 2px 0 8px; }
-.ep-now-progress {
-  background: rgba(255, 255, 255, .15);
-  border-radius: 999px;
-  height: 4px;
-  overflow: hidden;
-  span { background: var(--c-teal); display: block; height: 100%; transform: scaleX(0); transform-origin: left; transition: transform .5s linear; }
-}
-.ep-now-caption { align-items: flex-start; display: flex; gap: 10px; margin-top: 10px; }
-.ep-now-caption[hidden] { display: none; }
-.ep-now-face { border: 2px solid var(--c-teal); border-radius: 50%; flex: none; height: 38px; object-fit: cover; width: 38px; }
-.ep-now-face[hidden] { display: none; }
-.ep-now-speaker { color: var(--c-cream); display: block; font-size: .7rem; font-weight: bold; }
-.ep-now-line { font-size: .95rem; line-height: 1.5; margin: 0; }
-@media (prefers-reduced-motion: reduce) { .ep-now-progress span { transition: none; } }
 
 // Plain share link in the footer (no Twitter widget script).
 .footer-post {
@@ -512,8 +485,11 @@ body { background-color: var(--c-tint); color: var(--c-ink); }
   li { align-items: baseline; border-bottom: 1px solid var(--c-line); display: flex; gap: 10px; padding: 8px 0; }
   time { color: var(--c-muted); flex: none; font-size: .8rem; font-variant-numeric: tabular-nums; }
   a { color: var(--c-ink); }
-  button {
+  a.ep-play {
     align-self: center;
+    display: grid;
+    place-items: center;
+    text-decoration: none;
     background: var(--c-teal);
     border: 0;
     border-radius: 50%;
@@ -523,51 +499,12 @@ body { background-color: var(--c-tint); color: var(--c-ink); }
     font-size: .7rem;
     height: 26px;
     width: 26px;
-    &:disabled { opacity: .4; cursor: default; }
   }
 }
 
-// Shown under the player when a question's answer (or a related spot) has played to its end.
-.ep-clip-end {
-  background: var(--c-cream);
-  border-radius: 14px;
-  margin: 12px 0 16px;
-  padding: 14px 18px;
-  text-align: left;
-  p { align-items: center; display: flex; flex-wrap: wrap; gap: 8px 16px; margin: 0; }
-  button {
-    background: var(--c-ink);
-    border: 0;
-    border-radius: 999px;
-    color: #fff;
-    cursor: pointer;
-    font: inherit;
-    font-weight: bold;
-    padding: 6px 16px;
-  }
-  .ep-clip-end-lead { font-size: .85rem; font-weight: bold; margin-top: 12px; }
-  a.ep-clip-end-feed { background: none; border: 0; color: var(--c-accent); display: inline; font-weight: bold; padding: 0; }
-  ul { list-style: none; margin: 6px 0 0; padding: 0; }
-  li + li { margin-top: 6px; }
-  a {
-    background: #fff;
-    border: 1px solid var(--c-line);
-    border-radius: 10px;
-    color: var(--c-ink);
-    display: grid;
-    gap: 2px 12px;
-    grid-template-columns: 1fr auto;
-    padding: 8px 12px;
-    &:hover, &:focus { border-color: var(--c-teal); }
-  }
-  a strong { grid-column: 1; }
-  a span { color: var(--c-muted); font-size: .8rem; grid-column: 1; }
-  a time { align-self: center; color: var(--c-accent); font-size: .8rem; font-weight: bold; grid-column: 2; grid-row: 1 / span 2; white-space: nowrap; }
-  a small { color: var(--c-ink); font-size: .8rem; grid-column: 1 / span 2; }
-}
 .ep-quote-draft { background: var(--c-coral); border-radius: 4px; color: var(--c-ink); font-weight: bold; padding: 0 6px; }
 .markdown ul.ep-questions { list-style: none; padding-left: 0; }
-.ep-questions button {
+.ep-questions a.ep-play {
   background: none;
   border: 1px solid var(--c-accent);
   border-radius: 999px;
@@ -578,8 +515,8 @@ body { background-color: var(--c-tint); color: var(--c-ink); }
   margin-left: 8px;
   padding: 1px 9px;
   vertical-align: .1em;
-  &:hover:not(:disabled) { background: var(--c-accent); color: #fff; }
-  &:disabled { opacity: .5; cursor: default; }
+  text-decoration: none;
+  &:hover, &:focus { background: var(--c-accent); color: #fff; }
 }
 .ep-questions li.is-requested { color: var(--c-accent); }
 

@@ -24,9 +24,9 @@
     {% comment %}Its own link, outside the card's: it opens the episode at the moment that answers the showing question.{% endcomment %}
     {% assign card_url = card_post.url | prepend:site.github.url %}
     {% assign first_question = card_post.questions | first %}
-    <a class="ep-card-q" data-question-flip href="{% include question-url.html url=card_url question=first_question index=1 %}">
+    <a class="ep-card-q" data-question-flip href="{% include question-url.html url=card_url slug=card_post.slug question=first_question index=1 %}">
       <span class="ep-card-q-icon" aria-hidden="true">Q</span>
-      <span class="ep-card-q-window">{% for question in card_post.questions %}<span class="ep-card-q-item{% if forloop.first %} is-active{% endif %}" data-href="{% include question-url.html url=card_url question=question index=forloop.index %}">{{ question.text | default: question }}</span>{% endfor %}</span>
+      <span class="ep-card-q-window">{% for question in card_post.questions %}<span class="ep-card-q-item{% if forloop.first %} is-active{% endif %}" data-href="{% include question-url.html url=card_url slug=card_post.slug question=question index=forloop.index %}">{{ question.text | default: question }}</span>{% endfor %}</span>
       {% if first_question.time %}<span class="ep-card-q-play" aria-hidden="true">▶ 聴く</span>{% endif %}
     </a>
   {% endif %}

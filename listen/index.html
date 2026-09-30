@@ -10,6 +10,7 @@ permalink: /listen/
     <a class="listen-home" href="{{ '/' | relative_url }}"><span>あら</span>B.fm</a>
     <button type="button" class="listen-theme" data-listen-theme aria-haspopup="dialog">テーマ</button>
     <span class="listen-stats" data-listen-stats aria-live="polite"></span>
+    <button type="button" class="listen-rate" data-listen-rate aria-label="再生速度">1×</button>
   </header>
 
   <div class="listen-stage" data-listen-stage>
@@ -30,8 +31,6 @@ permalink: /listen/
     <a class="listen-button listen-open" data-listen-open href="{{ '/episodes/' | relative_url }}" aria-label="この回のページを開く">回</a>
   </div>
 
-  <div class="listen-player"><div data-listen-player></div></div>
-
   <div class="listen-sheet" data-listen-themes role="dialog" aria-label="テーマを選ぶ" hidden>
     <div class="listen-sheet-head">
       <strong>テーマから聴く</strong>
@@ -47,6 +46,6 @@ permalink: /listen/
     <p class="listen-hook-teaser" data-listen-hook-teaser hidden></p>
     <button type="button" data-listen-begin>▶ 答えを聴く</button>
     <p>答えが終わると、同じテーマを話している別の回へ自動でつながります。<br>上にスワイプ（↓キー）で次へ。</p>
-    <p class="listen-start-note">再生中は画面を点けたままにします。画面をロックすると止まることがあるので、ながら聴きは「Spotifyで全編」からどうぞ。</p>
+    <p class="listen-start-note">画面をロックしても聴き続けられます。一時停止や「次へ」はロック画面やイヤホンからも。右上の「1×」で再生速度を変えられます。</p>
   </div>
 </main>

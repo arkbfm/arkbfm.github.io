@@ -1,1 +1,2 @@
-{% comment %}Episode URL that starts at a question's answer. Params: url, question, index (1-based).{% endcomment %}{{ include.url }}{% if include.question.time %}?t={{ include.question.time }}{% if include.question.part %}&amp;p={{ include.question.part }}{% endif %}&amp;q={{ include.index }}{% endif %}
+{% comment %}Where a question plays: its answer in the listening feed. Params: url (the episode's page, used for a
+question without a located answer), slug, question, index (1-based).{% endcomment %}{% if include.question.time and include.question.end %}{{ '/listen/' | relative_url }}?c={{ include.slug | append: '.' | append: include.index | uri_escape }}{% else %}{{ include.url }}{% endif %}

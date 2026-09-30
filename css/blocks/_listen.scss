@@ -188,6 +188,21 @@
 }
 .listen-stats { background: rgba(255, 255, 255, .12); border-radius: 999px; font-size: .75rem; font-weight: bold; margin-left: auto; padding: 3px 10px; }
 .listen-stats:empty { display: none; }
+// Playback speed: cycles 1× → 1.25× → 1.5× → 2×.
+.listen-rate {
+  background: #fff;
+  border: 0;
+  border-radius: 999px;
+  color: var(--c-ink);
+  cursor: pointer;
+  flex: none;
+  font: inherit;
+  font-family: var(--font-display);
+  font-size: .85rem;
+  min-width: 3.4em;
+  padding: 3px 10px;
+}
+.listen-stats:empty + .listen-rate { margin-left: auto; }
 
 .listen-stage { min-height: 0; padding: 8px 16px; position: relative; }
 
@@ -220,6 +235,9 @@
   span { background: var(--c-ink); display: block; height: 100%; transform: scaleX(0); transform-origin: left; transition: transform .5s linear; }
 }
 .listen-tone-1 .listen-progress span { background: var(--c-cream); }
+// While the audio loads (a new episode's file, or a jump far into one) the bar breathes.
+.listen-card.is-buffering .listen-progress { animation: listen-buffering 1s ease-in-out infinite alternate; }
+@keyframes listen-buffering { from { opacity: 1; } to { opacity: .35; } }
 
 .listen-episode {
   align-items: center;
@@ -287,13 +305,13 @@
 .listen-speaker-name { color: var(--c-accent); display: block; font-size: .72rem; font-weight: bold; }
 .listen-line {
   display: -webkit-box;
-  font-size: 1.05rem;
+  font-size: 1.2rem;
   font-weight: bold;
   line-height: 1.5;
   margin: 2px 0 0;
   overflow: hidden;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3;
+  -webkit-line-clamp: 4;
 }
 .listen-line.is-new { animation: listen-line-in .35s ease-out; }
 @keyframes listen-line-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
@@ -445,7 +463,6 @@
 .listen-open { font-size: .85rem; }
 
 // Spotify's player stays visible (small) at the bottom: it is the actual source of the audio.
-.listen-player { padding: 0 16px 12px; iframe { border: 0; border-radius: 12px; display: block; } }
 
 .listen-start {
   align-items: center;

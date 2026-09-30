@@ -1,6 +1,8 @@
 // The listening feed: plays one question's answer at a time and moves on by itself, following the
 // subject into other episodes (related spots) before falling back to an unheard question, within a
-// theme when one is chosen.
+// theme when one is chosen. The audio is the show's own files (from its RSS feed, _data/audio_sources.json)
+// in an <audio> element, so it can change speed, keep playing with the screen locked and take the lock
+// screen's and earphones' controls (Media Session).
 (function () {
   var root = document.getElementById('listen');
   if (!root || !window.fetch) return;
@@ -8,6 +10,7 @@
   var card = root.querySelector('[data-listen-card]');
   var nextPeek = root.querySelector('[data-listen-next]');
   var playButton = root.querySelector('[data-listen-play]');
+  var rateButton = root.querySelector('[data-listen-rate]');
   var openLink = root.querySelector('[data-listen-open]');
   var statsElement = root.querySelector('[data-listen-stats]');
   var startScreen = root.querySelector('[data-listen-start]');
@@ -22,8 +25,8 @@
   var clipsById = {};
   var theme = null;         // the chosen theme, or null for the whole archive
   var themeIds = null;      // its clip ids as a lookup
-  var controller = null;
-  var loadedUri = null;
+  var audio = new Audio();
+  var pendingSeek = null;   // where to jump once a newly set file knows its length
   var started = false;      // the listener has tapped once, so playback may start on its own from now on
   var paused = true;
   var history = [];
@@ -33,9 +36,13 @@
   var upcoming = null;
   var heard = {};
   var streak = 0;
-  var wakeLock = null;
 
-  // How many seconds before a clip ends the next one is announced.
+  var RATES = [1, 1.25, 1.5, 2];
+  var rate = 1;
+  try { rate = Number(localStorage.getItem('arkbfm-listen-rate')) || 1; } catch (error) { /* storage can be unavailable */ }
+  if (RATES.indexOf(rate) < 0) rate = 1;
+
+  // How many seconds (at the chosen speed) before a clip ends the next one is announced.
   var PEEK_SECONDS = 12;
   // A small cheer every this many clips in a row.
   var STREAK_STEP = 5;
@@ -84,9 +91,21 @@
 
   function keyOf(clip) { return clip.id || clip.slug + '@' + clip.start; }
 
+  // A clip needs its audio file, and must start inside it (a few files are shorter than their transcript).
   function playable(clip) {
     var episode = clip && data.episodes[clip.slug];
-    return !!(episode && episode.a[clip.part]);
+    var file = episode && episode.u && episode.u[clip.part];
+    return !!(file && (!file[1] || clip.start < file[1] - 10));
+  }
+
+  // Where other episodes talk about this clip's subject; a span without a question borrows the question
+  // whose answer it falls in.
+  function relatedOf(clip) {
+    if (clip.id) return data.related[clip.id] || [];
+    var inside = data.clips.filter(function (item) {
+      return item.s === clip.slug && (item.p || 1) - 1 === clip.part && seconds(item.t) <= clip.start && clip.start < seconds(item.e);
+    })[0];
+    return inside ? data.related[inside.i] || [] : [];
   }
 
   function randomOf(list) { return list[Math.floor(Math.random() * list.length)]; }
@@ -107,7 +126,7 @@
   // Follow the subject first (staying in the theme when there is one); when the chain runs dry,
   // pick an unheard clip from the theme or the whole archive. Null means everything has been heard.
   function chooseNext(clip) {
-    var chained = ((clip.id && data.related[clip.id]) || []).map(fromSpot).filter(function (next) {
+    var chained = relatedOf(clip).map(fromSpot).filter(function (next) {
       return next && playable(next) && !heard[keyOf(next)];
     });
     if (themeIds) {
@@ -123,13 +142,17 @@
   }
 
   function episodeUrl(clip) {
-    // The episode page reads the same span, so it too stops where this topic ends.
-    var question = clip.headline ? '&q=' + clip.id.split('.').pop() : '';
-    return episodeBase + clip.slug + '?t=' + clip.start + '&e=' + clip.end + (clip.part ? '&p=' + (clip.part + 1) : '') + question;
+    return episodeBase + clip.slug;
+  }
+
+  // A span without a question id is addressed by its episode and times.
+  function spanQuery(clip) {
+    return 'ep=' + encodeURIComponent(clip.slug) + '&t=' + clip.start + '&e=' + clip.end + (clip.part ? '&p=' + (clip.part + 1) : '') +
+      (clip.chapter ? '&title=' + encodeURIComponent(clip.chapter) : '');
   }
 
   function shareUrl(clip) {
-    if (!clip.id) return window.location.origin + episodeUrl(clip);
+    if (!clip.id) return window.location.origin + window.location.pathname + '?' + spanQuery(clip);
     // Same rule as scripts/build_clip_pages.py (and Jekyll's slug): 118.5.2 -> 118-5-2.
     var page = clip.id.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
     return window.location.origin + shareBase + page + '/';
@@ -164,7 +187,7 @@
     next.appendChild(head);
 
     if (clip.reason) next.appendChild(element('p', 'listen-reason', '↪ つながり：' + clip.reason));
-    next.appendChild(element('p', 'listen-kicker', clip.id ? 'Q' : '関連する話題'));
+    next.appendChild(element('p', 'listen-kicker', clip.id ? 'Q' : clip.kicker || '関連する話題'));
     next.appendChild(element('h2', 'listen-question', clip.text));
     // Live captions with the speaker's face: filled in once the episode's captions arrive.
     var captions = element('div', 'listen-captions');
@@ -177,17 +200,19 @@
     said.appendChild(element('p', 'listen-line'));
     captions.appendChild(said);
     next.appendChild(captions);
-    var where = (episode.a.length > 1 ? 'パート' + (clip.part + 1) + ' ' : '') + clock(clip.start) + '〜 · 約' +
+    var where = (episode.u.length > 1 ? 'パート' + (clip.part + 1) + ' ' : '') + clock(clip.start) + '〜 · 約' +
       Math.max(1, Math.round((clip.end - clip.start) / 60)) + '分' + (clip.chapter && clip.id ? ' · ' + clip.chapter : '');
     next.appendChild(element('p', 'listen-meta', where));
     var foot = element('div', 'listen-foot');
-    foot.appendChild(element('span', 'listen-remaining', clock(clip.end - clip.start)));
-    var spotify = element('a', 'listen-spotify', 'Spotifyで全編 ↗');
-    spotify.href = 'https://open.spotify.com/episode/' + episode.a[clip.part];
-    spotify.target = '_blank';
-    spotify.rel = 'noopener';
-    spotify.addEventListener('click', function () { track('listen_spotify_full_click', { clip_id: keyOf(clip), episode: clip.slug }); });
-    foot.appendChild(spotify);
+    foot.appendChild(element('span', 'listen-remaining', clock((clip.end - clip.start) / rate)));
+    if (episode.a[clip.part]) {
+      var spotify = element('a', 'listen-spotify', 'Spotifyで全編 ↗');
+      spotify.href = 'https://open.spotify.com/episode/' + episode.a[clip.part];
+      spotify.target = '_blank';
+      spotify.rel = 'noopener';
+      spotify.addEventListener('click', function () { track('listen_spotify_full_click', { clip_id: keyOf(clip), episode: clip.slug }); });
+      foot.appendChild(spotify);
+    }
     next.appendChild(foot);
 
     if (!reduceMotion && direction) next.classList.add(direction > 0 ? 'is-entering-up' : 'is-entering-down');
@@ -220,7 +245,7 @@
     card.replaceWith(done);
     card = done;
     nextPeek.hidden = true;
-    if (controller) controller.pause();
+    audio.pause();
   }
 
   function peek(clip) {
@@ -328,30 +353,95 @@
     return null;
   }
 
-  // Keep the screen on while a clip plays: on phones the embedded player stops when the screen locks.
-  function holdScreen(on) {
-    if (!('wakeLock' in navigator)) return;
-    if (on && !wakeLock && document.visibilityState === 'visible') {
-      navigator.wakeLock.request('screen').then(function (lock) {
-        wakeLock = lock;
-        lock.addEventListener('release', function () { wakeLock = null; });
-      }).catch(function () { /* not allowed right now; nothing to do */ });
-    } else if (!on && wakeLock) {
-      wakeLock.release();
+  function applyRate() {
+    audio.defaultPlaybackRate = rate;
+    audio.playbackRate = rate;
+    rateButton.textContent = rate + '×';
+    rateButton.setAttribute('aria-label', '再生速度 ' + rate + '倍（押して変更）');
+  }
+
+  function playAudio() {
+    var playing = audio.play();
+    if (playing && playing.catch) {
+      playing.catch(function (error) {
+        // Refused without a tap (the page restored in the background, say): the start screen asks for one.
+        if (error && error.name === 'NotAllowedError' && current) { started = false; showHook(current, 'つまみ聴き'); }
+      });
     }
   }
 
   function load(clip) {
-    if (!controller) return;
-    var uri = 'spotify:episode:' + data.episodes[clip.slug].a[clip.part];
+    var file = data.episodes[clip.slug].u[clip.part];
     clip.reached = false;
-    // Loading with startAt keeps the position once playback starts; a seek before the first play is ignored.
+    // The file's end caps the clip (a few files are shorter than their transcript).
+    if (file[1] && clip.end > file[1]) clip.end = file[1];
     // A resumed clip starts where the last visit stopped, once.
     var from = clip.resumeAt && clip.resumeAt > clip.start && clip.resumeAt < clip.end - 10 ? clip.resumeAt : clip.start;
     clip.resumeAt = null;
-    controller.loadEntity(uri, false, from);
-    loadedUri = uri;
-    if (started) controller.play();
+    clip.from = from;
+    if (audio.getAttribute('src') !== file[0]) {
+      pendingSeek = from;
+      audio.src = file[0];
+    } else if (audio.readyState < 1) {
+      pendingSeek = from;
+    } else {
+      pendingSeek = null;
+      audio.currentTime = from;
+    }
+    applyRate();
+    updateSession(clip);
+    if (started) playAudio();
+  }
+
+  // Lock screen, notification and earphone controls.
+  function updateSession(clip) {
+    if (!('mediaSession' in navigator) || !window.MediaMetadata) return;
+    var episode = data.episodes[clip.slug];
+    var image = (episode.g[0] && episode.g[0][1]) || data.host;
+    try {
+      navigator.mediaSession.metadata = new MediaMetadata({
+        title: clip.text,
+        artist: 'あらB.fm Ep.' + episode.n,
+        album: episode.t,
+        artwork: image ? [{ src: new URL(image, window.location.href).href }] : []
+      });
+    } catch (error) { /* an older browser */ }
+  }
+
+  // The lock screen's progress bar shows the answer, not the whole episode.
+  var positionShownAt = 0;
+  function sessionPosition(clip, at, force) {
+    if (!('mediaSession' in navigator) || !navigator.mediaSession.setPositionState) return;
+    if (!force && Date.now() - positionShownAt < 5000) return;
+    positionShownAt = Date.now();
+    try {
+      navigator.mediaSession.setPositionState({
+        duration: Math.max(1, clip.end - clip.start),
+        position: Math.min(clip.end - clip.start, Math.max(0, at - clip.start)),
+        playbackRate: rate
+      });
+    } catch (error) { /* an invalid state while a file loads */ }
+  }
+
+  function seekBy(amount) {
+    if (!current) return;
+    audio.currentTime = Math.max(current.start, Math.min(current.end - 1, audio.currentTime + amount));
+  }
+
+  function sessionAction(name, handler) {
+    try { navigator.mediaSession.setActionHandler(name, handler); } catch (error) { /* an unsupported action */ }
+  }
+
+  if ('mediaSession' in navigator) {
+    sessionAction('play', function () { if (!started) begin(); else playAudio(); });
+    sessionAction('pause', function () { audio.pause(); });
+    sessionAction('nexttrack', function () { advance(false); });
+    sessionAction('previoustrack', function () { back(); });
+    sessionAction('seekbackward', function () { seekBy(-15); });
+    sessionAction('seekforward', function () { seekBy(15); });
+    sessionAction('seekto', function (details) {
+      if (current && details && typeof details.seekTime === 'number') audio.currentTime = current.start + details.seekTime;
+    });
   }
 
   function go(clip, direction) {
@@ -366,6 +456,7 @@
     var parts = [];
     if (theme) parts.push('theme=' + encodeURIComponent(theme.id));
     if (current && current.id) parts.push('c=' + encodeURIComponent(current.id));
+    else if (current) parts.push(spanQuery(current));
     return '?' + parts.join('&');
   }
 
@@ -378,20 +469,20 @@
     render(clip, direction);
     load(clip);
     clip.shownLine = null;
-    attachCaptions(clip).then(function () { showCaption(clip, clip.resumeAt || clip.start); });
+    attachCaptions(clip).then(function () { showCaption(clip, clip.from); });
     track('listen_clip_start', {
       clip_id: keyOf(clip), episode: clip.slug, via: how || clip.via || 'first', theme: theme ? theme.id : 'all', headline: clip.headline
     });
     try { window.history.replaceState(null, '', address()); } catch (error) { /* file:// or sandboxed */ }
   }
 
-  function advance(finished) {
+  function advance(complete) {
     if (!data || !current) return;
-    track(finished ? 'listen_clip_complete' : 'listen_skip', {
+    track(complete ? 'listen_clip_complete' : 'listen_skip', {
       clip_id: keyOf(current), episode: current.slug, theme: theme ? theme.id : 'all',
       heard_seconds: Math.round(lastAt === null ? 0 : Math.max(0, lastAt - current.start))
     });
-    if (finished) {
+    if (complete) {
       stats(current.end - current.start);
       streak += 1;
       finished += 1;
@@ -423,27 +514,31 @@
     show(history[position], -1, 'history');
   }
 
-  function onPlayback(state) {
-    if (!current || !state) return;
-    paused = state.isPaused;
+  function showPaused() {
+    paused = audio.paused;
     playButton.textContent = paused ? '▶' : '❚❚';
     playButton.setAttribute('aria-label', paused ? '再生' : '一時停止');
-    holdScreen(!paused);
-    var at = state.position / 1000;
+  }
+
+  function onTime() {
+    if (!current || pendingSeek !== null) return;
+    var at = audio.currentTime;
     var clip = current;
     if (!clip.reached) {
-      // Updates from before the jump still report the old position; wait until playback reaches the clip.
+      // Until the jump lands, the element can still report the old position.
       if (at >= clip.start - 5 && at < clip.end) clip.reached = true;
       else return;
     }
     lastAt = at;
     showCaption(clip, at);
     if (!paused) saveResume(clip, at);
+    sessionPosition(clip, at, false);
     var bar = card.querySelector('.listen-progress span');
     if (bar) bar.style.transform = 'scaleX(' + Math.min(1, Math.max(0, (at - clip.start) / (clip.end - clip.start))) + ')';
     var remaining = card.querySelector('.listen-remaining');
-    if (remaining) remaining.textContent = clock(clip.end - at);
-    if (clip.end - at <= PEEK_SECONDS && !paused) {
+    // Time left at the chosen speed.
+    if (remaining) remaining.textContent = clock((clip.end - at) / rate);
+    if ((clip.end - at) / rate <= PEEK_SECONDS && !paused) {
       if (upcoming === null) {
         upcoming = chooseNext(clip) || false;
         // Fetch the next episode's captions now, so its first line shows the moment it starts.
@@ -454,15 +549,41 @@
     if (at >= clip.end) advance(true);
   }
 
+  audio.preload = 'auto';
+  audio.addEventListener('loadedmetadata', function () {
+    if (pendingSeek === null) return;
+    audio.currentTime = pendingSeek;
+    pendingSeek = null;
+    applyRate();
+  });
+  audio.addEventListener('timeupdate', onTime);
+  audio.addEventListener('play', showPaused);
+  audio.addEventListener('pause', showPaused);
+  audio.addEventListener('waiting', function () { card.classList.add('is-buffering'); });
+  audio.addEventListener('playing', function () {
+    card.classList.remove('is-buffering');
+    if (current) sessionPosition(current, audio.currentTime, true);
+  });
+  // A clip that runs to the very end of its file.
+  audio.addEventListener('ended', function () { if (current && current.reached) advance(true); });
+  audio.addEventListener('error', function () {
+    if (!current || !audio.getAttribute('src')) return;
+    card.classList.remove('is-buffering');
+    flash('音声を読み込めませんでした。次へ進みます');
+    setTimeout(function () { advance(false); }, 1500);
+  });
+
   function begin() {
     started = true;
     startScreen.hidden = true;
-    track('listen_begin', { theme: theme ? theme.id : 'all', from_link: /[?&]c=/.test(window.location.search) });
-    if (controller && current) {
-      // This tap is the gesture browsers want before audio; later clips start on their own.
-      if (loadedUri) controller.play();
-      else load(current);
-    }
+    track('listen_begin', { theme: theme ? theme.id : 'all', from_link: /[?&](c|ep)=/.test(window.location.search) });
+    // This tap is the gesture browsers want before audio; later clips start on their own, even with the screen locked.
+    if (current) playAudio();
+  }
+
+  function togglePlay() {
+    if (!started) { begin(); return; }
+    if (audio.paused) playAudio(); else audio.pause();
   }
 
   // The start screen is a hook: the first question and the opening words of its answer, then one tap to hear it.
@@ -474,7 +595,7 @@
     var teaser = startScreen.querySelector('[data-listen-hook-teaser]');
     teaser.hidden = true;
     attachCaptions(clip).then(function () {
-      var from = clip.resumeAt || clip.start;
+      var from = clip.from || clip.start;
       var line = (clip.lines || []).filter(function (item) { return item[1] >= from - 2; })[0];
       if (!line) return;
       var speaker = (clip.speakers || {})[line[2]];
@@ -554,45 +675,54 @@
     if (!themeSheet.hidden) { if (event.key === 'Escape') themeSheet.hidden = true; return; }
     if (event.key === 'ArrowDown' || event.key === 'j') { event.preventDefault(); advance(false); }
     else if (event.key === 'ArrowUp' || event.key === 'k') { event.preventDefault(); back(); }
-    else if (event.key === ' ' && !event.target.closest('button, a')) { event.preventDefault(); if (controller) controller.togglePlay(); }
-  });
-  document.addEventListener('visibilitychange', function () {
-    // The browser drops the wake lock when the tab is hidden; take it again on return if still playing.
-    if (document.visibilityState === 'visible') holdScreen(!paused);
+    else if (event.key === 'ArrowLeft') seekBy(-15);
+    else if (event.key === 'ArrowRight') seekBy(15);
+    else if (event.key === ' ' && !event.target.closest('button, a')) { event.preventDefault(); togglePlay(); }
   });
   root.querySelector('[data-listen-next-button]').addEventListener('click', function () { advance(false); });
   root.querySelector('[data-listen-prev]').addEventListener('click', back);
   root.querySelector('[data-listen-replay]').addEventListener('click', function () { if (current) show(current, 0, 'replay'); });
   followLink.addEventListener('click', function () { track('listen_follow_click', { place: 'toast', finished: finished }); });
   root.querySelector('[data-listen-share]').addEventListener('click', share);
-  playButton.addEventListener('click', function () {
-    if (!started) { begin(); return; }
-    if (controller) controller.togglePlay();
+  playButton.addEventListener('click', togglePlay);
+  rateButton.addEventListener('click', function () {
+    rate = RATES[(RATES.indexOf(rate) + 1) % RATES.length];
+    try { localStorage.setItem('arkbfm-listen-rate', String(rate)); } catch (error) { /* storage can be unavailable */ }
+    applyRate();
+    if (current) sessionPosition(current, audio.currentTime, true);
+    track('listen_rate', { rate: rate });
   });
   root.querySelector('[data-listen-begin]').addEventListener('click', begin);
   nextPeek.addEventListener('click', function () { advance(false); });
   themeButton.addEventListener('click', function () { themeSheet.hidden = !themeSheet.hidden; });
   themeSheet.querySelector('[data-listen-theme-close]').addEventListener('click', function () { themeSheet.hidden = true; });
 
-  var apiReady = null;
-  window.onSpotifyIframeApiReady = function (api) {
-    apiReady = api;
-    if (data && current) createPlayer();
-  };
+  function param(query, name) {
+    var match = query.match(new RegExp('[?&]' + name + '=([^&]*)'));
+    if (!match) return null;
+    try { return decodeURIComponent(match[1].replace(/\+/g, ' ')); } catch (error) { return null; }
+  }
 
-  function createPlayer() {
-    apiReady.createController(root.querySelector('[data-listen-player]'), {
-      uri: 'spotify:episode:' + data.episodes[current.slug].a[current.part],
-      width: '100%',
-      height: 80
-    }, function (embed) {
-      controller = embed;
-      embed.addListener('playback_update', function (event) { onPlayback(event.data); });
-      embed.addListener('ready', function () {
-        playButton.disabled = false;
-        if (!loadedUri) load(current);
-      });
-    });
+  // ?ep=<slug>&t=<start>&e=<end>&p=<part>&title=<chapter>: any moment of an episode (chapters and quotes
+  // on the episode page), played as it is; after it the feed follows the question it falls in.
+  function spanFromQuery(query) {
+    var slug = param(query, 'ep');
+    var episode = slug && data.episodes[slug];
+    if (!episode) return null;
+    var time = function (value) { return value && /^\d+(:\d{1,2}){0,2}$/.test(value) ? seconds(value) : null; };
+    var start = time(param(query, 't')) || 0;
+    var part = (Number(param(query, 'p')) || 1) - 1;
+    var file = episode.u && episode.u[part];
+    var end = time(param(query, 'e'));
+    // Without an end, ten minutes (or to the end of the file).
+    if (end === null || end <= start) end = start + 600;
+    if (file && file[1]) end = Math.min(end, file[1]);
+    var title = param(query, 'title') || '';
+    var clip = {
+      id: null, slug: slug, text: title || 'Ep.' + episode.n + ' ' + clock(start) + '〜', chapter: title, headline: false,
+      start: start, end: end, part: part, kicker: 'この回のこの場面'
+    };
+    return playable(clip) ? clip : null;
   }
 
   fetch(root.getAttribute('data-clips')).then(function (response) { return response.json(); }).then(function (loaded) {
@@ -606,12 +736,13 @@
     stats(0);
 
     var query = window.location.search;
-    var wantedTheme = decodeURIComponent((query.match(/[?&]theme=([^&]+)/) || [])[1] || '');
-    var wantedClip = decodeURIComponent((query.match(/[?&]c=([^&]+)/) || [])[1] || '');
+    var wantedTheme = param(query, 'theme') || '';
+    var wantedClip = param(query, 'c') || '';
+    var span = spanFromQuery(query);
     var kicker = /[?&]from=today/.test(query) ? '今日の1問' : '';
-    // With no clip or theme asked for, pick up where the last visit stopped.
-    var resume = !wantedClip && !wantedTheme || /[?&]resume=1/.test(query) ? readResume() : null;
-    var first = clipsById[wantedClip] || null;
+    // With no clip, moment or theme asked for, pick up where the last visit stopped.
+    var resume = !wantedClip && !wantedTheme && !span || /[?&]resume=1/.test(query) ? readResume() : null;
+    var first = clipsById[wantedClip] || span;
     if (!first && resume && clipsById[resume.id]) {
       first = clipsById[resume.id];
       first.resumeAt = resume.at;
@@ -626,9 +757,10 @@
       themeButton.textContent = chosen.emoji + ' ' + chosen.label;
     }
     first = first || firstOf(chosen);
+    applyRate();
     go(first, 0);
+    playButton.disabled = false;
     showHook(first, kicker || (chosen ? chosen.emoji + ' ' + chosen.label : 'つまみ聴き'));
-    if (apiReady) createPlayer();
   }).catch(function () {
     card.textContent = '読み込めませんでした。時間をおいて開き直してください。';
   });

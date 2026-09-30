@@ -214,15 +214,12 @@
   &:hover, &:focus { background: var(--c-accent-deep); }
 }
 .episode-player { text-align: center; iframe { border: 0; } }
-.episode-player-part { position: relative; }
-.episode-spotify-api { left: 0; opacity: 0; pointer-events: none; position: absolute; top: 0; width: 100%; }
-.episode-spotify-api.is-ready { opacity: 1; pointer-events: auto; position: static; }
 .episode-toc {
   margin: 16px 0 24px;
   padding: 14px 20px;
   summary { color: var(--c-accent); cursor: pointer; font-weight: bold; }
   ol { margin-top: 14px; }
-  button {
+  a.ep-play {
     background: none;
     border: 0;
     color: var(--c-accent);
@@ -231,7 +228,6 @@
     font-size: .85rem;
     margin-left: 8px;
     text-decoration: underline;
-    &:disabled { color: var(--c-muted); cursor: default; text-decoration: none; }
   }
 }
 @media (max-width: $width-screen-extra-small-maximum) {
