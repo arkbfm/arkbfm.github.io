@@ -1,0 +1,7 @@
+{% comment %}Follow buttons for the podcast apps (_data/subscribe.yml). Params: place (for analytics), lead (optional text before the buttons).{% endcomment %}
+<div class="subscribe-links" data-subscribe-place="{{ include.place }}">
+  {% if include.lead %}<p class="subscribe-lead">{{ include.lead }}</p>{% endif %}
+  <ul>
+    {% for app in site.data.subscribe %}<li><a class="subscribe-{{ app.id }}" href="{{ app.url }}" target="_blank" rel="noopener" data-subscribe="{{ app.id }}">{{ app.label }}{% if app.id != 'rss' %}でフォロー{% endif %}</a></li>{% endfor %}
+  </ul>
+</div>

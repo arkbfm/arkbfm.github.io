@@ -14,6 +14,7 @@ Speakers come from the transcript's confirmed speaker_identities, shown with the
     python scripts/build_captions.py        # needs: pip install budoux
 """
 
+import bisect
 import json
 import re
 import sys
@@ -105,6 +106,58 @@ def spans_of(front: str, chapter_questions: list[dict]) -> list[tuple[int, int, 
     return merged
 
 
+class Turns:
+    """Who talks when, from the episode's diarization (transcripts/diarization/Ep<slug>.json).
+
+    Transcript segments run 20-30 seconds and often hold both voices, so a caption line takes the
+    speaker who talks most during the line itself; the segment's speaker is only the fallback. The
+    labels go through the same part mapping the transcript was integrated with, so they match its
+    reviewed speaker_identities. Used only when the diarization file is the one the transcript was
+    integrated from."""
+
+    def __init__(self, slug: str, transcript: dict):
+        self.parts = {}
+        meta = transcript.get("diarization") or {}
+        path = TRANSCRIPTS / "diarization" / f"Ep{slug}.json"
+        if not meta or not path.exists():
+            return
+        diarization = json.loads(path.read_text(encoding="utf-8"))
+        if diarization.get("generated_at") != meta.get("generated_at"):
+            return
+        by_number = {int(part["part"]): part for part in diarization["parts"]}
+        for raw_part, diar_part in meta.get("raw_to_diarization_part", {}).items():
+            part = by_number.get(int(diar_part))
+            if not part:
+                continue
+            turns = sorted(part.get("exclusive_turns") or part["regular_turns"], key=lambda turn: turn["start"])
+            self.parts[int(raw_part) - 1] = {
+                "turns": turns,
+                "starts": [turn["start"] for turn in turns],
+                "offset": float(meta.get("raw_part_time_offsets", {}).get(raw_part, 0.0)),
+                "map": meta.get("part_speaker_maps", {}).get(str(diar_part), {}),
+            }
+
+    def speaker(self, part: int, start: float, end: float) -> str | None:
+        """The (transcript) speaker label talking longest between start and end, or None."""
+        info = self.parts.get(part)
+        if not info:
+            return None
+        start, end = start + info["offset"], end + info["offset"]
+        talk = {}
+        index = max(0, bisect.bisect_right(info["starts"], start) - 1)
+        # Turns are short, so a few before the line's start are enough to catch one overlapping it.
+        for turn in info["turns"][max(0, index - 3):]:
+            if turn["start"] >= end:
+                break
+            overlap = min(end, turn["end"]) - max(start, turn["start"])
+            if overlap > 0:
+                talk[turn["speaker"]] = talk.get(turn["speaker"], 0.0) + overlap
+        if not talk:
+            return None
+        local = max(talk, key=talk.get)
+        return info["map"].get(local, local)
+
+
 def main() -> None:
     actors = load_actors()
     chapter_questions = json.loads(CHAPTER_QUESTIONS.read_text(encoding="utf-8"))
@@ -125,32 +178,40 @@ def main() -> None:
             continue
         data = json.loads(transcript.read_text(encoding="utf-8"))
         identities = data.get("speaker_identities", {})
+        turns = Turns(slug, data)
 
         speakers, keys = {}, {}
+
+        def key_of(label: str | None) -> str | None:
+            """The caption file's speaker key for a transcript label, or None when not a confirmed performer."""
+            identity = identities.get(label or "", {})
+            if identity.get("status") != "confirmed" or not identity.get("actor_id"):
+                return None
+            actor_id = identity["actor_id"]
+            if actor_id not in keys:
+                keys[actor_id] = f"s{len(keys)}"
+                actor = actors.get(actor_id, {})
+                speakers[keys[actor_id]] = [actor.get("name") or identity.get("name", ""), actor.get("image_url", ""),
+                                            identity.get("role") == "host"]
+            return keys[actor_id]
+
         lines = []
         for segment in data.get("segments", []):
             part = segment.get("part", 1) - 1
             start, end = float(segment["start"]), float(segment["end"])
             if not any(p == part and start < high + MARGIN_SECONDS and end > low - MARGIN_SECONDS for p, low, high in spans):
                 continue
-            identity = identities.get(segment.get("speaker") or "", {})
-            speaker = ""
-            if identity.get("status") == "confirmed" and identity.get("actor_id"):
-                actor_id = identity["actor_id"]
-                if actor_id not in keys:
-                    keys[actor_id] = f"s{len(keys)}"
-                    actor = actors.get(actor_id, {})
-                    speakers[keys[actor_id]] = [actor.get("name") or identity.get("name", ""), actor.get("image_url", ""),
-                                                identity.get("role") == "host"]
-                speaker = keys[actor_id]
+            fallback = key_of(segment.get("speaker"))
             pieces = split_lines(segment.get("text", ""))
             length = sum(len(piece.replace(BREAK, "")) for piece in pieces) or 1
             at = start
             for piece in pieces:
+                until = at + (end - start) * len(piece.replace(BREAK, "")) / length
                 # Keep only lines inside an answer span; a segment can straddle a span's edge.
                 if any(p == part and low - MARGIN_SECONDS <= at < high for p, low, high in spans):
+                    speaker = key_of(turns.speaker(part, at, until)) or fallback or ""
                     lines.append([part, round(at, 1), speaker, piece])
-                at += (end - start) * len(piece.replace(BREAK, "")) / length
+                at = until
         if not lines:
             continue
         out = OUTPUT / f"{slug}.json"

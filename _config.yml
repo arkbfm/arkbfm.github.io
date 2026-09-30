@@ -359,6 +359,9 @@ exclude:
   - scripts
   - transcripts
   - verify_out.txt
+  # Local-only drafts (gitignored) that Jekyll would otherwise publish as posts.
+  - _posts/html
+  - _posts/workflowy
 future: true
 # GA4 measurement ID (G-XXXXXXXXXX). Empty: no analytics is loaded.
 google_analytics: G-8Y6RJ822X8

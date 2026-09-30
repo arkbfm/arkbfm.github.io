@@ -49,6 +49,7 @@
                 {% if forloop.last and forloop.index > 1 %}</details>{% endif %}
               {% endfor %}
             </section>
+            <div class="ep-follow">{% include subscribe-links.html place="episode" lead="気に入ったら、番組をフォロー" %}</div>
             {% comment %}Draft quotes (unverified speaker or wording) only show in local builds.{% endcomment %}
             {% if jekyll.environment == "production" %}{% assign quotes = page.quotes | where_exp: "quote", "quote.draft != true" %}{% else %}{% assign quotes = page.quotes %}{% endif %}
             {% if quotes.size > 0 %}
