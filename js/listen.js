@@ -16,6 +16,11 @@
   var startScreen = root.querySelector('[data-listen-start]');
   var themeButton = root.querySelector('[data-listen-theme]');
   var themeSheet = root.querySelector('[data-listen-themes]');
+  // Side panels, shown on wide screens only (CSS): the trail of this visit, the talk around the current
+  // line, and what plays next.
+  var pastList = root.querySelector('[data-listen-past]');
+  var talkList = root.querySelector('[data-listen-talk]');
+  var upcomingButton = root.querySelector('[data-listen-upcoming]');
   var toast = root.querySelector('[data-listen-toast]');
   var episodeBase = root.getAttribute('data-episode-base');
   var shareBase = root.getAttribute('data-share-base');
@@ -231,6 +236,64 @@
     document.title = clip.text + ' | つまみ聴き';
   }
 
+  // "これまで": every clip of this visit, newest last; a click goes back (or forward) to it.
+  var PAST_SHOWN = 15;
+  function renderPast() {
+    pastList.textContent = '';
+    history.slice(-PAST_SHOWN).forEach(function (clip, offset) {
+      var index = Math.max(0, history.length - PAST_SHOWN) + offset;
+      var item = element('li', index === position ? 'is-current' : '');
+      var button = element('button');
+      button.type = 'button';
+      button.appendChild(element('small', '', 'Ep.' + data.episodes[clip.slug].n));
+      button.appendChild(element('span', '', clip.text));
+      button.addEventListener('click', function () {
+        if (index === position) return;
+        var direction = index > position ? 1 : -1;
+        position = index;
+        streak = 0;
+        show(history[index], direction, 'history');
+      });
+      item.appendChild(button);
+      pastList.appendChild(item);
+    });
+    var shown = pastList.querySelector('.is-current');
+    if (shown && shown.scrollIntoView && pastList.offsetParent) shown.scrollIntoView({ block: 'nearest' });
+  }
+
+  // "いまの会話": the current caption line with the few before it, each with its speaker's face.
+  var TALK_SHOWN = 5;
+  function renderTalk(clip, index) {
+    talkList.textContent = '';
+    if (!clip.lines) return;
+    clip.lines.slice(Math.max(0, index - TALK_SHOWN + 1), index + 1).forEach(function (line, offset, shown) {
+      var speaker = (clip.speakers || {})[line[2]] || null;
+      var item = element('li', offset === shown.length - 1 ? 'is-current' : '');
+      if (speaker && speaker[1]) {
+        var face = element('img');
+        face.src = speaker[1];
+        face.alt = '';
+        item.appendChild(face);
+      }
+      var words = element('div');
+      if (speaker) words.appendChild(element('small', '', speaker[0]));
+      words.appendChild(element('p', '', captionText(line[3], '​')));
+      item.appendChild(words);
+      talkList.appendChild(item);
+    });
+  }
+
+  // "このあと": the clip lined up after this one.
+  function renderUpcoming() {
+    upcomingButton.textContent = '';
+    upcomingButton.hidden = !upcoming;
+    if (!upcoming) return;
+    var episode = data.episodes[upcoming.slug];
+    upcomingButton.appendChild(element('small', '', upcoming.via === 'detour' ? '🎲 寄り道' : upcoming.via === 'chain' ? '↪ つながる話題' : '次の問い'));
+    upcomingButton.appendChild(element('strong', '', upcoming.text));
+    upcomingButton.appendChild(element('span', '', 'Ep.' + episode.n + ' ' + episode.t + (upcoming.reason ? ' · ' + upcoming.reason : '')));
+  }
+
   // The episodes this visit has passed through, up to the current clip: "Ep.37 → Ep.152 → Ep.88".
   function trailOf() {
     var numbers = [];
@@ -268,6 +331,9 @@
     card.replaceWith(done);
     card = done;
     nextPeek.hidden = true;
+    upcoming = false;
+    renderUpcoming();
+    talkList.textContent = '';
     audio.pause();
   }
 
@@ -349,6 +415,7 @@
       var text = box.querySelector('.listen-line');
       text.textContent = captionText(clip.lines[index][3], '​');
       restart(text, 'is-new');
+      renderTalk(clip, index);
     }
     // Who is talking right now: the voice-change points when the file has them, else the line's speaker.
     var turn = clip.turns && clip.turns.length ? clip.turns[latestAt(clip.turns, at)] : null;
@@ -534,7 +601,13 @@
     load(clip);
     clip.shownLine = null;
     clip.shownSpeaker = null;
+    talkList.textContent = '';
     attachCaptions(clip).then(function () { showCaption(clip, clip.from); });
+    // Line up the next clip now, so the side panel can show it from the start: the one ahead in the
+    // history after going back, or a fresh pick.
+    upcoming = position < history.length - 1 ? history[position + 1] : chooseNext(clip) || false;
+    renderUpcoming();
+    renderPast();
     track('listen_clip_start', {
       clip_id: keyOf(clip), episode: clip.slug, via: how || clip.via || 'first', theme: theme ? theme.id : 'all', headline: clip.headline
     });
@@ -764,6 +837,7 @@
   });
   root.querySelector('[data-listen-begin]').addEventListener('click', begin);
   nextPeek.addEventListener('click', function () { advance(false); });
+  upcomingButton.addEventListener('click', function () { advance(false); });
   themeButton.addEventListener('click', function () { themeSheet.hidden = !themeSheet.hidden; });
   themeSheet.querySelector('[data-listen-theme-close]').addEventListener('click', function () { themeSheet.hidden = true; });
 
@@ -802,7 +876,14 @@
     data.related = {};
     fetch(root.getAttribute('data-related'))
       .then(function (response) { return response.ok ? response.json() : {}; })
-      .then(function (related) { data.related = related || {}; })
+      .then(function (related) {
+        data.related = related || {};
+        // The first clip was lined up before its links arrived: follow the subject after all.
+        if (current && position === history.length - 1 && (!upcoming || upcoming.via === 'random')) {
+          upcoming = chooseNext(current) || false;
+          renderUpcoming();
+        }
+      })
       .catch(function () { /* the feed still works, without following subjects */ });
     data.themes = data.themes || [];
     data.clips = data.clips.filter(function (item) { return playable(fromItem(item)); });
