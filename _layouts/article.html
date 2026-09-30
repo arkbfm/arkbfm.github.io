@@ -92,7 +92,8 @@
               {% endfor %}
             </div>
             {{ content }}
-            {% comment %}Every question this episode answers, each linking to its share page (/q/<id>/), so search engines reach them too.{% endcomment %}
+            {% comment %}Every question this episode answers, each opening its answer in the listening feed (share pages /q/<id>/
+            stay reachable for search engines through the sitemap and each other's related links).{% endcomment %}
             {% assign chapter_questions = site.data.chapter_questions[page.slug] | where_exp: "question", "question.hidden != true" %}
             {% if page.questions or chapter_questions.size > 0 %}
               <section class="ep-all-questions" aria-labelledby="all-questions-heading">
@@ -100,11 +101,10 @@
                 <ol>
                   {% for question in page.questions %}{% if question.time %}
                     {% capture question_page %}{{ page.slug | append: '-' | append: forloop.index | slugify }}{% endcapture %}
-                    <li data-time="{{ question.time }}"{% if question.end %} data-clip="{{ page.slug }}.{{ forloop.index }}"{% endif %}{% if question.part %} data-part="{{ question.part }}"{% endif %}><time>{{ question.time }}</time><a href="{{ '/q/' | append: question_page | append: '/' | relative_url }}">{{ question.text }}</a></li>
+                    <li data-time="{{ question.time }}"{% if question.end %} data-clip="{{ page.slug }}.{{ forloop.index }}"{% endif %}{% if question.part %} data-part="{{ question.part }}"{% endif %}><a href="{% if question.end %}{{ '/listen/' | relative_url }}?c={{ page.slug | append: '.' | append: forloop.index | uri_escape }}{% else %}{{ '/q/' | append: question_page | append: '/' | relative_url }}{% endif %}"><time>{% if question.part and question.part > 1 %}パート{{ question.part }} {% endif %}{{ question.time }}</time>{{ question.text }}</a></li>
                   {% endif %}{% endfor %}
                   {% for question in site.data.chapter_questions[page.slug] %}{% unless question.hidden %}
-                    {% capture question_page %}{{ page.slug | append: '-c' | append: forloop.index | slugify }}{% endcapture %}
-                    <li data-time="{{ question.time }}" data-clip="{{ page.slug }}.c{{ forloop.index }}"{% if question.part %} data-part="{{ question.part }}"{% endif %}><time>{{ question.time }}</time><a href="{{ '/q/' | append: question_page | append: '/' | relative_url }}">{{ question.text }}</a></li>
+                    <li data-time="{{ question.time }}" data-clip="{{ page.slug }}.c{{ forloop.index }}"{% if question.part %} data-part="{{ question.part }}"{% endif %}><a href="{{ '/listen/' | relative_url }}?c={{ page.slug | append: '.c' | append: forloop.index | uri_escape }}"><time>{% if question.part and question.part > 1 %}パート{{ question.part }} {% endif %}{{ question.time }}</time>{{ question.text }}</a></li>
                   {% endunless %}{% endfor %}
                 </ol>
               </section>
