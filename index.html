@@ -16,6 +16,11 @@ layout: default
     <div class="home-random">
       <a class="home-random-button home-listen-button" href="{{ '/listen/' | relative_url }}">▶ つまみ聴き</a>
       <span>「問い」への答えだけを、次々に。答えが終わると、同じテーマを話す別の回へつながります。</span>
+      <ul class="home-listen-perks" aria-label="つまみ聴きでできること">
+        <li>💬 字幕と話し手の顔</li>
+        <li>⏩ 2倍速まで</li>
+        <li>🔒 画面ロックしても再生</li>
+      </ul>
     </div>
     {% comment %}Filled by js/home-today.js: "つづきから" for returning listeners and three questions of the day.{% endcomment %}
     <div class="home-today" data-home-today data-listen="{{ '/listen/' | relative_url }}" data-headlines="{{ '/listen/headlines.json' | relative_url }}" hidden></div>
@@ -126,4 +131,4 @@ layout: default
     </div>
   </section>
 </div>
-<script src="{{ '/js/home-today.js' | relative_url }}" defer></script>
+<script src="{{ '/js/home-today.js' | relative_url }}?v={{ site.time | date: '%s' }}" defer></script>

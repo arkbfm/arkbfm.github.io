@@ -48,6 +48,10 @@
   var STREAK_STEP = 5;
   // After this many finished clips the listener clearly likes it: offer following the show.
   var FOLLOW_AFTER = 3;
+  // Share of picks (outside a theme) that leave the subject for an unrelated question.
+  var DETOUR_CHANCE = 0.12;
+  // Answers heard to the end in this visit, for the summary when a theme runs out.
+  var session = { count: 0, seconds: 0, episodes: {} };
   var followLink = root.querySelector('[data-listen-follow]');
   followLink.href = root.getAttribute('data-follow');
   var finished = 0;
@@ -136,8 +140,10 @@
       if (fresh.length) return via(clipsById[randomOf(fresh)], 'theme');
       return null;
     }
-    if (chained.length) return via(chained[0], 'chain');
     var unheard = data.clips.filter(function (item) { return !heard[item.i] && item.s !== clip.slug; });
+    // Now and then a detour to somewhere unrelated, so the feed keeps a little surprise.
+    if (chained.length && unheard.length && Math.random() < DETOUR_CHANCE) return via(fromItem(randomOf(unheard)), 'detour');
+    if (chained.length) return via(chained[0], 'chain');
     return unheard.length ? via(fromItem(randomOf(unheard)), 'random') : null;
   }
 
@@ -186,7 +192,10 @@
     head.appendChild(faces);
     next.appendChild(head);
 
-    if (clip.reason) next.appendChild(element('p', 'listen-reason', '↪ つながり：' + clip.reason));
+    var trail = trailOf();
+    if (trail) next.appendChild(element('p', 'listen-trail', '🧭 ' + trail));
+    if (clip.via === 'detour') next.appendChild(element('p', 'listen-reason', '🎲 寄り道：ちょっと別の話へ'));
+    else if (clip.reason) next.appendChild(element('p', 'listen-reason', '↪ つながり：' + clip.reason));
     next.appendChild(element('p', 'listen-kicker', clip.id ? 'Q' : clip.kicker || '関連する話題'));
     next.appendChild(element('h2', 'listen-question', clip.text));
     // Live captions with the speaker's face: filled in once the episode's captions arrive.
@@ -222,11 +231,25 @@
     document.title = clip.text + ' | つまみ聴き';
   }
 
+  // The episodes this visit has passed through, up to the current clip: "Ep.37 → Ep.152 → Ep.88".
+  function trailOf() {
+    var numbers = [];
+    history.slice(Math.max(0, position - 3), position + 1).forEach(function (item) {
+      var number = 'Ep.' + data.episodes[item.slug].n;
+      if (numbers[numbers.length - 1] !== number) numbers.push(number);
+    });
+    return numbers.length > 1 ? (position > 3 ? '… → ' : '') + numbers.join(' → ') : '';
+  }
+
   function renderDone() {
     var done = element('article', 'listen-card listen-done');
     done.setAttribute('data-listen-card', '');
     done.appendChild(element('p', 'listen-kicker', theme ? theme.emoji + ' ' + theme.label : 'あらB.fm'));
     done.appendChild(element('h2', 'listen-question', theme ? 'このテーマは聴き終えました' : 'ぜんぶ聴き終えました'));
+    if (session.count) {
+      done.appendChild(element('p', 'listen-done-summary', '今回 ' + session.count + '本の答え・約' + Math.max(1, Math.round(session.seconds / 60)) +
+        '分・' + Object.keys(session.episodes).length + '回分を聴きました'));
+    }
     done.appendChild(element('p', 'listen-meta', 'ここでひと休み。別のテーマも、続きからどうぞ。'));
     var list = element('div', 'listen-done-themes');
     data.themes.filter(function (other) { return !theme || other.id !== theme.id; }).slice(0, 6).forEach(function (other) {
@@ -250,7 +273,7 @@
 
   function peek(clip) {
     nextPeek.textContent = '';
-    nextPeek.appendChild(element('span', 'listen-next-label', clip.reason ? '次は関連する話題' : '次はこちら'));
+    nextPeek.appendChild(element('span', 'listen-next-label', clip.via === 'detour' ? '次はちょっと寄り道' : clip.reason ? '次は関連する話題' : '次はこちら'));
     nextPeek.appendChild(element('strong', '', clip.text));
     nextPeek.appendChild(element('small', '', 'Ep.' + data.episodes[clip.slug].n + ' ' + data.episodes[clip.slug].t));
     nextPeek.hidden = false;
@@ -461,12 +484,18 @@
   }
 
   function show(clip, direction, how) {
+    var previous = current;
     current = clip;
     upcoming = null;
     lastAt = null;
     heard[keyOf(clip)] = true;
     nextPeek.hidden = true;
     render(clip, direction);
+    // Following the subject into another episode is the feed's trick: make the jump felt.
+    if (previous && direction > 0 && previous.slug !== clip.slug && (clip.via === 'chain' || clip.via === 'detour')) {
+      if (!reduceMotion) card.classList.add('is-warp');
+      if (toast.hidden) flash('🌀 Ep.' + data.episodes[previous.slug].n + ' → Ep.' + data.episodes[clip.slug].n + ' へワープ');
+    }
     load(clip);
     clip.shownLine = null;
     attachCaptions(clip).then(function () { showCaption(clip, clip.from); });
@@ -484,6 +513,9 @@
     });
     if (complete) {
       stats(current.end - current.start);
+      session.count += 1;
+      session.seconds += current.end - current.start;
+      session.episodes[current.slug] = true;
       streak += 1;
       finished += 1;
       if (streak % STREAK_STEP === 0) flash('🔥 ' + streak + '本連続');

@@ -213,7 +213,19 @@
   padding: 8px 12px;
   &:hover, &:focus { background: var(--c-accent-deep); }
 }
-.episode-player { text-align: center; iframe { border: 0; } }
+// The whole episode on Spotify: compact embeds, later audio parts folded away.
+.episode-player {
+  margin: 24px 0;
+  iframe { border: 0; border-radius: 12px; display: block; }
+  .episode-player-heading { font-size: 1rem; margin: 0 0 8px; }
+  .episode-player-heading small { color: var(--c-muted); font-size: .75rem; font-weight: normal; margin-left: 6px; }
+  .episode-player-part + .episode-player-part { margin-top: 8px; }
+}
+.episode-player-more {
+  margin-top: 8px;
+  summary { color: var(--c-accent); cursor: pointer; font-size: .9rem; font-weight: bold; margin-bottom: 8px; }
+}
+a.ep-play { white-space: nowrap; }
 .episode-toc {
   margin: 16px 0 24px;
   padding: 14px 20px;
