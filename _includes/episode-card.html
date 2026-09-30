@@ -12,15 +12,23 @@
         {%- if card_ep.guests.size > 0 %}とあらB{% else %}あらB{% endif -%}
       </span>
       {% include episode-meta.html ep=card_ep %}
-      {% if card_post.questions %}
-        <span class="ep-card-q" data-question-flip><span class="ep-card-q-icon" aria-hidden="true">Q</span><span class="ep-card-q-window">{% for question in card_post.questions %}<span class="ep-card-q-item{% if forloop.first %} is-active{% endif %}">{{ question }}</span>{% endfor %}</span></span>
-      {% else %}
+      {% unless card_post.questions %}
         <span class="ep-card-lead">{{ include.lead | default: card_post.description | escape }}</span>
-      {% endif %}
+      {% endunless %}
       {% for comeback in card_ep.returns %}
         {% if comeback.first %}{% assign guest = site.actors[comeback.id] %}<span class="ep-badge ep-badge-new">{{ guest.name | default: comeback.id }}さん初登場</span>{% endif %}
       {% endfor %}
     </span>
   </a>
+  {% if card_post.questions %}
+    {% comment %}Its own link, outside the card's: it opens the episode at the moment that answers the showing question.{% endcomment %}
+    {% assign card_url = card_post.url | prepend:site.github.url %}
+    {% assign first_question = card_post.questions | first %}
+    <a class="ep-card-q" data-question-flip href="{% include question-url.html url=card_url question=first_question index=1 %}">
+      <span class="ep-card-q-icon" aria-hidden="true">Q</span>
+      <span class="ep-card-q-window">{% for question in card_post.questions %}<span class="ep-card-q-item{% if forloop.first %} is-active{% endif %}" data-href="{% include question-url.html url=card_url question=question index=forloop.index %}">{{ question.text | default: question }}</span>{% endfor %}</span>
+      {% if first_question.time %}<span class="ep-card-q-play" aria-hidden="true">▶ 聴く</span>{% endif %}
+    </a>
+  {% endif %}
 </article>
 {% endif %}

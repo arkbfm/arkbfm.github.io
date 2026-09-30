@@ -32,16 +32,19 @@
               <div class="ep-questions-box">
                 <h2>この回で話していること</h2>
                 <ul class="ep-questions">
-                  {% for question in page.questions %}<li>{{ question }}</li>{% endfor %}
+                  {% for question in page.questions %}<li{% if question.time %} data-time="{{ question.time }}"{% endif %}{% if question.part %} data-part="{{ question.part }}"{% endif %}>{{ question.text | default: question }}</li>{% endfor %}
                 </ul>
               </div>
             {% endif %}
             <div class="episode-player" id="episode-player">
               {% assign audio_urls = page.audio_url | split: "," %}
+              {% comment %}Each audio part keeps a plain embed until the Spotify API replaces it with a player the page can seek.{% endcomment %}
               {% for audio_id in audio_urls %}
-                <iframe{% if audio_urls.size == 1 %} id="episode-spotify-fallback"{% endif %} src="https://open.spotify.com/embed/episode/{{ audio_id | strip }}" height="204" width="100%" title="{{ page.title | escape }} をSpotifyで再生" frameborder="0" scrolling="no" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                <div class="episode-player-part">
+                  <iframe class="episode-spotify-fallback" src="https://open.spotify.com/embed/episode/{{ audio_id | strip }}" height="204" width="100%" title="{{ page.title | escape }}{% if audio_urls.size > 1 %} パート{{ forloop.index }}{% endif %} をSpotifyで再生" frameborder="0" scrolling="no" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                  <div class="episode-spotify-api"><div data-spotify-id="{{ audio_id | strip }}"></div></div>
+                </div>
               {% endfor %}
-              {% if audio_urls.size == 1 %}<div id="episode-spotify-api" data-spotify-id="{{ audio_urls | first | strip }}"></div>{% endif %}
             </div>
             {% comment %}Draft quotes (unverified speaker or wording) only show in local builds.{% endcomment %}
             {% if jekyll.environment == "production" %}{% assign quotes = page.quotes | where_exp: "quote", "quote.draft != true" %}{% else %}{% assign quotes = page.quotes %}{% endif %}
