@@ -112,19 +112,6 @@
   > p:last-child { color: $color-text-dark-secondary; font-size: .9rem; }
 }
 
-.episode-toc {
-  background: var(--c-tint);
-  border-left: 4px solid var(--c-accent);
-  margin: 28px 0;
-  padding: 20px 24px;
-
-  h2 { margin: 0 0 12px; }
-  ol { list-style: none; margin: 0; padding: 0; }
-  li + li { margin-top: 8px; }
-  a { display: inline-block; }
-  time { color: $color-text-dark-secondary; font-variant-numeric: tabular-nums; margin-right: 8px; }
-}
-
 @media (max-width: $width-screen-extra-small-maximum) {
   .discovery-home,
   .discovery-archive {
@@ -226,21 +213,21 @@
   summary { color: var(--c-accent); cursor: pointer; font-size: .9rem; font-weight: bold; margin-bottom: 8px; }
 }
 a.ep-play { white-space: nowrap; }
-.episode-toc {
-  margin: 16px 0 24px;
-  padding: 14px 20px;
-  summary { color: var(--c-accent); cursor: pointer; font-weight: bold; }
-  ol { margin-top: 14px; }
-  a.ep-play {
-    background: none;
-    border: 0;
-    color: var(--c-accent);
-    cursor: pointer;
-    font: inherit;
-    font-size: .85rem;
-    margin-left: 8px;
-    text-decoration: underline;
-  }
+// A chapter heading's time in the show notes, turned into a link that plays the chapter in the feed.
+.markdown h2 a.ep-chapter-play {
+  background: var(--c-teal);
+  border-radius: 999px;
+  color: var(--c-ink);
+  display: inline-block;
+  font-size: .8rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: bold;
+  margin-right: 8px;
+  padding: 2px 10px;
+  text-decoration: none;
+  vertical-align: .15em;
+  white-space: nowrap;
+  &:hover, &:focus { background: var(--c-accent); color: #fff; }
 }
 @media (max-width: $width-screen-extra-small-maximum) {
   .discovery-home .discovery-intro { padding: 20px 18px; }
@@ -275,10 +262,6 @@ a.ep-play { white-space: nowrap; }
   padding: 0;
   li { background: var(--c-tint); border-radius: 3px; color: var(--c-accent); font-size: .78rem; padding: 2px 7px; }
 }
-.episode-toc h2 { font-size: 1.15rem; margin: 0 0 10px; }
-.episode-toc .episode-toc-preview { margin-top: 0; }
-.episode-toc details { border-top: 1px solid var(--c-line); margin-top: 12px; padding-top: 10px; }
-.episode-toc summary { font-size: .9rem; }
 
 @media (max-width: $width-screen-extra-small-maximum) {
   .discovery-home .discovery-latest { padding: 20px 18px; }

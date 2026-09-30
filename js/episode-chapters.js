@@ -1,5 +1,5 @@
-// Episode page: a table of contents from the timed chapter headings, quotes moved under their chapters,
-// and "listen from here" links. Everything that starts at a moment plays in the listening feed
+// Episode page: each timed chapter heading's time becomes a link that plays the chapter, quotes move
+// under their chapters, and questions get "listen from here" links. Everything that starts at a moment plays in the listening feed
 // (/listen/), which has captions, speed and lock-screen controls and follows the subject on to other
 // episodes; the Spotify embed on this page is for hearing the whole episode from the start.
 (function () {
@@ -75,43 +75,20 @@
       chapters.push({ heading: heading, seconds: seconds, part: part, title: match[4], time: match[1] + ':' + match[2] + ':' + match[3] });
     });
 
-    var nav = document.createElement('nav');
-    nav.className = 'episode-toc';
-    nav.setAttribute('aria-label', 'この回の目次');
-    var title = document.createElement('h2');
-    title.textContent = 'この回の目次';
-    nav.appendChild(title);
-    var previewList = document.createElement('ol');
-    previewList.className = 'episode-toc-preview';
-    var details = document.createElement('details');
-    var summary = document.createElement('summary');
-    summary.textContent = '残り' + (chapters.length - 3) + '章を見る';
-    details.appendChild(summary);
-    var remainingList = document.createElement('ol');
-
-    chapters.forEach(function (chapter, index) {
-      var item = document.createElement('li');
-      var link = document.createElement('a');
-      link.href = '#' + chapter.heading.id;
-      var time = document.createElement('time');
-      time.textContent = chapter.time;
-      link.appendChild(time);
-      link.appendChild(document.createTextNode(chapter.title));
-      item.appendChild(link);
+    // Each heading's time becomes "▶ 00:14:58", a link that plays the chapter in the feed.
+    chapters.forEach(function (chapter) {
       var listen = playLink({ start: chapter.seconds, end: chapterEnd(chapter), part: chapter.part, title: chapter.title },
-        'ここから聴く', partLabel(chapter.part) + chapter.time + ' ' + chapter.title + ' から聴く', 'chapter');
-      if (listen) item.appendChild(listen);
-      (index < 3 ? previewList : remainingList).appendChild(item);
+        // The show notes already head each audio part ("Ep.152-2"), so the link shows the time alone.
+        '▶ ' + chapter.time, partLabel(chapter.part) + chapter.time + ' ' + chapter.title + ' から聴く', 'chapter');
+      if (!listen) return;
+      listen.className = 'ep-chapter-play';
+      var walker = document.createTreeWalker(chapter.heading, NodeFilter.SHOW_TEXT);
+      var first = walker.nextNode();
+      while (first && !first.nodeValue.trim()) first = walker.nextNode();
+      if (!first) return;
+      first.nodeValue = first.nodeValue.replace(/^\s*\d{1,2}:\d{2}:\d{2}\s*/, '');
+      first.parentNode.insertBefore(listen, first);
     });
-
-    nav.appendChild(previewList);
-    if (chapters.length > 3) {
-      details.appendChild(remainingList);
-      nav.appendChild(details);
-    }
-    // Chapters come before the full-episode player: jumping to a moment is what most visitors want.
-    if (player) player.insertAdjacentElement('beforebegin', nav);
-    else headings[0].parentNode.insertBefore(nav, headings[0]);
   }
 
   // Quotes are listed together without JavaScript; with it, each moves under its chapter.
@@ -155,10 +132,8 @@
     Array.prototype.slice.call(allQuestions.children).map(function (item) {
       return { item: item, order: (Number(item.getAttribute('data-part')) || 1) * 1e6 + (parseTime(item.getAttribute('data-time')) || 0) };
     }).sort(function (a, b) { return a.order - b.order; }).forEach(function (entry) { allQuestions.appendChild(entry.item); });
-    Array.prototype.forEach.call(allQuestions.children, function (item) {
-      var text = item.querySelector('a').textContent;
-      var listen = playLink({ clip: item.getAttribute('data-clip'), part: (Number(item.getAttribute('data-part')) || 1) - 1 }, '▶', text + ' の答えを聴く', 'all_questions');
-      if (listen) item.insertBefore(listen, item.firstChild);
+    allQuestions.addEventListener('click', function (event) {
+      if (event.target.closest('a')) track('episode_play', { episode: episodeSlug, kind: 'all_questions' });
     });
   }
 
@@ -196,7 +171,7 @@
       banner.appendChild(jump);
       requestedChapter.heading.classList.add('is-requested');
     }
-    (article.querySelector('.episode-toc') || player).insertAdjacentElement('beforebegin', banner);
+    player.insertAdjacentElement('beforebegin', banner);
   }
 
   var copyButton = document.querySelector('[data-copy-url]');

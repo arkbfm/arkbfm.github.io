@@ -493,24 +493,31 @@ body { background-color: var(--c-tint); color: var(--c-ink); }
 // Every question the episode answers, with a play button each.
 .markdown .ep-all-questions {
   ol { list-style: none; margin: 0; padding: 0; }
-  li { align-items: baseline; border-bottom: 1px solid var(--c-line); display: flex; gap: 10px; padding: 8px 0; }
-  time { color: var(--c-muted); flex: none; font-size: .8rem; font-variant-numeric: tabular-nums; }
-  a { color: var(--c-ink); }
-  a.ep-play {
-    align-self: center;
-    display: grid;
-    place-items: center;
-    text-decoration: none;
-    background: var(--c-teal);
-    border: 0;
-    border-radius: 50%;
+  li { border-bottom: 1px solid var(--c-line); }
+  // The whole row opens the answer in the listening feed.
+  a {
+    align-items: baseline;
     color: var(--c-ink);
-    cursor: pointer;
-    flex: none;
-    font-size: .7rem;
-    height: 26px;
-    width: 26px;
+    display: flex;
+    gap: 10px;
+    padding: 8px 0;
+    text-decoration: none;
+    &::before {
+      align-self: center;
+      background: var(--c-teal);
+      border-radius: 50%;
+      content: '▶';
+      display: grid;
+      flex: none;
+      font-size: .7rem;
+      height: 26px;
+      place-items: center;
+      width: 26px;
+    }
+    &:hover, &:focus { color: var(--c-accent); }
+    &:hover::before, &:focus::before { background: var(--c-accent); color: #fff; }
   }
+  time { color: var(--c-muted); flex: none; font-size: .8rem; font-variant-numeric: tabular-nums; }
 }
 
 .ep-quote-draft { background: var(--c-coral); border-radius: 4px; color: var(--c-ink); font-weight: bold; padding: 0 6px; }
