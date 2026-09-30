@@ -7,7 +7,7 @@
   <meta name="theme-color" content="#29bd9d">
   <meta name="description" content="{% if page.description %}{{ page.description }}{% else %}{{ site.description }}{% endif %}">
   {% comment %}Episode and question pages share the episode's image; question pages (clip) carry the question as their title.{% endcomment %}
-  {% if page.layout == 'article' %}{% capture share_image %}{{ site.url }}/images/og/{{ page.slug }}.jpg{% endcapture %}{% elsif page.layout == 'clip' %}{% capture share_image %}{{ site.url }}/images/og/{{ page.episode }}.jpg{% endcapture %}{% else %}{% capture share_image %}{{ site.url }}/images/artwork.png{% endcapture %}{% endif %}
+  {% if page.layout == 'article' %}{% capture share_image %}{{ site.url }}/images/og/{{ page.slug }}.jpg{% endcapture %}{% elsif page.layout == 'clip' and page.image %}{% capture share_image %}{{ site.url }}{{ page.image }}{% endcapture %}{% elsif page.layout == 'clip' %}{% capture share_image %}{{ site.url }}/images/og/{{ page.episode }}.jpg{% endcapture %}{% else %}{% capture share_image %}{{ site.url }}/images/artwork.png{% endcapture %}{% endif %}
   <meta name="twitter:card" content="{% if page.layout == 'article' or page.layout == 'clip' %}summary_large_image{% else %}summary{% endif %}">
   <meta name="twitter:image" content="{{ share_image }}">
   <meta name="twitter:description" content="{% if page.description %}{{ page.description }}{% else %}{{ site.description }}{% endif %}">

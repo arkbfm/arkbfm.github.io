@@ -1,0 +1,19 @@
+---
+layout: null
+permalink: /listen/headlines.json
+sitemap: false
+---
+{%- comment -%}The headline questions only (id, question, episode), small enough for the home page's "今日の3問".{%- endcomment -%}
+[
+{%- assign first_item = true -%}
+{%- for post in site.posts -%}
+{%- assign ep = site.data.episode_index | where: "slug", post.slug | first -%}
+{%- for question in post.questions -%}
+{%- if question.time and question.end -%}
+{%- unless first_item %},{% endunless -%}
+{%- assign first_item = false -%}
+[{{ post.slug | append: "." | append: forloop.index | jsonify }},{{ question.text | jsonify }},{{ ep.number | default: post.slug | jsonify }},{{ ep.subtitle | default: post.title | jsonify }}]
+{%- endif -%}
+{%- endfor -%}
+{%- endfor -%}
+]

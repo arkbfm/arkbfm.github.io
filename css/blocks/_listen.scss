@@ -19,6 +19,60 @@
 .theme-tile-lead { color: var(--c-muted); font-size: .85rem; line-height: 1.5; }
 .theme-tile-meta { color: var(--c-accent); font-size: .8rem; font-weight: bold; margin-top: auto; }
 @media (prefers-reduced-motion: reduce) { .theme-tile { transition: none; } }
+// Home hero: "つづきから" for a returning listener and the three questions of the day.
+.home-today { margin-top: 16px; }
+.home-today[hidden] { display: none; }
+.home-resume {
+  background: var(--c-ink);
+  border-radius: 999px;
+  color: #fff;
+  display: inline-block;
+  font-weight: bold;
+  margin-bottom: 12px;
+  padding: 8px 18px;
+  &:hover, &:focus { color: var(--c-cream); }
+}
+.home-today-label { color: var(--c-accent); font-size: .85rem; font-weight: bold; margin: 0 0 6px; }
+.home-today-list {
+  counter-reset: today;
+  display: grid;
+  gap: 8px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  li { counter-increment: today; }
+  a {
+    align-items: center;
+    background: #fff;
+    border: 2px solid var(--c-ink);
+    border-radius: 14px;
+    color: var(--c-ink);
+    display: grid;
+    gap: 0 10px;
+    grid-template-columns: auto 1fr;
+    padding: 8px 12px;
+    transition: transform .12s ease;
+    &::before {
+      background: var(--c-teal);
+      border-radius: 50%;
+      content: counter(today);
+      font-family: var(--font-display);
+      grid-row: 1 / span 2;
+      height: 28px;
+      line-height: 28px;
+      text-align: center;
+      width: 28px;
+    }
+    &:hover, &:focus { color: var(--c-ink); transform: translateY(-2px); }
+  }
+  strong { font-size: .95rem; line-height: 1.4; }
+  span { color: var(--c-muted); font-size: .75rem; }
+}
+@media (min-width: 900px) {
+  .home-today-list { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (prefers-reduced-motion: reduce) { .home-today-list a { transition: none; } }
+
 // Theme shortcuts in the home hero: wrap on wide screens, one swipeable row on phones.
 .home-hero .discovery-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; width: 100%; }
 .home-hero .discovery-chips a { flex: none; white-space: nowrap; }
@@ -206,13 +260,53 @@
   margin: auto 0 0;
 }
 .listen-question {
-  font-size: clamp(1.6rem, 7vw, 2.3rem);
+  font-size: clamp(1.4rem, 6vw, 2rem);
   font-weight: bold;
   line-height: 1.35;
   margin: 0;
   overflow-wrap: anywhere;
 }
 .listen-meta { font-size: .8rem; font-weight: bold; margin: 0; opacity: .75; }
+
+// Live captions: the line being said, next to the face of whoever says it.
+.listen-captions {
+  align-items: flex-start;
+  background: rgba(255, 255, 255, .92);
+  border-radius: 16px;
+  color: var(--c-ink);
+  display: flex;
+  gap: 10px;
+  margin-top: 6px;
+  min-height: 5.2em;
+  padding: 10px 12px;
+}
+.listen-captions[hidden] { display: none; }
+.listen-speaker-face { border: 3px solid var(--c-teal); border-radius: 50%; flex: none; height: 44px; object-fit: cover; width: 44px; }
+.listen-speaker-face[hidden] { display: none; }
+.listen-said { min-width: 0; }
+.listen-speaker-name { color: var(--c-accent); display: block; font-size: .72rem; font-weight: bold; }
+.listen-line {
+  display: -webkit-box;
+  font-size: 1.05rem;
+  font-weight: bold;
+  line-height: 1.5;
+  margin: 2px 0 0;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+.listen-line.is-new { animation: listen-line-in .35s ease-out; }
+@keyframes listen-line-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+// Whoever is talking stands out among the header faces.
+.listen-faces img { transition: transform .2s ease, box-shadow .2s ease; }
+.listen-faces img.is-speaking { box-shadow: 0 0 0 3px var(--c-cream); transform: scale(1.18); z-index: 1; }
+
+// Start screen hook: the first question and the opening words of its answer.
+.listen-hook-kicker { color: var(--c-teal); font-size: .85rem; font-weight: bold; }
+.listen .listen-start .listen-hook-question { font-size: clamp(1.4rem, 6vw, 1.9rem); font-weight: bold; line-height: 1.4; margin: 0; max-width: 20em; opacity: 1; }
+.listen .listen-start .listen-hook-episode { font-size: .8rem; opacity: .75; }
+.listen .listen-start .listen-hook-teaser { background: rgba(255, 255, 255, .1); border-radius: 12px; font-size: .95rem; max-width: 24em; opacity: 1; padding: 10px 14px; }
 // Bottom row: time left on the left, clear of the cream splat; the Spotify link just above the splat.
 .listen-foot { align-items: center; display: flex; gap: 12px; margin-top: auto; padding-right: 64px; }
 .listen-remaining { font-family: var(--font-display); font-size: 1rem; }
@@ -355,7 +449,8 @@
 
 .listen-start {
   align-items: center;
-  background: rgba(12, 46, 39, .82);
+  // Nearly opaque: the hook must read cleanly over the card behind it.
+  background: rgba(12, 46, 39, .97);
   display: flex;
   flex-direction: column;
   gap: 14px;
@@ -390,6 +485,7 @@
 @keyframes listen-pulse { 50% { transform: scale(1.05); } }
 
 @media (prefers-reduced-motion: reduce) {
+  .listen-faces img { transition: none; }
   .listen-progress span { transition: none; }
   .listen-next, .listen-start button { animation: none; }
 }

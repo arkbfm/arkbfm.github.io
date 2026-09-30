@@ -17,9 +17,8 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from build_question_related import (  # noqa: E402
-    JUDGE_ENV, JUDGE_KEY, JUDGE_MODEL, ROOT, ask_judge, chapter_of, load_episodes, load_simple_env,
-)
+import build_question_related as related  # noqa: E402
+from build_question_related import ROOT, ask_judge, chapter_of, load_episodes, load_simple_env  # noqa: E402
 
 OUTPUT = ROOT / "_data" / "themes.json"
 CACHE = ROOT / "transcripts" / "work" / "themes_llm.json"
@@ -45,19 +44,30 @@ def seconds(value: str) -> int:
 
 
 def cached_ask(cache: dict, system: str, prompt: str, required: str) -> dict:
-    key = hashlib.sha1((JUDGE_MODEL + system + prompt).encode("utf-8")).hexdigest()
+    key = hashlib.sha1((related.JUDGE_MODEL + system + prompt).encode("utf-8")).hexdigest()
     if key not in cache:
-        load_simple_env(JUDGE_ENV)
-        if JUDGE_KEY not in os.environ:
-            raise SystemExit(f"{JUDGE_KEY} is not set (looked in {JUDGE_ENV})")
+        for provider in related.PROVIDERS.values():
+            load_simple_env(provider["env"])
+        if related.JUDGE_KEY not in os.environ:
+            raise SystemExit(f"{related.JUDGE_KEY} is not set")
         cache[key] = ask_judge(prompt, system=system, required=required, kind=list)
         CACHE.write_text(json.dumps(cache, ensure_ascii=False), encoding="utf-8")
     return cache[key]
 
 
 def main() -> None:
-    argparse.ArgumentParser().parse_args()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--keep-themes", action="store_true",
+                        help="reuse the themes in _data/themes.json (ids and names) and only reassign clips, e.g. after "
+                             "review_questions.py changed wording; a new taxonomy would change what shared theme links mean")
+    parser.add_argument("--provider", choices=sorted(related.PROVIDERS), default="opencode")
+    parser.add_argument("--key-env")
+    parser.add_argument("--model")
+    args = parser.parse_args()
     sys.stdout.reconfigure(encoding="utf-8")
+    related.select_provider(args.provider, args.key_env)
+    if args.model:
+        related.JUDGE_MODEL = args.model
     cache = json.loads(CACHE.read_text(encoding="utf-8")) if CACHE.exists() else {}
 
     clips = []
@@ -70,12 +80,18 @@ def main() -> None:
                           "chapter": chapter["title"] if chapter else "", "headline": question["id"].split(".")[-1].isdigit(),
                           "minutes": (seconds(question["end"]) - question["s"]) / 60})
 
-    # Stage 1: themes from all headline questions and a fixed sample of chapter questions.
-    sample = [clip["text"] for clip in clips if clip["headline"]]
-    extras = [clip["text"] for clip in clips if not clip["headline"]]
-    sample += random.Random(0).sample(extras, min(SAMPLE_EXTRAS, len(extras)))
-    themes = cached_ask(cache, TAXONOMY_SYSTEM, "\n".join(f"- {text}" for text in sample), "themes")["themes"]
-    print(f"{len(themes)} themes proposed from {len(sample)} questions", file=sys.stderr)
+    if args.keep_themes:
+        themes = sorted(json.loads(OUTPUT.read_text(encoding="utf-8")), key=lambda theme: int(theme["id"][1:]))
+        print(f"keeping {len(themes)} themes from {OUTPUT.name}", file=sys.stderr)
+    else:
+        # Stage 1: themes from all headline questions and a fixed sample of chapter questions.
+        sample = [clip["text"] for clip in clips if clip["headline"]]
+        extras = [clip["text"] for clip in clips if not clip["headline"]]
+        sample += random.Random(0).sample(extras, min(SAMPLE_EXTRAS, len(extras)))
+        themes = cached_ask(cache, TAXONOMY_SYSTEM, "\n".join(f"- {text}" for text in sample), "themes")["themes"]
+        for number, theme in enumerate(themes, 1):
+            theme["id"] = f"t{number}"
+        print(f"{len(themes)} themes proposed from {len(sample)} questions", file=sys.stderr)
 
     # Stage 2: every clip into one theme, a batch at a time.
     listing = "\n".join(f"{number}. {theme['emoji']} {theme['label']}: {theme['lead']}" for number, theme in enumerate(themes, 1))
@@ -98,13 +114,13 @@ def main() -> None:
         print(f"  assigned {min(offset + BATCH, len(clips))}/{len(clips)}", file=sys.stderr, flush=True)
 
     output = []
-    for number, (theme, group) in enumerate(zip(themes, members), 1):
+    for theme, group in zip(themes, members):
         if not group:
             continue
         # Headline questions first: they are the hand-picked way into a theme.
         group.sort(key=lambda clip: not clip["headline"])
         output.append({
-            "id": f"t{number}",
+            "id": theme["id"],
             "label": theme["label"],
             "lead": theme["lead"],
             "emoji": theme.get("emoji", ""),

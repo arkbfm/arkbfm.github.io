@@ -43,10 +43,105 @@
 
   var episodeSlug = decodeURIComponent(window.location.pathname.split('/').pop());
 
+  // "Now playing" above the player: Spotify's embed only shows the episode, so this shows which question's
+  // answer is playing, how far into it, and captions with the speaker's face (listen/captions/<slug>.json).
+  var captionBase = player ? player.getAttribute('data-captions') : null;
+  var captionFile = null;
+  var nowPanel = null;
+  var nowPlaying = null;
+
+  function loadCaptions() {
+    if (!captionFile) {
+      captionFile = captionBase ? fetch(captionBase + encodeURIComponent(episodeSlug) + '.json')
+        .then(function (response) { return response.ok ? response.json() : null; })
+        .catch(function () { return null; }) : Promise.resolve(null);
+    }
+    return captionFile;
+  }
+
+  function nowElement(tag, className) {
+    var node = document.createElement(tag);
+    node.className = className;
+    return node;
+  }
+
+  // info: { text, start, end (or null), part, waiting (true until playback starts) }
+  function showNow(info) {
+    if (!player) return;
+    if (!nowPanel) {
+      nowPanel = nowElement('div', 'ep-now');
+      nowPanel.setAttribute('aria-live', 'polite');
+      nowPanel.appendChild(nowElement('p', 'ep-now-label'));
+      nowPanel.appendChild(nowElement('p', 'ep-now-text'));
+      var bar = nowElement('div', 'ep-now-progress');
+      bar.appendChild(nowElement('span', ''));
+      nowPanel.appendChild(bar);
+      var said = nowElement('div', 'ep-now-caption');
+      said.appendChild(nowElement('img', 'ep-now-face'));
+      var words = nowElement('div', 'ep-now-words');
+      words.appendChild(nowElement('span', 'ep-now-speaker'));
+      words.appendChild(nowElement('p', 'ep-now-line'));
+      said.appendChild(words);
+      nowPanel.appendChild(said);
+      player.insertAdjacentElement('afterbegin', nowPanel);
+    }
+    nowPlaying = info;
+    info.shown = null;
+    var range = partLabel(info.part) + formatTime(info.start) + (info.end ? '〜' + formatTime(info.end) : '〜');
+    nowPanel.querySelector('.ep-now-label').textContent = (info.waiting ? '▶ を押すと、この答えから再生 · ' : '再生中 · ') + range;
+    nowPanel.querySelector('.ep-now-text').textContent = info.text || '';
+    nowPanel.querySelector('.ep-now-progress span').style.transform = 'scaleX(0)';
+    nowPanel.querySelector('.ep-now-caption').hidden = true;
+    nowPanel.hidden = false;
+    loadCaptions().then(function (file) {
+      if (!file || nowPlaying !== info) return;
+      info.speakers = file.speakers;
+      info.lines = file.lines.filter(function (line) {
+        return line[0] === info.part && line[1] >= info.start - 5 && (!info.end || line[1] < info.end);
+      });
+      followNow(info.part, info.start);
+    });
+  }
+
+  function followNow(part, at) {
+    var info = nowPlaying;
+    if (!info || !nowPanel || info.part !== part) return;
+    if (info.end) {
+      nowPanel.querySelector('.ep-now-progress span').style.transform =
+        'scaleX(' + Math.min(1, Math.max(0, (at - info.start) / (info.end - info.start))) + ')';
+    }
+    if (!info.lines || !info.lines.length) return;
+    var index = 0;
+    for (var i = 0; i < info.lines.length && info.lines[i][1] <= at; i += 1) index = i;
+    if (index === info.shown) return;
+    info.shown = index;
+    var line = info.lines[index];
+    var speaker = (info.speakers || {})[line[2]];
+    var caption = nowPanel.querySelector('.ep-now-caption');
+    var face = caption.querySelector('.ep-now-face');
+    face.hidden = !(speaker && speaker[1]);
+    if (speaker && speaker[1]) face.src = speaker[1];
+    face.alt = '';
+    caption.querySelector('.ep-now-speaker').textContent = speaker ? speaker[0] : '';
+    var text = caption.querySelector('.ep-now-line');
+    // Before playback the first line is a teaser for what the answer opens with.
+    text.textContent = info.waiting ? '「' + line[3] + '…」' : line[3];
+    caption.hidden = false;
+  }
+
   function playFrom(seconds, part, clip) {
     var target = parts[part];
     if (!target || !target.controller) return;
     track('episode_play', { episode: episodeSlug, kind: clip ? (clip.index ? 'question' : 'topic') : 'chapter', question: clip && clip.index || 0 });
+    var chapter = chapterAt(seconds, part);
+    var following = chapter ? chapters[chapters.indexOf(chapter) + 1] : null;
+    showNow({
+      text: clip && clip.text || (chapter ? chapter.title : ''),
+      start: seconds,
+      end: clip && clip.end || (following && following.part === part ? following.seconds : null),
+      part: part,
+      waiting: false
+    });
     parts.forEach(function (other) {
       if (other !== target && other.controller) other.controller.pause();
     });
@@ -272,7 +367,7 @@
     var seconds = parseTime(item.getAttribute('data-time'));
     var part = (Number(item.getAttribute('data-part')) || 1) - 1;
     var text = item.querySelector('a').textContent;
-    var button = seconds !== null && playButton(seconds, part, '▶', text + ' の答えを聴く', { end: parseTime(item.getAttribute('data-end')), related: [] });
+    var button = seconds !== null && playButton(seconds, part, '▶', text + ' の答えを聴く', { end: parseTime(item.getAttribute('data-end')), related: [], text: text });
     if (button) item.insertBefore(button, item.firstChild);
   });
 
@@ -295,11 +390,11 @@
       label.textContent = 'Q この問いの答えから ' + where;
       strong.textContent = requestedQuestion.text;
       requestedQuestion.item.classList.add('is-requested');
-      bannerClip = { end: requestedEnd !== null ? requestedEnd : requestedQuestion.end, related: requestedQuestion.related, index: requestedQuestion.index };
+      bannerClip = { end: requestedEnd !== null ? requestedEnd : requestedQuestion.end, related: requestedQuestion.related, index: requestedQuestion.index, text: requestedQuestion.text };
     } else if (requestedEnd !== null) {
       label.textContent = '関連する話題から ' + partLabel(requestedPart) + formatTime(requested) + '〜' + formatTime(requestedEnd);
       strong.textContent = requestedChapter ? requestedChapter.title : 'この場面';
-      bannerClip = { end: requestedEnd, related: [] };
+      bannerClip = { end: requestedEnd, related: [], text: requestedChapter ? requestedChapter.title : '' };
     } else {
       label.textContent = '🎲 ランダムに選んだ場面';
       strong.textContent = formatTime(requestedChapter.seconds) + ' ' + requestedChapter.title;
@@ -317,6 +412,14 @@
       requestedChapter.heading.classList.add('is-requested');
     }
     player.insertAdjacentElement('beforebegin', banner);
+    // Show what will play, with the answer's opening words, before the listener presses play.
+    showNow({
+      text: bannerClip ? bannerClip.text : (requestedChapter ? requestedChapter.title : ''),
+      start: requested,
+      end: bannerClip ? bannerClip.end : null,
+      part: requestedPart,
+      waiting: true
+    });
   }
 
   var copyButton = document.querySelector('[data-copy-url]');
@@ -344,7 +447,10 @@
         height: 204
       }, function (embedController) {
         part.controller = embedController;
-        embedController.addListener('playback_update', function (event) { watchClip(index, event.data); });
+        embedController.addListener('playback_update', function (event) {
+          watchClip(index, event.data);
+          if (event.data && !event.data.isPaused) followNow(index, event.data.position / 1000);
+        });
         embedController.addListener('ready', function () {
           part.api.classList.add('is-ready');
           if (part.fallback) part.fallback.remove();

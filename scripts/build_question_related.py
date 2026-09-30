@@ -74,6 +74,8 @@ JUDGE_KEY = PROVIDERS["opencode"]["key"]
 JUDGE_ENV = PROVIDERS["opencode"]["env"]
 JUDGE_SESSION = str(uuid.uuid4())
 JUDGE_CACHE = ROOT / "transcripts" / "work" / "question_related_judged.json"
+# Question id -> the wording its related spots were judged for (see --only-new).
+KNOWN = ROOT / "transcripts" / "work" / "question_related_known.json"
 # OpenAI's complimentary tokens reset daily (UTC); stay under them with room for one request in flight.
 OPENAI_DAILY_TOKENS = 2_400_000
 OPENAI_LEDGER = ROOT / "transcripts" / "work" / "openai-daily-usage.json"
@@ -337,7 +339,8 @@ def ask_judge(prompt: str, system: str = JUDGE_SYSTEM, required: str = "picks", 
         except urllib.error.HTTPError as error:
             detail = error.read().decode("utf-8", errors="replace")[:300]
             # 402, or a 429 about quota, means the allowance is spent; a plain 429 is a per-minute rate limit.
-            if error.code == 402 or (error.code == 429 and "quota" in detail):
+            # 403 means this account may not use the model (access disabled, subscription lapsed): retrying never helps.
+            if error.code in (402, 403) or (error.code == 429 and "quota" in detail):
                 raise UsageLimitError(f"HTTP {error.code}: {detail[:120]}") from error
             print(f"  retry {attempt + 1}: HTTP {error.code} {detail[:100]}", file=sys.stderr)
         except (urllib.error.URLError, TimeoutError, ValueError, KeyError) as error:
@@ -359,6 +362,10 @@ def main() -> None:
     parser.add_argument("--workers", type=int, default=4)
     parser.add_argument("--provider", choices=sorted(PROVIDERS), default="opencode")
     parser.add_argument("--key-env", help="environment variable with the API key, for a second account (e.g. OPENAI_API_KEY2)")
+    parser.add_argument("--only-new", action="store_true",
+                        help="judge only questions not judged before (new, or reworded); the rest keep their published "
+                             "related spots. Without it, any change to the chapters (a new transcript) re-judges every "
+                             "question whose candidates moved, which takes thousands of calls and reshuffles spots")
     args = parser.parse_args()
     sys.stdout.reconfigure(encoding="utf-8")
     select_provider(args.provider, args.key_env)
@@ -417,8 +424,13 @@ def main() -> None:
         return hashlib.sha1((JUDGE_MODEL + JUDGE_SYSTEM + compact).encode("utf-8")).hexdigest(), compact
 
     judged = json.loads(JUDGE_CACHE.read_text(encoding="utf-8")) if JUDGE_CACHE.exists() else {}
-    prompts = [prompt_for(row) for row in range(len(asked))]
-    work = [(key, prompt) for key, prompt in prompts if key not in judged]
+    known = json.loads(KNOWN.read_text(encoding="utf-8")) if KNOWN.exists() else {}
+    previous_clip = json.loads(CLIP_OUTPUT.read_text(encoding="utf-8")) if CLIP_OUTPUT.exists() else {}
+    previous_related = json.loads(OUTPUT.read_text(encoding="utf-8")) if OUTPUT.exists() else {}
+    # Rows kept as published: judged before with the same wording (only with --only-new).
+    kept = {row for row, (_, _, question) in enumerate(asked) if args.only_new and known.get(question["id"]) == question["text"]}
+    prompts = [prompt_for(row) if row not in kept else (None, None) for row in range(len(asked))]
+    work = [(key, prompt) for key, prompt in prompts if key and key not in judged]
     if args.limit is not None:
         work = work[:args.limit]
     if work:
@@ -457,6 +469,13 @@ def main() -> None:
     related = {}
     clip_related = {}
     for row, ((episode, index, question), source) in enumerate(zip(asked, sources)):
+        if row in kept:
+            if index is not None:
+                lists = previous_related.get(episode["slug"], [])
+                related.setdefault(episode["slug"], [[] for _ in episode["questions"]])[index] = lists[index] if index < len(lists) else []
+            if question["id"] in previous_clip:
+                clip_related[question["id"]] = previous_clip[question["id"]]
+            continue
         spots, compact = [], []
         verdict = judged.get(prompts[row][0], {"picks": []})
         for pick in verdict["picks"][:SPOTS_PER_QUESTION]:
@@ -493,6 +512,10 @@ def main() -> None:
     related = {slug: questions for slug, questions in related.items() if any(questions)}
     OUTPUT.write_text(json.dumps(related, ensure_ascii=False, indent=1) + "\n", encoding="utf-8", newline="\n")
     CLIP_OUTPUT.write_text(json.dumps(clip_related, ensure_ascii=False, separators=(",", ":")) + "\n", encoding="utf-8", newline="\n")
+    # Every question now has spots from a verdict for its current wording (a judged one or a kept one).
+    judged_rows = {row for row in range(len(asked)) if row in kept or (prompts[row][0] in judged)}
+    known.update({asked[row][2]["id"]: asked[row][2]["text"] for row in judged_rows})
+    KNOWN.write_text(json.dumps(known, ensure_ascii=False, indent=1), encoding="utf-8")
     counts = [len(spots) for spots in clip_related.values()]
     print(f"{len(clip_related)} of {len(asked)} clips with related spots, {sum(counts)} spots")
 

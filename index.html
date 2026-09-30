@@ -17,6 +17,8 @@ layout: default
       <a class="home-random-button home-listen-button" href="{{ '/listen/' | relative_url }}">▶ つまみ聴き</a>
       <span>「問い」への答えだけを、次々に。答えが終わると、同じテーマを話す別の回へつながります。</span>
     </div>
+    {% comment %}Filled by js/home-today.js: "つづきから" for returning listeners and three questions of the day.{% endcomment %}
+    <div class="home-today" data-home-today data-listen="{{ '/listen/' | relative_url }}" data-headlines="{{ '/listen/headlines.json' | relative_url }}" hidden></div>
     {% comment %}Theme shortcuts: one click starts the feed on a theme; the full map is further down.{% endcomment %}
     <div class="discovery-chips" aria-label="テーマから聴く">
       {% for theme in site.data.themes limit:8 %}
@@ -124,3 +126,4 @@ layout: default
     </div>
   </section>
 </div>
+<script src="{{ '/js/home-today.js' | relative_url }}" defer></script>

@@ -39,7 +39,7 @@
               {% assign question_related = site.data.question_related[page.slug] %}
               {% if question_related %}<script type="application/json" id="question-related" data-episode-base="{{ '/episode/' | prepend:site.github.url }}">{{ question_related | jsonify }}</script>{% endif %}
             {% endif %}
-            <div class="episode-player" id="episode-player">
+            <div class="episode-player" id="episode-player" data-captions="{{ '/listen/captions/' | relative_url }}">
               {% assign audio_urls = page.audio_url | split: "," %}
               {% comment %}Each audio part keeps a plain embed until the Spotify API replaces it with a player the page can seek.{% endcomment %}
               {% for audio_id in audio_urls %}
