@@ -5,16 +5,21 @@ chapter questions in _data/chapter_questions.json that are not hidden), so the t
 published whole and nothing from a hidden question's span leaks unless another public answer covers it.
 
 Transcript segments run about 30 seconds, too long to read along, so each is cut into short lines at
-sentence ends (and at commas when still long), and the segment's time is shared out by line length.
+sentence ends, and long sentences at BudouX phrase boundaries (as podclip's burned-in subtitles do);
+the segment's time is shared out by line length. Inside a line the phrases are joined with a zero-width
+space, so the page (word-break: keep-all) wraps only between phrases, never mid-word; the files store it as "|"
+(one byte instead of three).
 Speakers come from the transcript's confirmed speaker_identities, shown with the performer's face.
 
-    python scripts/build_captions.py
+    python scripts/build_captions.py        # needs: pip install budoux
 """
 
 import json
 import re
 import sys
 from pathlib import Path
+
+import budoux
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from build_site_data import load_actors  # noqa: E402
@@ -23,30 +28,63 @@ from locate_questions import POSTS, ROOT, read_questions, split_front  # noqa: E
 OUTPUT = ROOT / "listen" / "captions"
 TRANSCRIPTS = ROOT / "transcripts"
 CHAPTER_QUESTIONS = ROOT / "_data" / "chapter_questions.json"
-# A caption line longer than this is split again at a comma or, failing that, by length.
-LINE_CHARS = 34
+# A caption line holds at most this many characters (two lines on a phone), as in podclip.
+LINE_CHARS = 26
+# A leftover this short joins the line before it, unless that makes the line far too long.
+TAIL_CHARS = 4
 # Answers can start a few seconds before the question's time; keep a little lead-in.
 MARGIN_SECONDS = 5
+# Past this many characters, a line closes after a phrase that ends a clause (the transcripts have
+# few punctuation marks, so this is what keeps "…人も / いるかもしれない" from being cut mid-clause).
+CLAUSE_CHARS = 13
+CLAUSE_END = re.compile(r"(ね|よね|よ|な|けど|けれど|ので|から|って|です|ます|した|たら|ても|でしょう|じゃん)$")
+# Marks where the page may wrap a line: between BudouX phrases (the page turns it into a zero-width space).
+BREAK = "|"
+PARSER = budoux.load_default_japanese_parser()
 
 
 def seconds(value: str) -> int:
     return sum(int(part) * unit for part, unit in zip(value.split(":"), (3600, 60, 1)))
 
 
+def phrases(text: str) -> list[str]:
+    """BudouX phrases, minus the boundaries that would strand a bracket, a punctuation mark, or an
+    English word after Japanese (the same rules as podclip's budoux_phrases)."""
+    safe = []
+    for phrase in PARSER.parse(text):
+        if safe and (
+            safe[-1][-1] in "『「（(【" or phrase[0] in "』」）)】、。，,.!?！？ー〜"
+            or (re.search(r"[ぁ-んァ-ヶ一-龠]$", safe[-1]) and re.match(r"[A-Za-z]", phrase))
+        ):
+            safe[-1] += phrase
+        else:
+            safe.append(phrase)
+    return safe
+
+
 def split_lines(text: str) -> list[str]:
-    """Short readable lines: sentence ends first, then commas, then plain length."""
-    text = re.sub(r"\s+", " ", text).strip()
+    """Short readable lines: sentence ends first, then BudouX phrases packed up to LINE_CHARS, closing
+    early after a clause ending. Each line keeps BREAK between its phrases."""
+    text = re.sub(r"\s+", " ", text.replace(BREAK, "｜")).strip()
     lines = []
     for sentence in re.findall(r"[^。！？!?]+[。！？!?]*", text):
-        sentence = sentence.strip()
-        while len(sentence) > LINE_CHARS:
-            cut = max(sentence.rfind("、", 0, LINE_CHARS), sentence.rfind(" ", 0, LINE_CHARS))
-            cut = cut + 1 if cut >= LINE_CHARS // 2 else LINE_CHARS
-            lines.append(sentence[:cut].strip())
-            sentence = sentence[cut:].strip()
-        if sentence:
-            lines.append(sentence)
-    return lines
+        chunks, current = [], []
+        for phrase in phrases(sentence.strip()):
+            if current and len("".join(current) + phrase) > LINE_CHARS:
+                chunks.append(current)
+                current = [phrase]
+            else:
+                current.append(phrase)
+            if len("".join(current)) > CLAUSE_CHARS and CLAUSE_END.search(phrase):
+                chunks.append(current)
+                current = []
+        if current:
+            if chunks and len("".join(current)) <= TAIL_CHARS and len("".join(chunks[-1] + current)) <= LINE_CHARS + TAIL_CHARS:
+                chunks[-1] += current
+            else:
+                chunks.append(current)
+        lines += [BREAK.join(part.strip() for part in chunk if part.strip()) for chunk in chunks]
+    return [line for line in lines if line]
 
 
 def spans_of(front: str, chapter_questions: list[dict]) -> list[tuple[int, int, int]]:
@@ -106,13 +144,13 @@ def main() -> None:
                                                 identity.get("role") == "host"]
                 speaker = keys[actor_id]
             pieces = split_lines(segment.get("text", ""))
-            length = sum(len(piece) for piece in pieces) or 1
+            length = sum(len(piece.replace(BREAK, "")) for piece in pieces) or 1
             at = start
             for piece in pieces:
                 # Keep only lines inside an answer span; a segment can straddle a span's edge.
                 if any(p == part and low - MARGIN_SECONDS <= at < high for p, low, high in spans):
                     lines.append([part, round(at, 1), speaker, piece])
-                at += (end - start) * len(piece) / length
+                at += (end - start) * len(piece.replace(BREAK, "")) / length
         if not lines:
             continue
         out = OUTPUT / f"{slug}.json"
