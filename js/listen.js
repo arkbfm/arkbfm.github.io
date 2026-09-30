@@ -157,6 +157,7 @@
       var image = element('img');
       image.src = guest[1];
       image.alt = '';
+      image.setAttribute('data-face', guest[1]);
       faces.appendChild(image);
     });
     head.appendChild(faces);
@@ -165,6 +166,17 @@
     if (clip.reason) next.appendChild(element('p', 'listen-reason', '↪ つながり：' + clip.reason));
     next.appendChild(element('p', 'listen-kicker', clip.id ? 'Q' : '関連する話題'));
     next.appendChild(element('h2', 'listen-question', clip.text));
+    // Live captions with the speaker's face: filled in once the episode's captions arrive.
+    var captions = element('div', 'listen-captions');
+    captions.hidden = true;
+    var face = element('img', 'listen-speaker-face');
+    face.alt = '';
+    captions.appendChild(face);
+    var said = element('div', 'listen-said');
+    said.appendChild(element('span', 'listen-speaker-name'));
+    said.appendChild(element('p', 'listen-line'));
+    captions.appendChild(said);
+    next.appendChild(captions);
     var where = (episode.a.length > 1 ? 'パート' + (clip.part + 1) + ' ' : '') + clock(clip.start) + '〜 · 約' +
       Math.max(1, Math.round((clip.end - clip.start) / 60)) + '分' + (clip.chapter && clip.id ? ' · ' + clip.chapter : '');
     next.appendChild(element('p', 'listen-meta', where));
@@ -241,6 +253,81 @@
     statsElement.textContent = saved.count ? '今日 ' + saved.count + '本 · ' + Math.round(saved.seconds / 60) + '分' : '';
   }
 
+  // Captions: one file per episode (scripts/build_captions.py), fetched once and shared by its clips.
+  var captionBase = root.getAttribute('data-captions');
+  var captionFiles = {};
+
+  function captionsFor(slug) {
+    if (!captionFiles[slug]) {
+      captionFiles[slug] = fetch(captionBase + encodeURIComponent(slug) + '.json')
+        .then(function (response) { return response.ok ? response.json() : null; })
+        .catch(function () { return null; });
+    }
+    return captionFiles[slug];
+  }
+
+  // The clip's own lines (its audio part, from a little before its start to its end).
+  function attachCaptions(clip) {
+    return captionsFor(clip.slug).then(function (file) {
+      if (!file) return clip;
+      clip.speakers = file.speakers;
+      clip.lines = file.lines.filter(function (line) {
+        return line[0] === clip.part && line[1] >= clip.start - 5 && line[1] < clip.end;
+      });
+      return clip;
+    });
+  }
+
+  function showCaption(clip, at) {
+    if (clip !== current || !clip.lines || !clip.lines.length) return;
+    var index = -1;
+    for (var i = 0; i < clip.lines.length && clip.lines[i][1] <= at; i += 1) index = i;
+    if (index < 0) index = 0;
+    if (index === clip.shownLine) return;
+    clip.shownLine = index;
+    var line = clip.lines[index];
+    var speaker = (clip.speakers || {})[line[2]] || null;
+    var box = card.querySelector('.listen-captions');
+    if (!box) return;
+    box.hidden = false;
+    var face = box.querySelector('.listen-speaker-face');
+    face.hidden = !(speaker && speaker[1]);
+    if (speaker && speaker[1]) face.src = speaker[1];
+    box.querySelector('.listen-speaker-name').textContent = speaker ? speaker[0] : '';
+    var text = box.querySelector('.listen-line');
+    text.textContent = line[3];
+    if (!reduceMotion) {
+      text.classList.remove('is-new');
+      void text.offsetWidth; // restart the fade-in
+      text.classList.add('is-new');
+    }
+    // Light up whoever is talking among the faces in the card's header.
+    Array.prototype.forEach.call(card.querySelectorAll('[data-face]'), function (image) {
+      image.classList.toggle('is-speaking', !!speaker && image.getAttribute('data-face') === speaker[1]);
+    });
+  }
+
+  // "つづきから": remember the clip and position, so the next visit can pick up where this one stopped.
+  var RESUME_KEY = 'arkbfm-listen-resume';
+  var RESUME_DAYS = 14;
+  var savedAt = 0;
+
+  function saveResume(clip, at) {
+    if (!clip || !clip.id || Date.now() - savedAt < 5000) return;
+    savedAt = Date.now();
+    try {
+      localStorage.setItem(RESUME_KEY, JSON.stringify({ id: clip.id, at: Math.floor(at), theme: theme ? theme.id : '', t: Date.now() }));
+    } catch (error) { /* storage can be unavailable */ }
+  }
+
+  function readResume() {
+    try {
+      var saved = JSON.parse(localStorage.getItem(RESUME_KEY) || 'null');
+      if (saved && Date.now() - saved.t < RESUME_DAYS * 864e5) return saved;
+    } catch (error) { /* storage can be unavailable */ }
+    return null;
+  }
+
   // Keep the screen on while a clip plays: on phones the embedded player stops when the screen locks.
   function holdScreen(on) {
     if (!('wakeLock' in navigator)) return;
@@ -259,7 +346,10 @@
     var uri = 'spotify:episode:' + data.episodes[clip.slug].a[clip.part];
     clip.reached = false;
     // Loading with startAt keeps the position once playback starts; a seek before the first play is ignored.
-    controller.loadEntity(uri, false, clip.start);
+    // A resumed clip starts where the last visit stopped, once.
+    var from = clip.resumeAt && clip.resumeAt > clip.start && clip.resumeAt < clip.end - 10 ? clip.resumeAt : clip.start;
+    clip.resumeAt = null;
+    controller.loadEntity(uri, false, from);
     loadedUri = uri;
     if (started) controller.play();
   }
@@ -287,6 +377,8 @@
     nextPeek.hidden = true;
     render(clip, direction);
     load(clip);
+    clip.shownLine = null;
+    attachCaptions(clip).then(function () { showCaption(clip, clip.resumeAt || clip.start); });
     track('listen_clip_start', {
       clip_id: keyOf(clip), episode: clip.slug, via: how || clip.via || 'first', theme: theme ? theme.id : 'all', headline: clip.headline
     });
@@ -345,12 +437,18 @@
       else return;
     }
     lastAt = at;
+    showCaption(clip, at);
+    if (!paused) saveResume(clip, at);
     var bar = card.querySelector('.listen-progress span');
     if (bar) bar.style.transform = 'scaleX(' + Math.min(1, Math.max(0, (at - clip.start) / (clip.end - clip.start))) + ')';
     var remaining = card.querySelector('.listen-remaining');
     if (remaining) remaining.textContent = clock(clip.end - at);
     if (clip.end - at <= PEEK_SECONDS && !paused) {
-      if (upcoming === null) upcoming = chooseNext(clip) || false;
+      if (upcoming === null) {
+        upcoming = chooseNext(clip) || false;
+        // Fetch the next episode's captions now, so its first line shows the moment it starts.
+        if (upcoming) captionsFor(upcoming.slug);
+      }
       if (upcoming) peek(upcoming);
     }
     if (at >= clip.end) advance(true);
@@ -365,6 +463,25 @@
       if (loadedUri) controller.play();
       else load(current);
     }
+  }
+
+  // The start screen is a hook: the first question and the opening words of its answer, then one tap to hear it.
+  function showHook(clip, kicker) {
+    startScreen.querySelector('[data-listen-hook-kicker]').textContent = kicker;
+    startScreen.querySelector('[data-listen-hook-question]').textContent = clip.text;
+    var episode = data.episodes[clip.slug];
+    startScreen.querySelector('[data-listen-hook-episode]').textContent = 'Ep.' + episode.n + ' ' + episode.t;
+    var teaser = startScreen.querySelector('[data-listen-hook-teaser]');
+    teaser.hidden = true;
+    attachCaptions(clip).then(function () {
+      var from = clip.resumeAt || clip.start;
+      var line = (clip.lines || []).filter(function (item) { return item[1] >= from - 2; })[0];
+      if (!line) return;
+      var speaker = (clip.speakers || {})[line[2]];
+      teaser.textContent = '「' + line[3] + '…」' + (speaker ? '　— ' + speaker[0] : '');
+      teaser.hidden = false;
+    });
+    startScreen.hidden = false;
   }
 
   function firstOf(chosen) {
@@ -491,6 +608,16 @@
     var query = window.location.search;
     var wantedTheme = decodeURIComponent((query.match(/[?&]theme=([^&]+)/) || [])[1] || '');
     var wantedClip = decodeURIComponent((query.match(/[?&]c=([^&]+)/) || [])[1] || '');
+    var kicker = /[?&]from=today/.test(query) ? '今日の1問' : '';
+    // With no clip or theme asked for, pick up where the last visit stopped.
+    var resume = !wantedClip && !wantedTheme || /[?&]resume=1/.test(query) ? readResume() : null;
+    var first = clipsById[wantedClip] || null;
+    if (!first && resume && clipsById[resume.id]) {
+      first = clipsById[resume.id];
+      first.resumeAt = resume.at;
+      wantedTheme = wantedTheme || resume.theme;
+      kicker = 'つづきから';
+    }
     var chosen = data.themes.filter(function (item) { return item.id === wantedTheme; })[0] || null;
     theme = chosen;
     if (chosen) {
@@ -498,8 +625,9 @@
       chosen.clips.forEach(function (id) { themeIds[id] = true; });
       themeButton.textContent = chosen.emoji + ' ' + chosen.label;
     }
-    go(clipsById[wantedClip] || firstOf(chosen), 0);
-    startScreen.hidden = false;
+    first = first || firstOf(chosen);
+    go(first, 0);
+    showHook(first, kicker || (chosen ? chosen.emoji + ' ' + chosen.label : 'つまみ聴き'));
     if (apiReady) createPlayer();
   }).catch(function () {
     card.textContent = '読み込めませんでした。時間をおいて開き直してください。';

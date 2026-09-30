@@ -22,6 +22,7 @@ CLIPS = ROOT / "_clips"
 CHAPTER_QUESTIONS = ROOT / "_data" / "chapter_questions.json"
 CLIP_RELATED = ROOT / "_data" / "clip_related.json"
 EPISODE_INDEX = ROOT / "_data" / "episode_index.json"
+QUESTION_IMAGES = ROOT / "images" / "og" / "q"
 
 
 def quoted(value: str) -> str:
@@ -72,6 +73,9 @@ def page(clip_id: str, slug: str, question: dict, headline: bool, episode: dict,
     if headline:
         lines.append(f"headline: {clip_id.split('.')[-1]}")
     lines.append(f"title: {quoted('Q. ' + question['text'])}")
+    # Headline questions have a share image with the question on it (build_question_images.py).
+    if headline and (QUESTION_IMAGES / (page_name(clip_id) + ".jpg")).exists():
+        lines.append(f"image: {quoted('/images/og/q/' + page_name(clip_id) + '.jpg')}")
     lines.append(f"description: {quoted(f'あらB.fm {where}で話している、この問いへの答え（約{minutes}分）をつまみ聴きで。')}")
     if notes:
         lines.append("notes:")

@@ -190,7 +190,10 @@ def apply(clips: list[dict], cache: dict) -> None:
             if clip["headline"]:
                 fixed_headlines.setdefault(clip["slug"], {})[int(clip["id"].split(".")[-1])] = result["text"]
             else:
-                chapter_questions[clip["slug"]][int(clip["id"].split(".c")[-1]) - 1]["text"] = result["text"]
+                entry = chapter_questions[clip["slug"]][int(clip["id"].split(".c")[-1]) - 1]
+                # Keep the generated wording, so generate_chapter_questions.py can carry this fix over when it rebuilds.
+                entry.setdefault("source_text", entry["text"])
+                entry["text"] = result["text"]
             # The new text is already reviewed; record it so a rerun does not ask again.
             cache[text_key(clip["id"], result["text"])] = {"verdict": "ok", "text": "", "reason": "修正済み", "model": MODEL}
         elif result["verdict"] == "hide":

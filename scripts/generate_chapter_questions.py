@@ -102,12 +102,18 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--limit", type=int, help="ask about only this many uncached chapters (for a trial run)")
     parser.add_argument("--workers", type=int, default=4)
+    parser.add_argument("--rebuild", action="store_true",
+                        help="rewrite episodes that already have questions too; by default only new episodes are written, "
+                             "since their question ids back share pages, related spots, themes and review verdicts")
     args = parser.parse_args()
     sys.stdout.reconfigure(encoding="utf-8")
 
+    previous = json.loads(OUTPUT.read_text(encoding="utf-8")) if OUTPUT.exists() else {}
     episodes = load_episodes()
     jobs = []
     for episode in episodes:
+        if episode["slug"] in previous and not args.rebuild:
+            continue
         raw_segments = transcript_texts(episode["slug"])
         if not raw_segments:
             continue
@@ -164,7 +170,8 @@ def main() -> None:
         with ThreadPoolExecutor(max_workers=args.workers) as pool:
             list(pool.map(write, work))
 
-    output = {}
+    # Episodes left alone keep their questions exactly as they are.
+    output = {slug: clips for slug, clips in previous.items() if not args.rebuild}
     located = total = 0
     for episode, unit, key, _, wanted in jobs:
         if key not in written:
@@ -182,8 +189,21 @@ def main() -> None:
             if episode["parts"] > 1:
                 clip["part"] = unit["p"] + 1
             output.setdefault(episode["slug"], []).append(clip)
-    for clips in output.values():
-        clips.sort(key=lambda clip: (clip.get("part", 1), clip["time"]))
+    rebuilt = {episode["slug"] for episode, *_ in jobs}
+    for slug in rebuilt:
+        output.get(slug, []).sort(key=lambda clip: (clip.get("part", 1), clip["time"]))
+    # With --rebuild, review_questions.py's rewording and hiding carry over for every question whose
+    # generated wording is unchanged, instead of being silently undone.
+    for slug in rebuilt:
+        clips = output.get(slug, [])
+        before = {entry.get("source_text", entry["text"]): entry for entry in previous.get(slug, [])}
+        for clip in clips:
+            kept = before.get(clip["text"])
+            if kept:
+                if kept["text"] != clip["text"]:
+                    clip["source_text"], clip["text"] = clip["text"], kept["text"]
+                if kept.get("hidden"):
+                    clip["hidden"] = True
     OUTPUT.write_text(json.dumps(output, ensure_ascii=False, indent=1) + "\n", encoding="utf-8", newline="\n")
     print(f"{total} chapter questions in {len(output)} episodes ({located} located in the transcript)")
 
