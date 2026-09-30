@@ -9,7 +9,9 @@ sentence ends, and long sentences at BudouX phrase boundaries (as podclip's burn
 the segment's time is shared out by line length. Inside a line the phrases are joined with a zero-width
 space, so the page (word-break: keep-all) wraps only between phrases, never mid-word; the files store it as "|"
 (one byte instead of three).
-Speakers come from the transcript's confirmed speaker_identities, shown with the performer's face.
+Speakers come from the transcript's confirmed speaker_identities, shown with the performer's face: each
+line takes whoever talks most during it, and "turns" marks every point where the voice changes, so
+the face can switch mid-line.
 
     python scripts/build_captions.py        # needs: pip install budoux
 """
@@ -35,6 +37,8 @@ LINE_CHARS = 26
 TAIL_CHARS = 4
 # Answers can start a few seconds before the question's time; keep a little lead-in.
 MARGIN_SECONDS = 5
+# A voice must talk this long to take over the speaking face (shorter turns are nods and laughs).
+MIN_TURN_SECONDS = 0.7
 # Past this many characters, a line closes after a phrase that ends a clause (the transcripts have
 # few punctuation marks, so this is what keeps "…人も / いるかもしれない" from being cut mid-clause).
 CLAUSE_CHARS = 13
@@ -157,6 +161,23 @@ class Turns:
         local = max(talk, key=talk.get)
         return info["map"].get(local, local)
 
+    def changes(self, part: int, start: float, end: float) -> list[tuple[float, str]]:
+        """(time, transcript speaker label) for each turn starting between start and end, in the part's
+        own clock; turns shorter than MIN_TURN_SECONDS (a nod, a laugh) are left out."""
+        info = self.parts.get(part)
+        if not info:
+            return []
+        offset = info["offset"]
+        index = max(0, bisect.bisect_right(info["starts"], start + offset) - 1)
+        found = []
+        for turn in info["turns"][index:]:
+            if turn["start"] >= end + offset:
+                break
+            if turn["end"] - turn["start"] < MIN_TURN_SECONDS or turn["end"] <= start + offset:
+                continue
+            found.append((max(start, turn["start"] - offset), info["map"].get(turn["speaker"], turn["speaker"])))
+        return found
+
 
 def main() -> None:
     actors = load_actors()
@@ -214,8 +235,21 @@ def main() -> None:
                 at = until
         if not lines:
             continue
+        # Where the voice changes, so the page can switch the speaking face mid-line: [part, time, speaker],
+        # only when a different performer takes over.
+        changes = []
+        for part, low, high in spans:
+            previous = None
+            for at, label in turns.changes(part, low - MARGIN_SECONDS, high):
+                key = key_of(label)
+                if key and key != previous:
+                    changes.append([part, round(at, 1), key])
+                    previous = key
+        payload = {"speakers": speakers, "lines": lines}
+        if changes:
+            payload["turns"] = changes
         out = OUTPUT / f"{slug}.json"
-        out.write_text(json.dumps({"speakers": speakers, "lines": lines}, ensure_ascii=False, separators=(",", ":")) + "\n",
+        out.write_text(json.dumps(payload, ensure_ascii=False, separators=(",", ":")) + "\n",
                        encoding="utf-8", newline="\n")
         written.add(out.name)
         total += len(lines)
