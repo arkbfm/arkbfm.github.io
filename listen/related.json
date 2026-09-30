@@ -1,0 +1,10 @@
+---
+layout: null
+permalink: /listen/related.json
+sitemap: false
+---
+{%- comment -%}
+Where other episodes talk about each clip's subject (_data/clip_related.json), for the listening feed's
+chain. Kept apart from clips.json so the first answer can start before this half of the data arrives.
+{%- endcomment -%}
+{{ site.data.clip_related | jsonify }}

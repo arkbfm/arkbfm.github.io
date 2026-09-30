@@ -61,6 +61,7 @@ layout: default
     {% if latest_audio != '' %}
       <iframe class="discovery-player" src="https://open.spotify.com/embed/episode/{{ latest_audio }}" width="100%" height="152" title="{{ latest.title | escape }} をSpotifyで再生" loading="lazy" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
     {% endif %}
+    {% include subscribe-links.html place="home_latest" lead="次の回を聴き逃さないように、いつものアプリでフォロー" %}
   </section>
 
   {% include theme-map.html %}

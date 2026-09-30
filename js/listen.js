@@ -780,7 +780,13 @@
 
   fetch(root.getAttribute('data-clips')).then(function (response) { return response.json(); }).then(function (loaded) {
     data = loaded;
-    data.related = data.related || {};
+    // The chain's links arrive separately (listen/related.json) so the first answer can start sooner;
+    // until then a clip that ends picks from the theme or at random.
+    data.related = {};
+    fetch(root.getAttribute('data-related'))
+      .then(function (response) { return response.ok ? response.json() : {}; })
+      .then(function (related) { data.related = related || {}; })
+      .catch(function () { /* the feed still works, without following subjects */ });
     data.themes = data.themes || [];
     data.clips = data.clips.filter(function (item) { return playable(fromItem(item)); });
     data.clips.forEach(function (item) { clipsById[item.i] = fromItem(item); });

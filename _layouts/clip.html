@@ -4,7 +4,6 @@ layout: default
 {% comment %}Share page for one question (/q/<id>/): what is asked, where it is answered, and a way to hear it.{% endcomment %}
 {% assign post = site.posts | where: "slug", page.episode | first %}
 {% assign ep = site.data.episode_index | where: "slug", page.episode | first %}
-{% capture episode_link %}{{ post.url | relative_url }}?t={{ page.time }}&amp;e={{ page.end }}{% if page.part %}&amp;p={{ page.part }}{% endif %}{% if page.headline %}&amp;q={{ page.headline }}{% endif %}{% endcapture %}
 <div class="container clip-page">
   <p class="discovery-kicker">あらB.fm の問い</p>
   <h1 class="clip-question">{{ page.question }}</h1>
@@ -15,9 +14,11 @@ layout: default
   {% if ep %}<a class="clip-visual" href="{{ post.url | relative_url }}">{% include episode-visual.html ep=ep size="large" %}</a>{% endif %}
   <div class="clip-actions">
     <a class="home-random-button home-listen-button" href="{{ '/listen/' | relative_url }}?c={{ page.clip | uri_escape }}">▶ この答えを聴く</a>
-    <a class="clip-episode-link" href="{{ episode_link }}">エピソードページで聴く</a>
+    <a class="clip-episode-link" href="{{ post.url | relative_url }}">この回のショーノートを見る</a>
   </div>
   <p class="clip-note">答えが終わると、同じテーマを話している別の回へ自動でつながります。</p>
+  {% comment %}Most visitors here come from a shared link and do not know the show yet.{% endcomment %}
+  {% include subscribe-links.html place="clip" lead="あらB.fm はゲストと一緒にくだをまくポッドキャスト。いつものアプリでフォロー" %}
   {% if page.notes %}
     <section class="clip-notes" aria-labelledby="clip-notes-heading">
       <h2 id="clip-notes-heading">この章のショーノート{% if page.chapter %}「{{ page.chapter }}」{% endif %}</h2>

@@ -1,0 +1,13 @@
+# Where to follow the show: shown in the footer, the home page and each episode page.
+- id: spotify
+  label: Spotify
+  url: https://open.spotify.com/show/7lPzrpCgD358gJArLLSgSw
+- id: apple
+  label: Apple Podcasts
+  url: https://podcasts.apple.com/jp/podcast/%E3%81%82%E3%82%89b-fm/id1530413903
+- id: pocketcasts
+  label: Pocket Casts
+  url: https://pca.st/1rthedh6
+- id: rss
+  label: RSS
+  url: https://anchor.fm/s/319a2820/podcast/rss

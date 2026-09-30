@@ -16,4 +16,11 @@ page scripts can report events unconditionally.
   window.arkbfmTrack = function (name, params) {
     if (typeof window.gtag === 'function') window.gtag('event', name, params || {});
   };
+  // Follow buttons (_includes/subscribe-links.html): which app, from which place on the site.
+  document.addEventListener('click', function (event) {
+    var link = event.target.closest && event.target.closest('[data-subscribe]');
+    if (!link) return;
+    var box = link.closest('[data-subscribe-place]');
+    window.arkbfmTrack('follow_click', { app: link.getAttribute('data-subscribe'), place: box ? box.getAttribute('data-subscribe-place') : '' });
+  });
 </script>

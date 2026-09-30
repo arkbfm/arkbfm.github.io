@@ -1,7 +1,7 @@
 ---
 layout: default
 title: 全エピソード
-description: あらB.fm の全エピソード一覧。気になる話題は検索から探せます。
+description: あらB.fm の全エピソード一覧。年ごとに並べ、タイトル・出演者・問いで絞り込めます。
 permalink: /episodes/
 ---
 
@@ -9,11 +9,56 @@ permalink: /episodes/
   <section class="discovery-section">
     <p class="discovery-kicker">アーカイブ</p>
     <h1 class="page-title">全エピソード</h1>
-    <p class="discovery-section-lead">新しい回から順に{{ site.posts.size }}本。話題や出演者で探す場合は、ページ上部の検索か<a href="{{ '/guests/' | prepend:site.github.url }}">出演者一覧</a>をどうぞ。</p>
-    <div class="ep-grid">
-      {% for post in site.posts %}
-        {% include episode-card.html slug=post.slug %}
-      {% endfor %}
+    <p class="discovery-section-lead">新しい回から順に{{ site.posts.size }}本。<a href="{{ '/guests/' | prepend:site.github.url }}">出演者一覧</a>からも探せます。</p>
+    {% assign years = site.posts | group_by_exp: "post", "post.date | date: '%Y'" %}
+    {% comment %}Filled in by the script below; without JavaScript the year links still work.{% endcomment %}
+    <div class="archive-tools">
+      <label class="visually-hidden" for="archive-filter">タイトル・出演者・問いで絞り込む</label>
+      <input id="archive-filter" class="archive-filter" type="search" placeholder="タイトル・出演者・問いで絞り込む" data-archive-filter hidden>
+      <nav class="discovery-chips archive-years" aria-label="年で移動">
+        {% for year in years %}<a href="#y{{ year.name }}">{{ year.name }}<span>{{ year.items.size }}</span></a>{% endfor %}
+      </nav>
+      <p class="archive-count" data-archive-count aria-live="polite" hidden></p>
     </div>
+    {% for year in years %}
+      <h2 class="archive-year" id="y{{ year.name }}">{{ year.name }}年</h2>
+      <div class="ep-grid">
+        {% for post in year.items %}
+          {% assign item_ep = site.data.episode_index | where: "slug", post.slug | first %}
+          {% capture item_search %}Ep.{{ item_ep.number }} {{ item_ep.subtitle }} {% for guest_id in item_ep.guests %}{{ site.actors[guest_id].name | default: guest_id }} {% endfor %}{% for question in post.questions %}{{ question.text | default: question }} {% endfor %}{% endcapture %}
+          <div class="archive-item" data-search="{{ item_search | strip | downcase | escape }}">{% include episode-card.html slug=post.slug %}</div>
+        {% endfor %}
+      </div>
+    {% endfor %}
+    <p class="archive-empty" data-archive-empty hidden>見つかりませんでした。<a href="https://search.arkbfm.com/">全文検索</a>なら話の中身からも探せます。</p>
   </section>
 </div>
+<script>
+  // Filters the cards as you type (title, number, guests, headline questions) and hides empty years.
+  (function () {
+    var input = document.querySelector('[data-archive-filter]');
+    var count = document.querySelector('[data-archive-count]');
+    var empty = document.querySelector('[data-archive-empty]');
+    var items = Array.prototype.slice.call(document.querySelectorAll('.archive-item'));
+    input.hidden = false;
+    input.addEventListener('input', function () {
+      var words = input.value.toLowerCase().split(/\s+/).filter(Boolean);
+      var shown = 0;
+      items.forEach(function (item) {
+        var text = item.getAttribute('data-search');
+        var match = words.every(function (word) { return text.indexOf(word) >= 0; });
+        item.hidden = !match;
+        shown += match;
+      });
+      Array.prototype.forEach.call(document.querySelectorAll('.archive-year'), function (heading) {
+        var grid = heading.nextElementSibling;
+        var visible = grid.querySelector('.archive-item:not([hidden])');
+        heading.hidden = !visible;
+        grid.hidden = !visible;
+      });
+      count.hidden = !words.length;
+      count.textContent = shown + '本';
+      empty.hidden = shown > 0;
+    });
+  }());
+</script>
