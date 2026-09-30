@@ -31,6 +31,18 @@ permalink: /listen/
     <a class="listen-button listen-open" data-listen-open href="{{ '/episodes/' | relative_url }}" aria-label="この回のページを開く">回</a>
   </div>
 
+  {% comment %}Wide screens only (CSS): where this visit has been, and the talk around the current line with what comes next.{% endcomment %}
+  <aside class="listen-side listen-side-past" aria-label="これまで聴いた問い">
+    <h2>これまで</h2>
+    <ol class="listen-past" data-listen-past></ol>
+  </aside>
+  <aside class="listen-side listen-side-now" aria-label="いまの会話とこのあと">
+    <h2>いまの会話</h2>
+    <ol class="listen-talk" data-listen-talk></ol>
+    <h2>このあと</h2>
+    <button type="button" class="listen-upcoming" data-listen-upcoming hidden></button>
+  </aside>
+
   <div class="listen-sheet" data-listen-themes role="dialog" aria-label="テーマを選ぶ" hidden>
     <div class="listen-sheet-head">
       <strong>テーマから聴く</strong>
