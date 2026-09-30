@@ -213,9 +213,10 @@
   padding: 8px 12px;
   &:hover, &:focus { background: var(--c-accent-deep); }
 }
-.episode-player { position: relative; text-align: center; iframe { border: 0; } }
-#episode-spotify-api { left: 0; opacity: 0; pointer-events: none; position: absolute; top: 0; width: 100%; }
-#episode-spotify-api.is-ready { opacity: 1; pointer-events: auto; position: static; }
+.episode-player { text-align: center; iframe { border: 0; } }
+.episode-player-part { position: relative; }
+.episode-spotify-api { left: 0; opacity: 0; pointer-events: none; position: absolute; top: 0; width: 100%; }
+.episode-spotify-api.is-ready { opacity: 1; pointer-events: auto; position: static; }
 .episode-toc {
   margin: 16px 0 24px;
   padding: 14px 20px;

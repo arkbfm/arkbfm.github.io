@@ -212,11 +212,12 @@ body { background-color: var(--c-tint); color: var(--c-ink); }
 
 // Cards
 .ep-grid { display: grid; gap: 22px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.ep-card { display: flex; flex-direction: column; gap: 8px; }
 .ep-card-link {
   display: flex;
+  flex: 1;
   flex-direction: column;
   gap: 10px;
-  height: 100%;
   &, &:hover, &:focus, &:active { color: var(--c-ink); }
   .ep-visual { transition: transform .18s ease, box-shadow .18s ease; }
   &:hover .ep-visual,
@@ -461,16 +462,45 @@ body { background-color: var(--c-tint); color: var(--c-ink); }
 }
 .ep-quote-draft { background: var(--c-coral); border-radius: 4px; color: var(--c-ink); font-weight: bold; padding: 0 6px; }
 .markdown ul.ep-questions { list-style: none; padding-left: 0; }
+.ep-questions button {
+  background: none;
+  border: 1px solid var(--c-accent);
+  border-radius: 999px;
+  color: var(--c-accent);
+  cursor: pointer;
+  font: inherit;
+  font-size: .75rem;
+  margin-left: 8px;
+  padding: 1px 9px;
+  vertical-align: .1em;
+  &:hover:not(:disabled) { background: var(--c-accent); color: #fff; }
+  &:disabled { opacity: .5; cursor: default; }
+}
+.ep-questions li.is-requested { color: var(--c-accent); }
 
 // Flip-board questions on cards (pody-style key points).
 .ep-card-q {
   align-items: flex-start;
   background: var(--c-tint);
+  border: 1px solid transparent;
   border-radius: 8px;
   display: flex;
   gap: 8px;
-  margin-top: 4px;
   padding: 7px 10px;
+  &, &:hover, &:focus, &:active { color: var(--c-ink); }
+  &:hover, &:focus { border-color: var(--c-teal); }
+  &:hover .ep-card-q-play, &:focus .ep-card-q-play { background: var(--c-accent); color: #fff; }
+}
+.ep-card-q-play {
+  align-self: center;
+  background: #fff;
+  border-radius: 999px;
+  color: var(--c-accent);
+  flex: none;
+  font-size: .75rem;
+  font-weight: bold;
+  padding: 2px 9px;
+  white-space: nowrap;
 }
 .ep-card-q-icon {
   background: var(--c-teal);

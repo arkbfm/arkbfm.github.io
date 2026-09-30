@@ -41,7 +41,8 @@ layout: default
         {% include episode-meta.html ep=latest_ep %}
         {% if latest.questions %}
           <ul class="ep-questions ep-questions-compact" aria-label="この回で話していること">
-            {% for question in latest.questions %}<li>{{ question }}</li>{% endfor %}
+            {% assign latest_url = latest.url | prepend:site.github.url %}
+            {% for question in latest.questions %}<li>{% if question.time %}<a href="{% include question-url.html url=latest_url question=question index=forloop.index %}">{{ question.text }}</a>{% else %}{{ question.text | default: question }}{% endif %}</li>{% endfor %}
           </ul>
         {% else %}
           <p class="discovery-latest-description">{{ latest.description | escape }}</p>

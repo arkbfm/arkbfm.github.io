@@ -36,6 +36,8 @@
     current.classList.remove('is-active');
     current.classList.add('is-leaving');
     next.classList.add('is-active');
+    // The box links to the showing question's answer, so a click always plays what the reader just read.
+    box.href = next.getAttribute('data-href');
     setTimeout(function () { current.classList.remove('is-leaving'); }, 450);
   }
 
