@@ -24,13 +24,6 @@ layout: default
     </div>
     {% comment %}Filled by js/home-today.js: "つづきから" for returning listeners and three questions of the day.{% endcomment %}
     <div class="home-today" data-home-today data-listen="{{ '/listen/' | relative_url }}" data-headlines="{{ '/listen/headlines.json' | relative_url }}" hidden></div>
-    {% comment %}Theme shortcuts: one click starts the feed on a theme; the full map is further down.{% endcomment %}
-    <div class="discovery-chips" aria-label="テーマから聴く">
-      {% for theme in site.data.themes limit:8 %}
-        <a href="{{ '/listen/' | relative_url }}?theme={{ theme.id }}">{{ theme.emoji }} {{ theme.label }}<span>{{ theme.clips.size }}</span></a>
-      {% endfor %}
-      <a href="#theme-map-heading">すべてのテーマ ↓</a>
-    </div>
   </section>
 
   <section class="home-latest" aria-labelledby="latest-heading">

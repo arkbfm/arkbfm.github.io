@@ -1,3 +1,4 @@
+# Performers without a face picture (no SNS account) share images/actors/noface.png.
 actors:
   asesama_:
     image_url: /images/actors/asesama_.jpg
@@ -8,7 +9,7 @@ actors:
     name: みずうみ
     url: https://bsky.app/profile/mizuumi.bsky.social
   syncat2:
-    image_url: /images/actors/syncat2.jpg
+    image_url: /images/actors/noface.png
     name: すこ
     url: https://x.com/
   mistigrix0123:
@@ -284,7 +285,7 @@ actors:
     name: もふふ
     url: https://twitter.com/mof_mmm
   watanabe:
-    image_url: /images/actors/watanabe.png
+    image_url: /images/actors/noface.png
     name: ワタナベ
     url: https://x.com/
   zeeksphere:
@@ -308,7 +309,7 @@ actors:
     name: スーパー猫かわいい人材
     url: https://twitter.com/takayutsch
   kyomuo:
-    image_url: /images/actors/kyomuo.png
+    image_url: /images/actors/noface.png
     name: きょむお
     url: https://x.com/
   ban20151031_2:

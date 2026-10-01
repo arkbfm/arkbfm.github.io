@@ -77,6 +77,8 @@ body { background-color: var(--c-tint); color: var(--c-ink); }
   background: var(--c-tint);
   border-radius: 999px;
   font-weight: bold;
+  // Level with the heading's text, not with the bottom of its margin.
+  margin-bottom: 12px;
   padding: 4px 14px;
 }
 
@@ -535,7 +537,20 @@ body { background-color: var(--c-tint); color: var(--c-ink); }
   &:hover, &:focus { color: var(--c-cream); }
 }
 
-// Every question the episode answers, with a play button each.
+// Every question the episode answers, with a play button each; past the first ten they fold behind a button
+// (js/episode-chapters.js).
+.ep-all-questions-more {
+  background: none;
+  border: 0;
+  color: var(--c-accent);
+  cursor: pointer;
+  font: inherit;
+  font-weight: bold;
+  margin-top: 10px;
+  min-height: 44px;
+  padding: 0;
+  &:hover, &:focus { color: var(--c-accent-deep); text-decoration: underline; }
+}
 .markdown .ep-all-questions {
   ol { list-style: none; margin: 0; padding: 0; }
   li { border-bottom: 1px solid var(--c-line); }
@@ -576,7 +591,8 @@ body { background-color: var(--c-tint); color: var(--c-ink); }
   font: inherit;
   font-size: .75rem;
   margin-left: 8px;
-  padding: 1px 9px;
+  // Tall enough to tap on a phone (24px or more).
+  padding: 4px 10px;
   vertical-align: .1em;
   text-decoration: none;
   &:hover, &:focus { background: var(--c-accent); color: #fff; }
