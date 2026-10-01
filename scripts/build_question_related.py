@@ -40,7 +40,7 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from locate_questions import (  # noqa: E402
-    LEAD_SECONDS, POSTS, ROOT, SNAP_SECONDS, STOP, TERM_RE, answer_end, chapters_of, hms,
+    POSTS, ROOT, SNAP_SECONDS, STOP, TERM_RE, answer_end, chapters_of, hms,
     load_segments, normalize, read_questions, seconds_of, split_front,
 )
 
@@ -196,6 +196,17 @@ def embed(texts: list[str]) -> np.ndarray:
     return np.array([cached[key] for key in keys])
 
 
+def utterance_start(chapter: dict, talk: list[dict], mention: dict | None) -> int:
+    """Where a spot in this chapter starts: at the start of an utterance. A show-note timestamp is approximate
+    and often lands mid-utterance, on the tail of the previous subject (a letter being read, say), so the
+    chapter's first utterance stands in for it; a mention close to that snaps back to it, a later one starts
+    at its own utterance. `talk` is the chapter's segments in order."""
+    opening = talk[0] if talk and talk[0]["start"] - chapter["s"] < SNAP_SECONDS else None
+    if mention and (not opening or mention["start"] - opening["start"] >= SNAP_SECONDS):
+        return int(mention["start"])
+    return int(opening["start"]) if opening else chapter["s"]
+
+
 def spot_in(episode: dict, chapter: dict, shared: list[str]) -> dict:
     """Where in the chapter the shared subject comes up, and where that talk ends.
 
@@ -212,15 +223,13 @@ def spot_in(episode: dict, chapter: dict, shared: list[str]) -> dict:
     position = chapters.index(chapter)
     following = chapters[position + 1] if position + 1 < len(chapters) else None
     high = following["s"] if following and following["p"] == chapter["p"] else math.inf
-    start = chapter["s"]
     talk = [seg for seg in episode["segments"] if seg["p"] == chapter["p"] and chapter["s"] <= seg["start"] < high]
+    mention = None
     for term in shared:
-        first = next((seg for seg in talk if term in seg["text"]), None)
-        if first:
-            start = max(chapter["s"], int(first["start"]) - LEAD_SECONDS)
-            if start - chapter["s"] < SNAP_SECONDS:
-                start = chapter["s"]
+        mention = next((seg for seg in talk if term in seg["text"]), None)
+        if mention:
             break
+    start = utterance_start(chapter, talk, mention)
     end = answer_end(start, chapter["p"], chapters, episode["segments"], shared)
     return {"time": hms(start), "end": hms(end)}
 
