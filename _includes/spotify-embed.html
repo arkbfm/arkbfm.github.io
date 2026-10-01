@@ -1,0 +1,26 @@
+{% comment %}
+Spotify player for one episode. Params: id (Spotify episode ID), title, class (optional).
+The embed weighs about 600 KB of scripts, more than the rest of the page, so its address is set only after the
+page has loaded and the player is near the screen: the page's own content shows first. Same size before and
+after, so nothing moves when it arrives.
+{% endcomment %}
+<iframe class="spotify-embed{% if include.class %} {{ include.class }}{% endif %}" data-spotify-src="https://open.spotify.com/embed/episode/{{ include.id | strip }}" width="100%" height="152" title="{{ include.title | escape }} をSpotifyで再生" frameborder="0" scrolling="no" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
+<noscript><iframe class="spotify-embed{% if include.class %} {{ include.class }}{% endif %}" src="https://open.spotify.com/embed/episode/{{ include.id | strip }}" width="100%" height="152" title="{{ include.title | escape }} をSpotifyで再生" frameborder="0" scrolling="no" allow="encrypted-media" loading="lazy"></iframe></noscript>
+{% unless spotify_embed_script %}{% assign spotify_embed_script = true %}
+<script>
+  (function () {
+    function start() {
+      var frames = document.querySelectorAll('iframe[data-spotify-src]');
+      function load(frame) { frame.src = frame.getAttribute('data-spotify-src'); frame.removeAttribute('data-spotify-src'); }
+      if (!('IntersectionObserver' in window)) { Array.prototype.forEach.call(frames, load); return; }
+      var observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) { observer.unobserve(entry.target); load(entry.target); }
+        });
+      }, { rootMargin: '600px 0px' });
+      Array.prototype.forEach.call(frames, function (frame) { observer.observe(frame); });
+    }
+    if (document.readyState === 'complete') start(); else window.addEventListener('load', start);
+  })();
+</script>
+{% endunless %}

@@ -14,7 +14,7 @@ permalink: /guests/
       {% for entry in site.data.guests %}
         {% assign guest_id = entry[0] %}{% assign guest = site.actors[guest_id] %}
         <a href="{{ '/guest/' | append: guest_id | append: '/' | prepend:site.github.url }}" class="guest-chip">
-          <img src="{{ guest.image_url | prepend:site.github.url }}" alt="" width="56" height="56" loading="lazy">
+          <img src="{{ guest.image_url | replace_first: '/images/actors/', '/images/actors/s/' | prepend:site.github.url }}" alt="" width="56" height="56" loading="lazy">
           <span class="guest-chip-name">{{ guest.name }}</span>
           <span class="guest-chip-count">{{ entry[1].count }}回</span>
         </a>

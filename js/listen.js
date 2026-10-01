@@ -71,6 +71,11 @@
     return (total >= 3600 ? Math.floor(total / 3600) + ':' + pad(Math.floor(total % 3600 / 60)) : Math.floor(total / 60)) + ':' + pad(total % 60);
   }
 
+  // Faces are shown at 44px or less: use the small copy (scripts/build_actor_thumbs.py), not the original image.
+  function thumb(url) {
+    return url.replace('/images/actors/', '/images/actors/s/');
+  }
+
   function element(tag, className, text) {
     var node = document.createElement(tag);
     if (className) node.className = className;
@@ -189,7 +194,7 @@
     episode.g.concat([['あらB', data.host]]).forEach(function (guest) {
       if (!guest[1]) return;
       var image = element('img');
-      image.src = guest[1];
+      image.src = thumb(guest[1]);
       image.alt = '';
       image.setAttribute('data-face', guest[1]);
       faces.appendChild(image);
@@ -275,7 +280,7 @@
       var item = element('li', offset === shown.length - 1 ? 'is-current' : '');
       if (speaker && speaker[1]) {
         var face = element('img');
-        face.src = speaker[1];
+        face.src = thumb(speaker[1]);
         face.alt = '';
         item.appendChild(face);
       }
@@ -437,7 +442,7 @@
     var box = card.querySelector('.listen-captions');
     var face = box.querySelector('.listen-speaker-face');
     face.hidden = !(speaker && speaker[1]);
-    if (speaker && speaker[1]) face.src = speaker[1];
+    if (speaker && speaker[1]) face.src = thumb(speaker[1]);
     box.querySelector('.listen-speaker-name').textContent = speaker ? speaker[0] : '';
     // Light up whoever is talking among the faces in the card's header, and dim the others.
     var faces = card.querySelector('.listen-faces');

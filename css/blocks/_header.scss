@@ -1,13 +1,16 @@
 @font-face {
   font-family: 'Splatoon';
-  src: url('../fonts/ikamodoki1_0.ttf') format('truetype');
+  src: url('../fonts/ikamodoki1_0.woff2') format('woff2'), url('../fonts/ikamodoki1_0.ttf') format('truetype');
   unicode-range: U+3040-309F, U+30A0-30FF; // ひらがな・カタカナ
+  // Show the text in a system font until the font arrives, instead of no text for up to 3 seconds.
+  font-display: swap;
 }
 
 @font-face {
   font-family: 'Splatoon';
-  src: url('../fonts/ProjectPaintballDisplay.ttf') format('truetype');
+  src: url('../fonts/ProjectPaintballDisplay.woff2') format('woff2'), url('../fonts/ProjectPaintballDisplay.ttf') format('truetype');
   unicode-range: U+0000-007F; // ASCII (英数字・記号)
+  font-display: swap;
   size-adjust: 115%;
 }
 

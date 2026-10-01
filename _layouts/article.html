@@ -44,7 +44,8 @@
               {% for audio_id in audio_urls %}
                 {% if forloop.index == 2 %}<details class="episode-player-more"><summary>パート2{% if audio_urls.size > 2 %}〜{{ audio_urls.size }}{% endif %}を開く</summary>{% endif %}
                 <div class="episode-player-part">
-                  <iframe src="https://open.spotify.com/embed/episode/{{ audio_id | strip }}" height="152" width="100%" title="{{ page.title | escape }}{% if audio_urls.size > 1 %} パート{{ forloop.index }}{% endif %} をSpotifyで再生" frameborder="0" scrolling="no" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                  {% capture part_title %}{{ page.title }}{% if audio_urls.size > 1 %} パート{{ forloop.index }}{% endif %}{% endcapture %}
+                  {% include spotify-embed.html id=audio_id title=part_title %}
                 </div>
                 {% if forloop.last and forloop.index > 1 %}</details>{% endif %}
               {% endfor %}
@@ -62,7 +63,7 @@
                   {% assign quote_minutes = quote_parts[1] | times: 60 %}
                   {% assign quote_seconds = quote_seconds | plus: quote_minutes | plus: quote_parts[2] %}
                   <figure class="ep-quote" data-seconds="{{ quote_seconds }}">
-                    <img src="{{ speaker.image_url | prepend:site.github.url }}" alt="" width="40" height="40" loading="lazy">
+                    <img src="{{ speaker.image_url | replace_first: '/images/actors/', '/images/actors/s/' | prepend:site.github.url }}" alt="" width="40" height="40" loading="lazy">
                     <div>
                       <blockquote>{{ quote.text }}</blockquote>
                       <figcaption>{{ speaker.name | default: quote.actor }}<time>{{ quote.time }}</time>{% if quote.draft %}<span class="ep-quote-draft">要確認（公開されません）</span>{% endif %}</figcaption>
@@ -85,7 +86,7 @@
                 {% assign actor = site.actors[actor_id] %}
                 {% assign actor_page = site.data.guests[actor_id] %}
                 <a href="{% if actor_page %}{{ '/guest/' | append: actor_id | append: '/' | prepend:site.github.url }}{% else %}{{ actor.url }}{% endif %}" class="actor"{% unless actor_page %} target="_blank"{% endunless %}>
-                  <img src="{{ actor.image_url | prepend:site.github.url }}" alt="{{ actor.name }}" class="actor-image" width="72" height="72">
+                  <img src="{{ actor.image_url | replace_first: '/images/actors/', '/images/actors/s/' | prepend:site.github.url }}" alt="{{ actor.name }}" class="actor-image" width="72" height="72">
                   <br>
                   {{ actor.name }}
                   {% if actor_page %}<small class="actor-count">出演{{ actor_page.count }}回</small>{% endif %}

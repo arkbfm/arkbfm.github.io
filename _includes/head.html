@@ -22,6 +22,9 @@
   <link rel="alternate" type="application/rss+xml" title="{{ site.title }}" href="{{ site.podcast_feed_url }}">
   {% comment %}?v= is the build time: a returning visitor gets the new CSS and scripts right after a deploy.{% endcomment %}
   <link rel="stylesheet" href="{{ site.github.url }}/css/main.css?v={{ site.time | date: '%s' }}">
+  {% comment %}The header's display fonts: fetched alongside the CSS rather than after it, so the logo swaps in quickly.{% endcomment %}
+  <link rel="preload" href="{{ '/fonts/ikamodoki1_0.woff2' | relative_url }}" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="{{ '/fonts/ProjectPaintballDisplay.woff2' | relative_url }}" as="font" type="font/woff2" crossorigin>
   <link rel="shortcut icon" type="image/x-icon" href="{{ site.github.url }}/favicon.ico">
   {% include structured-data.html %}
   {% include analytics.html %}

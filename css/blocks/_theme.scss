@@ -463,7 +463,7 @@ body { background-color: var(--c-tint); color: var(--c-ink); }
   .home-latest { padding: 18px 16px 20px; }
   .home-latest-layout,
   .ep-hero { grid-template-columns: 1fr; gap: 16px; }
-  .ep-grid { gap: 26px; grid-template-columns: 1fr; }
+  .ep-grid { grid-template-columns: 1fr; }
   .ep-hero-title { font-size: 1.8rem; }
   .guest-hero { align-items: flex-start; flex-direction: column; gap: 14px; padding: 22px 18px; img { height: 96px; width: 96px; } }
   .header-heading { font-size: 2.2rem; }
@@ -477,7 +477,7 @@ body { background-color: var(--c-tint); color: var(--c-ink); }
   .home-random-button.is-rolling { animation: none; }
 }
 
-// Episode archive: year headings, a jump bar and a filter; on phones the cards turn into compact rows.
+// Episode archive: year headings, a jump bar and a filter.
 .archive-tools { background: var(--c-bg, #fff); margin: 16px 0 8px; padding: 8px 0; position: sticky; top: 0; z-index: 2; }
 .archive-filter {
   border: 2px solid var(--c-ink);
@@ -491,14 +491,15 @@ body { background-color: var(--c-tint); color: var(--c-ink); }
 .archive-count { font-size: .85rem; font-weight: bold; margin: 6px 0 0; }
 .archive-year { border-bottom: 3px solid var(--c-teal); font-size: 1.4rem; margin: 28px 0 14px; padding-bottom: 4px; scroll-margin-top: 130px; }
 .archive-item[hidden], .archive-year[hidden], .ep-grid[hidden], .archive-count[hidden], .archive-empty[hidden] { display: none; }
+// On phones every card list turns into compact rows: a full-width visual per card made the home page ~15 screens tall.
 @media (max-width: $width-screen-extra-small-maximum) {
-  .discovery-archive .ep-grid { gap: 14px; }
-  .discovery-archive .ep-card-link { align-items: flex-start; flex-direction: row; gap: 12px; }
+  .ep-grid { gap: 14px; }
+  .ep-card-link { align-items: flex-start; flex-direction: row; gap: 12px; }
   // At this size the faces would cover the number: keep the number only, smaller.
-  .discovery-archive .ep-card-link .ep-visual { flex: none; padding: 8px 10px; width: 36%; }
-  .discovery-archive .ep-visual-faces { display: none; }
-  .discovery-archive .ep-visual-number { font-size: 1.7rem; small { font-size: .7rem; } }
-  .discovery-archive .ep-card-body { min-width: 0; }
+  .ep-card-link .ep-visual { flex: none; padding: 8px 10px; width: 36%; }
+  .ep-card-link .ep-visual-faces { display: none; }
+  .ep-card-link .ep-visual-number { font-size: 1.7rem; small { font-size: .7rem; } }
+  .ep-card-body { min-width: 0; }
 }
 
 // Follow buttons for the podcast apps (_includes/subscribe-links.html).

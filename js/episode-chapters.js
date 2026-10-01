@@ -38,6 +38,7 @@
   }
 
   // Returns null without a feed (or for a part with no audio), so callers simply skip the link.
+  // The label starts with the visible words, so voice control ("click ここから聴く") finds the link.
   function playLink(spot, text, label, kind) {
     if (!listenBase || spot.part >= partCount) return null;
     var link = document.createElement('a');
@@ -98,7 +99,7 @@
       var seconds = Number(quote.getAttribute('data-seconds'));
       var chapter = chapterAt(seconds, 0);
       var listen = playLink({ start: seconds, end: chapter ? chapterEnd(chapter) : null, part: 0, title: chapter ? chapter.title : '' },
-        '▶ この発言から聴く', formatTime(seconds) + ' の発言から聴く', 'quote');
+        '▶ この発言から聴く', 'この発言から聴く：' + formatTime(seconds), 'quote');
       if (listen) quote.querySelector('figcaption').appendChild(listen);
       if (!chapter) return;
       var anchor = chapter.heading.nextElementSibling;
@@ -120,7 +121,7 @@
   // Each question plays the part of the talk that answers it (data-clip is its id in the feed).
   var questions = Array.prototype.map.call(article.querySelectorAll('.ep-questions li'), function (item, index) {
     var question = { item: item, text: item.textContent.trim(), clip: item.getAttribute('data-clip'), part: (Number(item.getAttribute('data-part')) || 1) - 1 };
-    var listen = question.clip && playLink(question, '▶ ここから聴く', question.text + ' の答えから聴く', 'question');
+    var listen = question.clip && playLink(question, '▶ ここから聴く', 'ここから聴く：' + question.text + ' の答え', 'question');
     if (listen) item.appendChild(listen);
     return question;
   });
@@ -162,7 +163,7 @@
       start: requested, part: requestedPart, title: requestedChapter ? requestedChapter.title : '',
       end: requestedEnd !== null ? requestedEnd : requestedChapter ? chapterEnd(requestedChapter) : null
     };
-    var listen = playLink(spot, '▶ ここから聴く', partLabel(requestedPart) + formatTime(requested) + ' から聴く', 'banner');
+    var listen = playLink(spot, '▶ ここから聴く', 'ここから聴く：' + partLabel(requestedPart) + formatTime(requested), 'banner');
     if (listen) banner.appendChild(listen);
     if (requestedChapter) {
       var jump = document.createElement('a');

@@ -1,5 +1,6 @@
 .footer {
-  color: $color-text-dark-secondary;
+  // The muted ink, not translucent black: on the tinted ground the latter fell short of 4.5:1 contrast.
+  color: var(--c-muted);
   font-size: 0.9rem;
   padding-bottom: 64px;
   padding-top: 64px;
@@ -18,6 +19,13 @@
         font-weight: bold;
       }
     }
+  }
+
+  // Links inside running text are underlined, so they don't rely on color alone.
+  &-sections-element-description a,
+  &-copyright a {
+    text-decoration: underline;
+    text-underline-offset: 2px;
   }
 
   &-twitter {
