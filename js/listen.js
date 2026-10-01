@@ -916,7 +916,7 @@
     var wantedTheme = param(query, 'theme') || '';
     var wantedClip = param(query, 'c') || '';
     var span = spanFromQuery(query);
-    var kicker = /[?&]from=today/.test(query) ? '今日の1問' : '';
+    var kicker = /[?&]from=today/.test(query) ? '今日の1問' : /[?&]from=search/.test(query) ? '検索した場面' : '';
     // With no clip, moment or theme asked for, pick up where the last visit stopped.
     var resume = !wantedClip && !wantedTheme && !span || /[?&]resume=1/.test(query) ? readResume() : null;
     var first = clipsById[wantedClip] || span;
