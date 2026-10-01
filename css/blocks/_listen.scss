@@ -73,13 +73,6 @@
 }
 @media (prefers-reduced-motion: reduce) { .home-today-list a { transition: none; } }
 
-// Theme shortcuts in the home hero: wrap on wide screens, one swipeable row on phones.
-.home-hero .discovery-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; width: 100%; }
-.home-hero .discovery-chips a { flex: none; white-space: nowrap; }
-@media (max-width: 599px) {
-  .home-hero .discovery-chips { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 6px; scrollbar-width: none; }
-}
-
 .theme-more {
   margin-top: 14px;
   summary { color: var(--c-accent); cursor: pointer; font-weight: bold; }

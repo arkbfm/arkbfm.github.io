@@ -6,6 +6,8 @@
   var article = document.querySelector('.article .markdown');
   if (!article) return;
 
+  // How many of the episode's questions show before the rest fold away.
+  var QUESTIONS_SHOWN = 10;
   var player = document.getElementById('episode-player');
   var listenBase = player ? player.getAttribute('data-listen') : null;
   var partCount = document.querySelectorAll('.episode-player-part').length;
@@ -136,6 +138,25 @@
     allQuestions.addEventListener('click', function (event) {
       if (event.target.closest('a')) track('episode_play', { episode: episodeSlug, kind: 'all_questions' });
     });
+    // A long episode answers 50 questions or more, which repeat the chapters above at length: show the first
+    // ones and fold the rest behind a button. Without JavaScript the whole list shows.
+    var rest = Array.prototype.slice.call(allQuestions.children, QUESTIONS_SHOWN);
+    if (rest.length > 2) {
+      rest.forEach(function (item) { item.hidden = true; });
+      var more = document.createElement('button');
+      more.type = 'button';
+      more.className = 'ep-all-questions-more';
+      more.textContent = '▶ 残り' + rest.length + '問を見る';
+      more.addEventListener('click', function () {
+        rest.forEach(function (item) { item.hidden = false; });
+        more.remove();
+        // Keyboard users land on the first question that was folded away.
+        var first = rest[0].querySelector('a');
+        if (first) first.focus();
+        track('episode_all_questions_expand', { episode: episodeSlug, count: rest.length });
+      });
+      allQuestions.parentNode.appendChild(more);
+    }
   }
 
   // Older links open this page at a moment (?t=, ?p= the 1-based audio part, ?q= the question's 1-based
