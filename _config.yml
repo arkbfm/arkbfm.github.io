@@ -367,6 +367,8 @@ future: true
 google_analytics: G-8Y6RJ822X8
 hashtag: arkbfm
 itunes_podcast_url:
+# The show's real RSS feed (hosted by Spotify for Creators / Anchor); /feed.xml only points podcast apps here.
+podcast_feed_url: https://anchor.fm/s/319a2820/podcast/rss
 keywords: guest,chat,letter
 language: ja
 markdown: kramdown
