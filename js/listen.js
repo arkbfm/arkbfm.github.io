@@ -208,6 +208,11 @@
     else if (clip.reason) next.appendChild(element('p', 'listen-reason', '↪ つながり：' + clip.reason));
     next.appendChild(element('p', 'listen-kicker', clip.id ? 'Q' : clip.kicker || '関連する話題'));
     next.appendChild(element('h2', 'listen-question', clip.text));
+    // The lines just before the current one, small, above it: the side panel's "いまの会話" for screens too
+    // narrow for the panel (CSS), so the back-and-forth stays in view on a phone.
+    var earlier = element('ol', 'listen-earlier');
+    earlier.setAttribute('aria-hidden', 'true');
+    next.appendChild(earlier);
     // Live captions with the speaker's face: filled in once the episode's captions arrive.
     var captions = element('div', 'listen-captions');
     captions.hidden = true;
@@ -270,13 +275,19 @@
   var TALK_SHOWN = 5;
   // Faces match the card's: each line shows whoever the card showed while it was on screen (the last
   // voice, if it changed mid-line), recorded in clip.lineSpeakers.
+  var EARLIER_SHOWN = 2;
+  function speakerOfLine(clip, index) {
+    var key = (clip.lineSpeakers || {})[index];
+    return (clip.speakers || {})[key === undefined ? clip.lines[index][2] : key] || null;
+  }
+
   function renderTalk(clip, index) {
     talkList.textContent = '';
     if (!clip.lines) return;
+    renderEarlier(clip, index);
     var first = Math.max(0, index - TALK_SHOWN + 1);
     clip.lines.slice(first, index + 1).forEach(function (line, offset, shown) {
-      var key = (clip.lineSpeakers || {})[first + offset];
-      var speaker = (clip.speakers || {})[key === undefined ? line[2] : key] || null;
+      var speaker = speakerOfLine(clip, first + offset);
       var item = element('li', offset === shown.length - 1 ? 'is-current' : '');
       if (speaker && speaker[1]) {
         var face = element('img');
@@ -290,6 +301,26 @@
       item.appendChild(words);
       talkList.appendChild(item);
     });
+  }
+
+  // The card's own short version of it: the lines before the current one, oldest first.
+  function renderEarlier(clip, index) {
+    var list = card.querySelector('.listen-earlier');
+    if (!list) return;
+    list.textContent = '';
+    for (var i = Math.max(0, index - EARLIER_SHOWN); i < index; i += 1) {
+      var speaker = speakerOfLine(clip, i);
+      var item = element('li');
+      if (speaker && speaker[1]) {
+        var face = element('img');
+        face.src = thumb(speaker[1]);
+        face.alt = '';
+        item.appendChild(face);
+      }
+      if (speaker) item.appendChild(element('b', '', speaker[0]));
+      item.appendChild(element('span', '', captionText(clip.lines[i][3], '')));
+      list.appendChild(item);
+    }
   }
 
   // "このあと": the clip lined up after this one.
