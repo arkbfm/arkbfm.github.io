@@ -48,13 +48,13 @@
   ],
   "friends": [
    "SesameElegy",
-   "morazumorazu",
-   "mutoreimu",
    "Weisweiler",
-   "mof_mmm",
+   "mutoreimu",
    "miyauchi_it",
-   "a33554432",
-   "kurptoon"
+   "mof_mmm",
+   "morazumorazu",
+   "kurptoon",
+   "a33554432"
   ]
  },
  "mutoreimu": {
@@ -93,11 +93,11 @@
   ],
   "friends": [
    "morazumorazu",
-   "sprtfrst",
    "xiPJ",
+   "sprtfrst",
    "mizuumi",
-   "kichisyumi",
-   "syu_ya"
+   "syu_ya",
+   "kichisyumi"
   ]
  },
  "morazumorazu": {
@@ -135,8 +135,8 @@
   "friends": [
    "mutoreimu",
    "xiPJ",
-   "sprtfrst",
    "go_o2",
+   "sprtfrst",
    "syu_ya"
   ]
  },
@@ -167,8 +167,8 @@
   "friends": [
    "xiPJ",
    "manjimiya",
-   "IRFDK",
-   "kojinsathavasa"
+   "kojinsathavasa",
+   "IRFDK"
   ]
  },
  "Eigelpp": {
@@ -193,6 +193,26 @@
    "xiPJ"
   ]
  },
+ "asesama_": {
+  "count": 7,
+  "first": "42",
+  "latest": "148",
+  "episodes": [
+   "148",
+   "122-2",
+   "122-1",
+   "99",
+   "80",
+   "57-2",
+   "57-1",
+   "44",
+   "42"
+  ],
+  "friends": [
+   "sisisisisyamoo",
+   "kichisyumi"
+  ]
+ },
  "SesameElegy": {
   "count": 7,
   "first": "71",
@@ -213,8 +233,8 @@
   ],
   "friends": [
    "xiPJ",
-   "mof_mmm",
    "kurptoon",
+   "mof_mmm",
    "chihiroiinamae",
    "hiropon160"
   ]
@@ -232,9 +252,9 @@
    "32"
   ],
   "friends": [
-   "chihiroiinamae",
    "xiPJ",
-   "SesameElegy"
+   "SesameElegy",
+   "chihiroiinamae"
   ]
  },
  "kichisyumi": {
@@ -253,7 +273,7 @@
    "23"
   ],
   "friends": [
-   "shiroie_event",
+   "asesama_",
    "mutoreimu"
   ]
  },
@@ -270,8 +290,8 @@
    "6"
   ],
   "friends": [
-   "katsuko_meumeu",
-   "imo_ben_"
+   "imo_ben_",
+   "katsuko_meumeu"
   ]
  },
  "miyauchi_it": {
@@ -289,28 +309,9 @@
   ],
   "friends": [
    "xiPJ",
+   "syncat2",
    "g23997601",
-   "gekihihi",
-   "syncat2"
-  ]
- },
- "shiroie_event": {
-  "count": 6,
-  "first": "42",
-  "latest": "122-2",
-  "episodes": [
-   "122-2",
-   "122-1",
-   "99",
-   "80",
-   "57-2",
-   "57-1",
-   "44",
-   "42"
-  ],
-  "friends": [
-   "sisisisisyamoo",
-   "kichisyumi"
+   "gekihihi"
   ]
  },
  "sisisisisyamoo": {
@@ -327,7 +328,6 @@
    "42"
   ],
   "friends": [
-   "shiroie_event",
    "asesama_"
   ]
  },
@@ -343,8 +343,8 @@
    "63"
   ],
   "friends": [
-   "nowohyeah",
-   "buumm"
+   "buumm",
+   "nowohyeah"
   ]
  },
  "sprtfrst": {
@@ -407,8 +407,8 @@
   ],
   "friends": [
    "watanabe",
-   "yjmtsmt",
-   "AHA_oretama"
+   "AHA_oretama",
+   "yjmtsmt"
   ]
  },
  "muscle_azoson": {
@@ -556,8 +556,8 @@
    "10"
   ],
   "friends": [
-   "morazumorazu",
    "sprtfrst",
+   "morazumorazu",
    "Q_chan_zzz"
   ]
  },
@@ -622,8 +622,8 @@
    "146"
   ],
   "friends": [
-   "mutoreimu",
-   "sprtfrst"
+   "sprtfrst",
+   "mutoreimu"
   ]
  },
  "mof_mmm": {
@@ -638,8 +638,8 @@
   ],
   "friends": [
    "xiPJ",
-   "SesameElegy",
-   "kurptoon"
+   "kurptoon",
+   "SesameElegy"
   ]
  },
  "RyoAkashi": {
@@ -715,17 +715,6 @@
   ],
   "friends": []
  },
- "asesama_": {
-  "count": 1,
-  "first": "148",
-  "latest": "148",
-  "episodes": [
-   "148"
-  ],
-  "friends": [
-   "sisisisisyamoo"
-  ]
- },
  "ban20151031_2": {
   "count": 1,
   "first": "156",
@@ -785,8 +774,8 @@
    "59"
   ],
   "friends": [
-   "gekihihi",
    "xiPJ",
+   "gekihihi",
    "miyauchi_it"
   ]
  },
@@ -798,8 +787,8 @@
    "59"
   ],
   "friends": [
-   "g23997601",
    "xiPJ",
+   "g23997601",
    "miyauchi_it"
   ]
  },
@@ -839,10 +828,10 @@
    "56-3"
   ],
   "friends": [
-   "manjimiya",
-   "Weisweiler",
    "xiPJ",
-   "kojinsathavasa"
+   "Weisweiler",
+   "kojinsathavasa",
+   "manjimiya"
   ]
  },
  "Juri585": {
@@ -853,11 +842,11 @@
    "63_5"
   ],
   "friends": [
-   "Kamosoba_P14",
    "xiPJ",
-   "ogi_0227",
+   "lovemvno",
    "take__0814",
-   "lovemvno"
+   "ogi_0227",
+   "Kamosoba_P14"
   ]
  },
  "Kamosoba_P14": {
@@ -869,10 +858,10 @@
   ],
   "friends": [
    "xiPJ",
+   "lovemvno",
    "Juri585",
-   "ogi_0227",
    "take__0814",
-   "lovemvno"
+   "ogi_0227"
   ]
  },
  "kojinsathavasa": {
@@ -883,9 +872,9 @@
    "56-3"
   ],
   "friends": [
-   "manjimiya",
-   "Weisweiler",
    "xiPJ",
+   "Weisweiler",
+   "manjimiya",
    "IRFDK"
   ]
  },
@@ -934,11 +923,11 @@
    "63_5"
   ],
   "friends": [
-   "Kamosoba_P14",
    "xiPJ",
    "Juri585",
+   "take__0814",
    "ogi_0227",
-   "take__0814"
+   "Kamosoba_P14"
   ]
  },
  "manjimiya": {
@@ -949,10 +938,10 @@
    "56-3"
   ],
   "friends": [
-   "Weisweiler",
    "xiPJ",
-   "IRFDK",
-   "kojinsathavasa"
+   "Weisweiler",
+   "kojinsathavasa",
+   "IRFDK"
   ]
  },
  "mesirupedo": {
@@ -994,11 +983,11 @@
    "63_5"
   ],
   "friends": [
-   "Kamosoba_P14",
    "xiPJ",
+   "lovemvno",
    "Juri585",
    "take__0814",
-   "lovemvno"
+   "Kamosoba_P14"
   ]
  },
  "oooTORIBALLooo": {
@@ -1057,11 +1046,11 @@
    "63_5"
   ],
   "friends": [
-   "Kamosoba_P14",
    "xiPJ",
    "Juri585",
+   "lovemvno",
    "ogi_0227",
-   "lovemvno"
+   "Kamosoba_P14"
   ]
  },
  "tjmlab": {

@@ -229,7 +229,9 @@ def main() -> None:
         path = GUEST_PAGES / f"{guest}.md"
         wanted.add(path.name)
         name = actors[guest].get("name", guest).replace('"', '\\"')
-        content = f'---\nactor_id: "{guest}"\ntitle: "{name}さんの出演回"\n---\n'
+        # The address is spelled out: Jekyll's :name drops a handle's trailing "_" (asesama_ -> /guest/asesama/),
+        # while every link builds /guest/<handle>/.
+        content = f'---\nactor_id: "{guest}"\ntitle: "{name}さんの出演回"\npermalink: /guest/{guest}/\n---\n'
         if not path.exists() or path.read_text(encoding="utf-8") != content:
             path.write_text(content, encoding="utf-8", newline="\n")
     for path in GUEST_PAGES.glob("*.md"):

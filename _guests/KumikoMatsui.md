@@ -1,4 +1,5 @@
 ---
 actor_id: "KumikoMatsui"
-title: "Mastuiさんの出演回"
+title: "Matsuiさんの出演回"
+permalink: /guest/KumikoMatsui/
 ---

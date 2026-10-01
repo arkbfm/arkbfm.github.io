@@ -13,7 +13,7 @@ layout: default
       <p class="guest-hero-stats"><strong>{{ stats.count }}</strong>回出演{% if first_post %} · 初登場は<a href="{{ first_post.url | prepend:site.github.url }}">Ep.{{ stats.first | replace: '_', '.' }}</a>（{{ first_post.date | date: "%Y年%-m月" }}）{% endif %}</p>
       <p class="guest-hero-links">
         <a href="https://search.arkbfm.com/?q={{ guest.name | uri_escape }}">{{ guest.name }}さんの発言を検索</a>
-        {% if guest.url and guest.url != 'https://twitter.com/' %}<a href="{{ guest.url }}" target="_blank" rel="noopener noreferrer">SNS ↗</a>{% endif %}
+        {% comment %}Performers without an SNS account point at the X home page; they get no link.{% endcomment %}{% unless guest.url == nil or guest.url == 'https://x.com/' or guest.url == 'https://twitter.com/' %}<a href="{{ guest.url }}" target="_blank" rel="noopener noreferrer">SNS ↗</a>{% endunless %}
       </p>
     </div>
   </section>

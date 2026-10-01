@@ -10,7 +10,7 @@ actors:
   syncat2:
     image_url: /images/actors/syncat2.jpg
     name: すこ
-    url: https://twitter.com/
+    url: https://x.com/
   mistigrix0123:
     image_url: /images/actors/mistigrix0123.jpg
     name: るかりお
@@ -183,10 +183,6 @@ actors:
     image_url: /images/actors/Weisweiler.jpg
     name: ウスター
     url: https://twitter.com/Weisweiler
-  shiroie_event:
-    image_url: /images/actors/shiroie_event.jpg
-    name: 汗様
-    url: https://twitter.com/shiroie_event
   sisisisisyamoo:
     image_url: /images/actors/sisisisisyamoo.jpg
     name: ししゃも
@@ -226,7 +222,7 @@ actors:
   g23997601:
     image_url: /images/actors/g23997601.jpg
     name: 青汁ちゃん
-    url: https://twitter.com/xiPJ
+    url: https://x.com/
   miyauchi_it:
     image_url: /images/actors/miyauchi_it.jpg
     name: 宮内
@@ -237,7 +233,7 @@ actors:
     url: https://twitter.com/gekihihi
   KumikoMatsui:
     image_url: /images/actors/KumikoMatsui.jpg
-    name: Mastui
+    name: Matsui
     url: https://twitter.com/KumikoMatsui
   nowohyeah:
     image_url: /images/actors/nowohyeah.jpg
@@ -290,7 +286,7 @@ actors:
   watanabe:
     image_url: /images/actors/watanabe.png
     name: ワタナベ
-    url: https://twitter.com/
+    url: https://x.com/
   zeeksphere:
     image_url: /images/actors/zeeksphere.png
     name: じく
@@ -314,7 +310,7 @@ actors:
   kyomuo:
     image_url: /images/actors/kyomuo.png
     name: きょむお
-    url: https://twitter.com/
+    url: https://x.com/
   ban20151031_2:
     image_url: /images/actors/ban20151031_2.jpg
     name: ばん
