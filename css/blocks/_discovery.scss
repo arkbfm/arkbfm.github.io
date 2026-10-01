@@ -68,6 +68,8 @@
 .discovery-meta { color: $color-text-dark-secondary; font-size: .82rem; margin: 6px 0; }
 .discovery-latest-title { margin-bottom: 4px; }
 .discovery-player { border: 0; margin-top: 18px; }
+// Spotify embeds load late (_includes/spotify-embed.html): until then a quiet panel of the player's size and shape.
+.spotify-embed { background: var(--c-tint); border: 0; border-radius: 12px; display: block; }
 
 .discovery-grid { display: grid; gap: 16px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .discovery-feature {

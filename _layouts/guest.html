@@ -25,7 +25,7 @@ layout: default
         {% for friend_id in stats.friends %}
           {% assign friend = site.actors[friend_id] %}
           <a href="{{ '/guest/' | append: friend_id | append: '/' | prepend:site.github.url }}" class="guest-chip">
-            <img src="{{ friend.image_url | prepend:site.github.url }}" alt="" width="56" height="56" loading="lazy">
+            <img src="{{ friend.image_url | replace_first: '/images/actors/', '/images/actors/s/' | prepend:site.github.url }}" alt="" width="56" height="56" loading="lazy">
             <span class="guest-chip-name">{{ friend.name }}</span>
           </a>
         {% endfor %}

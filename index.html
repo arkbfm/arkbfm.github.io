@@ -43,7 +43,7 @@ layout: default
     </div>
     {% assign latest_audio = latest.audio_url | split: ',' | first | strip %}
     <div class="home-latest-layout">
-      <a class="home-latest-visual" href="{{ latest.url | prepend:site.github.url }}">{% include episode-visual.html ep=latest_ep size="large" %}</a>
+      <a class="home-latest-visual" href="{{ latest.url | prepend:site.github.url }}" aria-label="Ep.{{ latest_ep.number }} {{ latest_ep.subtitle | escape }} のショーノート">{% include episode-visual.html ep=latest_ep size="large" %}</a>
       <div>
         <h3 class="home-latest-title"><a href="{{ latest.url | prepend:site.github.url }}">{{ latest_ep.subtitle }}</a></h3>
         {% include episode-meta.html ep=latest_ep %}
@@ -59,7 +59,7 @@ layout: default
       </div>
     </div>
     {% if latest_audio != '' %}
-      <iframe class="discovery-player" src="https://open.spotify.com/embed/episode/{{ latest_audio }}" width="100%" height="152" title="{{ latest.title | escape }} をSpotifyで再生" loading="lazy" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
+      {% include spotify-embed.html id=latest_audio title=latest.title class="discovery-player" %}
     {% endif %}
     {% include subscribe-links.html place="home_latest" lead="次の回を聴き逃さないように、いつものアプリでフォロー" %}
   </section>
@@ -109,7 +109,7 @@ layout: default
       {% for entry in site.data.guests limit:14 %}
         {% assign guest_id = entry[0] %}{% assign guest = site.actors[guest_id] %}
         <a href="{{ '/guest/' | append: guest_id | append: '/' | prepend:site.github.url }}" class="guest-chip">
-          <img src="{{ guest.image_url | prepend:site.github.url }}" alt="" width="56" height="56" loading="lazy">
+          <img src="{{ guest.image_url | replace_first: '/images/actors/', '/images/actors/s/' | prepend:site.github.url }}" alt="" width="56" height="56" loading="lazy">
           <span class="guest-chip-name">{{ guest.name }}</span>
           <span class="guest-chip-count">{{ entry[1].count }}回</span>
         </a>
