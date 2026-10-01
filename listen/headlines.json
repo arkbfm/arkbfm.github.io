@@ -3,7 +3,8 @@ layout: null
 permalink: /listen/headlines.json
 sitemap: false
 ---
-{%- comment -%}The headline questions only (id, question, episode), small enough for the home page's "今日の3問".{%- endcomment -%}
+{%- comment -%}The headline questions only, small enough for the home page's "今日の3問": [id, question, episode number,
+episode subtitle, start, end, audio part (1-based), faces (guests', then the host's thumbnail)].{%- endcomment -%}
 [
 {%- assign first_item = true -%}
 {%- for post in site.posts -%}
@@ -12,7 +13,9 @@ sitemap: false
 {%- if question.time and question.end -%}
 {%- unless first_item %},{% endunless -%}
 {%- assign first_item = false -%}
-[{{ post.slug | append: "." | append: forloop.index | jsonify }},{{ question.text | jsonify }},{{ ep.number | default: post.slug | jsonify }},{{ ep.subtitle | default: post.title | jsonify }}]
+[{{ post.slug | append: "." | append: forloop.index | jsonify }},{{ question.text | jsonify }},{{ ep.number | default: post.slug | jsonify }},{{ ep.subtitle | default: post.title | jsonify }},{{ question.time | jsonify }},{{ question.end | jsonify }},{{ question.part | default: 1 }},[
+{%- for guest_id in ep.guests limit:3 -%}{%- assign guest = site.actors[guest_id] -%}{%- if guest.image_url -%}{{ guest.image_url | replace_first: '/images/actors/', '/images/actors/s/' | relative_url | jsonify }},{%- endif -%}{%- endfor -%}
+{{ site.actors.ark_B.image_url | replace_first: '/images/actors/', '/images/actors/s/' | relative_url | jsonify }}]]
 {%- endif -%}
 {%- endfor -%}
 {%- endfor -%}
