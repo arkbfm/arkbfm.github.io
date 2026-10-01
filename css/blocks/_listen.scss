@@ -383,6 +383,7 @@
   padding: 4px 12px;
 }
 // Where this visit has been: the episodes the chain passed through.
+.listen-bond { font-size: .78rem; font-weight: bold; margin: -4px 0 0; opacity: .85; text-align: right; }
 .listen-trail { font-family: var(--font-display); font-size: .75rem; margin: 6px 0 0; opacity: .8; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .listen-kicker {
   font-family: var(--font-display);

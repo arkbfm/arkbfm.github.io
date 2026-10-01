@@ -3,6 +3,10 @@
   "count": 28,
   "first": "43",
   "latest": "163",
+  "first_number": "43",
+  "since": "2021",
+  "latest_number": "163",
+  "latest_gap": "前回に続いて",
   "episodes": [
    "163",
    "161",
@@ -48,19 +52,23 @@
   ],
   "friends": [
    "SesameElegy",
-   "Weisweiler",
-   "mutoreimu",
    "miyauchi_it",
    "mof_mmm",
    "morazumorazu",
-   "kurptoon",
-   "a33554432"
+   "mutoreimu",
+   "Weisweiler",
+   "a33554432",
+   "kurptoon"
   ]
  },
  "mutoreimu": {
   "count": 20,
   "first": "21",
   "latest": "164",
+  "first_number": "21",
+  "since": "2021",
+  "latest_number": "164",
+  "latest_gap": "2か月ぶり",
   "episodes": [
    "164",
    "158_5",
@@ -93,17 +101,21 @@
   ],
   "friends": [
    "morazumorazu",
-   "xiPJ",
    "sprtfrst",
+   "xiPJ",
+   "kichisyumi",
    "mizuumi",
-   "syu_ya",
-   "kichisyumi"
+   "syu_ya"
   ]
  },
  "morazumorazu": {
   "count": 19,
   "first": "1",
   "latest": "158_5",
+  "first_number": "1",
+  "since": "2020",
+  "latest_number": "158.5",
+  "latest_gap": "6か月ぶり",
   "episodes": [
    "158_5",
    "147_5",
@@ -144,6 +156,10 @@
   "count": 16,
   "first": "36",
   "latest": "159",
+  "first_number": "36",
+  "since": "2021",
+  "latest_number": "159",
+  "latest_gap": "4か月ぶり",
   "episodes": [
    "159",
    "152",
@@ -166,15 +182,19 @@
   ],
   "friends": [
    "xiPJ",
-   "manjimiya",
+   "IRFDK",
    "kojinsathavasa",
-   "IRFDK"
+   "manjimiya"
   ]
  },
  "Eigelpp": {
   "count": 8,
   "first": "58",
   "latest": "163",
+  "first_number": "58",
+  "since": "2022",
+  "latest_number": "163",
+  "latest_gap": "5か月ぶり",
   "episodes": [
    "163",
    "154",
@@ -197,6 +217,10 @@
   "count": 7,
   "first": "42",
   "latest": "148",
+  "first_number": "42",
+  "since": "2021",
+  "latest_number": "148",
+  "latest_gap": "1年ぶり",
   "episodes": [
    "148",
    "122-2",
@@ -217,6 +241,10 @@
   "count": 7,
   "first": "71",
   "latest": "151",
+  "first_number": "71",
+  "since": "2022",
+  "latest_number": "151",
+  "latest_gap": "1年3か月ぶり",
   "episodes": [
    "151",
    "118.5",
@@ -243,6 +271,10 @@
   "count": 6,
   "first": "32",
   "latest": "118.5",
+  "first_number": "32",
+  "since": "2021",
+  "latest_number": "118.5",
+  "latest_gap": "3か月ぶり",
   "episodes": [
    "118.5",
    "113",
@@ -252,15 +284,19 @@
    "32"
   ],
   "friends": [
-   "xiPJ",
+   "chihiroiinamae",
    "SesameElegy",
-   "chihiroiinamae"
+   "xiPJ"
   ]
  },
  "kichisyumi": {
   "count": 6,
   "first": "23",
   "latest": "164",
+  "first_number": "23",
+  "since": "2021",
+  "latest_number": "164",
+  "latest_gap": "9か月ぶり",
   "episodes": [
    "164",
    "143",
@@ -281,6 +317,10 @@
   "count": 6,
   "first": "6",
   "latest": "134",
+  "first_number": "6",
+  "since": "2020",
+  "latest_number": "134",
+  "latest_gap": "5か月ぶり",
   "episodes": [
    "134",
    "125",
@@ -298,6 +338,10 @@
   "count": 6,
   "first": "59",
   "latest": "165",
+  "first_number": "59",
+  "since": "2022",
+  "latest_number": "165",
+  "latest_gap": "11か月ぶり",
   "episodes": [
    "165",
    "141",
@@ -309,15 +353,19 @@
   ],
   "friends": [
    "xiPJ",
-   "syncat2",
    "g23997601",
-   "gekihihi"
+   "gekihihi",
+   "syncat2"
   ]
  },
  "sisisisisyamoo": {
   "count": 6,
   "first": "42",
   "latest": "148",
+  "first_number": "42",
+  "since": "2021",
+  "latest_number": "148",
+  "latest_gap": "1年ぶり",
   "episodes": [
    "148",
    "122-2",
@@ -335,6 +383,10 @@
   "count": 5,
   "first": "63",
   "latest": "160",
+  "first_number": "63",
+  "since": "2022",
+  "latest_number": "160",
+  "latest_gap": "1年1か月ぶり",
   "episodes": [
    "160",
    "136",
@@ -351,6 +403,10 @@
   "count": 5,
   "first": "64-1",
   "latest": "146",
+  "first_number": "64",
+  "since": "2022",
+  "latest_number": "146",
+  "latest_gap": "3か月ぶり",
   "episodes": [
    "146",
    "140",
@@ -362,8 +418,8 @@
   ],
   "friends": [
    "mutoreimu",
-   "morazumorazu",
    "go_o2",
+   "morazumorazu",
    "mizuumi"
   ]
  },
@@ -371,6 +427,10 @@
   "count": 4,
   "first": "4",
   "latest": "92",
+  "first_number": "4",
+  "since": "2020",
+  "latest_number": "92",
+  "latest_gap": "1年7か月ぶり",
   "episodes": [
    "92",
    "55",
@@ -378,14 +438,18 @@
    "4"
   ],
   "friends": [
-   "yjmtsmt",
-   "MasashiU"
+   "MasashiU",
+   "yjmtsmt"
   ]
  },
  "maraky99": {
   "count": 4,
   "first": "50",
   "latest": "150",
+  "first_number": "50",
+  "since": "2022",
+  "latest_number": "150",
+  "latest_gap": "2年2か月ぶり",
   "episodes": [
    "150",
    "100",
@@ -398,6 +462,10 @@
   "count": 4,
   "first": "2",
   "latest": "145",
+  "first_number": "2",
+  "since": "2020",
+  "latest_number": "145",
+  "latest_gap": "3年1か月ぶり",
   "episodes": [
    "145",
    "73-2",
@@ -415,6 +483,10 @@
   "count": 4,
   "first": "9",
   "latest": "166",
+  "first_number": "9",
+  "since": "2020",
+  "latest_number": "166",
+  "latest_gap": "1年9か月ぶり",
   "episodes": [
    "166",
    "123",
@@ -428,6 +500,10 @@
   "count": 3,
   "first": "7",
   "latest": "70",
+  "first_number": "7",
+  "since": "2020",
+  "latest_number": "70",
+  "latest_gap": "1年ぶり",
   "episodes": [
    "70",
    "24",
@@ -442,6 +518,10 @@
   "count": 3,
   "first": "11",
   "latest": "82-2",
+  "first_number": "11",
+  "since": "2021",
+  "latest_number": "82",
+  "latest_gap": "1年3か月ぶり",
   "episodes": [
    "82-2",
    "82-1",
@@ -457,6 +537,10 @@
   "count": 3,
   "first": "10",
   "latest": "81-2",
+  "first_number": "10",
+  "since": "2020",
+  "latest_number": "81",
+  "latest_gap": "3か月ぶり",
   "episodes": [
    "81-2",
    "81-1",
@@ -472,6 +556,10 @@
   "count": 3,
   "first": "37",
   "latest": "110-2",
+  "first_number": "37",
+  "since": "2021",
+  "latest_number": "110",
+  "latest_gap": "2年7か月ぶり",
   "episodes": [
    "110-2",
    "110-1",
@@ -484,20 +572,28 @@
   "count": 3,
   "first": "18",
   "latest": "161",
+  "first_number": "18",
+  "since": "2021",
+  "latest_number": "161",
+  "latest_gap": "2年4か月ぶり",
   "episodes": [
    "161",
    "105",
    "18"
   ],
   "friends": [
-   "xiPJ",
-   "imo_ben_"
+   "imo_ben_",
+   "xiPJ"
   ]
  },
  "syu_ya": {
   "count": 3,
   "first": "3",
   "latest": "21",
+  "first_number": "3",
+  "since": "2020",
+  "latest_number": "21",
+  "latest_gap": "2か月ぶり",
   "episodes": [
    "21",
    "17",
@@ -512,6 +608,10 @@
   "count": 3,
   "first": "13",
   "latest": "86",
+  "first_number": "13",
+  "since": "2021",
+  "latest_number": "86",
+  "latest_gap": "1年4か月ぶり",
   "episodes": [
    "86",
    "31",
@@ -526,6 +626,10 @@
   "count": 2,
   "first": "98-1",
   "latest": "147",
+  "first_number": "98",
+  "since": "2023",
+  "latest_number": "147",
+  "latest_gap": "2年ぶり",
   "episodes": [
    "147",
    "98-2",
@@ -537,27 +641,35 @@
   "count": 2,
   "first": "31",
   "latest": "88",
+  "first_number": "31",
+  "since": "2021",
+  "latest_number": "88",
+  "latest_gap": "1年7か月ぶり",
   "episodes": [
    "88",
    "31"
   ],
   "friends": [
-   "toko157",
-   "sai_enlightened"
+   "sai_enlightened",
+   "toko157"
   ]
  },
  "go_o2": {
   "count": 2,
   "first": "10",
   "latest": "64-2",
+  "first_number": "10",
+  "since": "2020",
+  "latest_number": "64",
+  "latest_gap": "1年7か月ぶり",
   "episodes": [
    "64-2",
    "64-1",
    "10"
   ],
   "friends": [
-   "sprtfrst",
    "morazumorazu",
+   "sprtfrst",
    "Q_chan_zzz"
   ]
  },
@@ -565,19 +677,27 @@
   "count": 2,
   "first": "12",
   "latest": "105",
+  "first_number": "12",
+  "since": "2021",
+  "latest_number": "105",
+  "latest_gap": "3年1か月ぶり",
   "episodes": [
    "105",
    "12"
   ],
   "friends": [
-   "saikoro19937",
-   "matyunmatyun"
+   "matyunmatyun",
+   "saikoro19937"
   ]
  },
  "Ioty47": {
   "count": 2,
   "first": "127",
   "latest": "153",
+  "first_number": "127",
+  "since": "2025",
+  "latest_number": "153",
+  "latest_gap": "1年ぶり",
   "episodes": [
    "153",
    "127"
@@ -590,21 +710,29 @@
   "count": 2,
   "first": "66",
   "latest": "78-2",
+  "first_number": "66",
+  "since": "2022",
+  "latest_number": "78",
+  "latest_gap": "5か月ぶり",
   "episodes": [
    "78-2",
    "78-1",
    "66"
   ],
   "friends": [
-   "xiPJ",
    "mof_mmm",
-   "SesameElegy"
+   "SesameElegy",
+   "xiPJ"
   ]
  },
  "mistigrix0123": {
   "count": 2,
   "first": "138",
   "latest": "153",
+  "first_number": "138",
+  "since": "2025",
+  "latest_number": "153",
+  "latest_gap": "8か月ぶり",
   "episodes": [
    "153",
    "138"
@@ -617,19 +745,27 @@
   "count": 2,
   "first": "146",
   "latest": "157",
+  "first_number": "146",
+  "since": "2025",
+  "latest_number": "157",
+  "latest_gap": "5か月ぶり",
   "episodes": [
    "157",
    "146"
   ],
   "friends": [
-   "sprtfrst",
-   "mutoreimu"
+   "mutoreimu",
+   "sprtfrst"
   ]
  },
  "mof_mmm": {
   "count": 2,
   "first": "72-1",
   "latest": "78-2",
+  "first_number": "72",
+  "since": "2022",
+  "latest_number": "78",
+  "latest_gap": "3か月ぶり",
   "episodes": [
    "78-2",
    "78-1",
@@ -646,6 +782,10 @@
   "count": 2,
   "first": "89",
   "latest": "111",
+  "first_number": "89",
+  "since": "2023",
+  "latest_number": "111",
+  "latest_gap": "1年1か月ぶり",
   "episodes": [
    "111",
    "89"
@@ -656,6 +796,10 @@
   "count": 2,
   "first": "40",
   "latest": "81-2",
+  "first_number": "40",
+  "since": "2021",
+  "latest_number": "81",
+  "latest_gap": "1年1か月ぶり",
   "episodes": [
    "81-2",
    "81-1",
@@ -669,6 +813,10 @@
   "count": 2,
   "first": "91",
   "latest": "155",
+  "first_number": "91",
+  "since": "2023",
+  "latest_number": "155",
+  "latest_gap": "2年7か月ぶり",
   "episodes": [
    "155",
    "91"
@@ -679,6 +827,10 @@
   "count": 2,
   "first": "22",
   "latest": "79",
+  "first_number": "22",
+  "since": "2021",
+  "latest_number": "79",
+  "latest_gap": "1年5か月ぶり",
   "episodes": [
    "79",
    "22"
@@ -689,6 +841,10 @@
   "count": 1,
   "first": "128",
   "latest": "128",
+  "first_number": "128",
+  "since": "2025",
+  "latest_number": "128",
+  "latest_gap": null,
   "episodes": [
    "128"
   ],
@@ -698,6 +854,10 @@
   "count": 1,
   "first": "69-1",
   "latest": "69-2",
+  "first_number": "69",
+  "since": "2022",
+  "latest_number": "69",
+  "latest_gap": null,
   "episodes": [
    "69-2",
    "69-1"
@@ -710,6 +870,10 @@
   "count": 1,
   "first": "26",
   "latest": "26",
+  "first_number": "26",
+  "since": "2021",
+  "latest_number": "26",
+  "latest_gap": null,
   "episodes": [
    "26"
   ],
@@ -719,6 +883,10 @@
   "count": 1,
   "first": "156",
   "latest": "156",
+  "first_number": "156",
+  "since": "2026",
+  "latest_number": "156",
+  "latest_gap": null,
   "episodes": [
    "156"
   ],
@@ -728,19 +896,27 @@
   "count": 1,
   "first": "118.5",
   "latest": "118.5",
+  "first_number": "118.5",
+  "since": "2024",
+  "latest_number": "118.5",
+  "latest_gap": null,
   "episodes": [
    "118.5"
   ],
   "friends": [
-   "xiPJ",
    "hiropon160",
-   "SesameElegy"
+   "SesameElegy",
+   "xiPJ"
   ]
  },
  "dr_Q_99": {
   "count": 1,
   "first": "28",
   "latest": "28",
+  "first_number": "28",
+  "since": "2021",
+  "latest_number": "28",
+  "latest_gap": null,
   "episodes": [
    "28"
   ],
@@ -750,6 +926,10 @@
   "count": 1,
   "first": "20",
   "latest": "20",
+  "first_number": "20",
+  "since": "2021",
+  "latest_number": "20",
+  "latest_gap": null,
   "episodes": [
    "20"
   ],
@@ -759,6 +939,10 @@
   "count": 1,
   "first": "70",
   "latest": "70",
+  "first_number": "70",
+  "since": "2022",
+  "latest_number": "70",
+  "latest_gap": null,
   "episodes": [
    "70"
   ],
@@ -770,32 +954,44 @@
   "count": 1,
   "first": "59",
   "latest": "59",
+  "first_number": "59",
+  "since": "2022",
+  "latest_number": "59",
+  "latest_gap": null,
   "episodes": [
    "59"
   ],
   "friends": [
-   "xiPJ",
    "gekihihi",
-   "miyauchi_it"
+   "miyauchi_it",
+   "xiPJ"
   ]
  },
  "gekihihi": {
   "count": 1,
   "first": "59",
   "latest": "59",
+  "first_number": "59",
+  "since": "2022",
+  "latest_number": "59",
+  "latest_gap": null,
   "episodes": [
    "59"
   ],
   "friends": [
-   "xiPJ",
    "g23997601",
-   "miyauchi_it"
+   "miyauchi_it",
+   "xiPJ"
   ]
  },
  "grace00455": {
   "count": 1,
   "first": "120-1",
   "latest": "120-2",
+  "first_number": "120",
+  "since": "2024",
+  "latest_number": "120",
+  "latest_gap": null,
   "episodes": [
    "120-2",
    "120-1"
@@ -806,6 +1002,10 @@
   "count": 1,
   "first": "54",
   "latest": "54",
+  "first_number": "54",
+  "since": "2022",
+  "latest_number": "54",
+  "latest_gap": null,
   "episodes": [
    "54"
   ],
@@ -815,6 +1015,10 @@
   "count": 1,
   "first": "130",
   "latest": "130",
+  "first_number": "130",
+  "since": "2025",
+  "latest_number": "130",
+  "latest_gap": null,
   "episodes": [
    "130"
   ],
@@ -824,64 +1028,84 @@
   "count": 1,
   "first": "56-3",
   "latest": "56-3",
+  "first_number": "56",
+  "since": "2022",
+  "latest_number": "56",
+  "latest_gap": null,
   "episodes": [
    "56-3"
   ],
   "friends": [
-   "xiPJ",
-   "Weisweiler",
    "kojinsathavasa",
-   "manjimiya"
+   "manjimiya",
+   "Weisweiler",
+   "xiPJ"
   ]
  },
  "Juri585": {
   "count": 1,
   "first": "63_5",
   "latest": "63_5",
+  "first_number": "63.5",
+  "since": "2022",
+  "latest_number": "63.5",
+  "latest_gap": null,
   "episodes": [
    "63_5"
   ],
   "friends": [
-   "xiPJ",
+   "Kamosoba_P14",
    "lovemvno",
-   "take__0814",
    "ogi_0227",
-   "Kamosoba_P14"
+   "take__0814",
+   "xiPJ"
   ]
  },
  "Kamosoba_P14": {
   "count": 1,
   "first": "63_5",
   "latest": "63_5",
+  "first_number": "63.5",
+  "since": "2022",
+  "latest_number": "63.5",
+  "latest_gap": null,
   "episodes": [
    "63_5"
   ],
   "friends": [
-   "xiPJ",
-   "lovemvno",
    "Juri585",
+   "lovemvno",
+   "ogi_0227",
    "take__0814",
-   "ogi_0227"
+   "xiPJ"
   ]
  },
  "kojinsathavasa": {
   "count": 1,
   "first": "56-3",
   "latest": "56-3",
+  "first_number": "56",
+  "since": "2022",
+  "latest_number": "56",
+  "latest_gap": null,
   "episodes": [
    "56-3"
   ],
   "friends": [
-   "xiPJ",
-   "Weisweiler",
+   "IRFDK",
    "manjimiya",
-   "IRFDK"
+   "Weisweiler",
+   "xiPJ"
   ]
  },
  "KumikoMatsui": {
   "count": 1,
   "first": "61-1",
   "latest": "61-2",
+  "first_number": "61",
+  "since": "2022",
+  "latest_number": "61",
+  "latest_gap": null,
   "episodes": [
    "61-2",
    "61-1"
@@ -892,6 +1116,10 @@
   "count": 1,
   "first": "8",
   "latest": "8",
+  "first_number": "8",
+  "since": "2020",
+  "latest_number": "8",
+  "latest_gap": null,
   "episodes": [
    "8"
   ],
@@ -901,6 +1129,10 @@
   "count": 1,
   "first": "108",
   "latest": "108",
+  "first_number": "108",
+  "since": "2024",
+  "latest_number": "108",
+  "latest_gap": null,
   "episodes": [
    "108"
   ],
@@ -910,6 +1142,10 @@
   "count": 1,
   "first": "19",
   "latest": "19",
+  "first_number": "19",
+  "since": "2021",
+  "latest_number": "19",
+  "latest_gap": null,
   "episodes": [
    "19"
   ],
@@ -919,35 +1155,47 @@
   "count": 1,
   "first": "63_5",
   "latest": "63_5",
+  "first_number": "63.5",
+  "since": "2022",
+  "latest_number": "63.5",
+  "latest_gap": null,
   "episodes": [
    "63_5"
   ],
   "friends": [
-   "xiPJ",
    "Juri585",
-   "take__0814",
+   "Kamosoba_P14",
    "ogi_0227",
-   "Kamosoba_P14"
+   "take__0814",
+   "xiPJ"
   ]
  },
  "manjimiya": {
   "count": 1,
   "first": "56-3",
   "latest": "56-3",
+  "first_number": "56",
+  "since": "2022",
+  "latest_number": "56",
+  "latest_gap": null,
   "episodes": [
    "56-3"
   ],
   "friends": [
-   "xiPJ",
-   "Weisweiler",
+   "IRFDK",
    "kojinsathavasa",
-   "IRFDK"
+   "Weisweiler",
+   "xiPJ"
   ]
  },
  "mesirupedo": {
   "count": 1,
   "first": "34",
   "latest": "34",
+  "first_number": "34",
+  "since": "2021",
+  "latest_number": "34",
+  "latest_gap": null,
   "episodes": [
    "34"
   ],
@@ -957,6 +1205,10 @@
   "count": 1,
   "first": "86",
   "latest": "86",
+  "first_number": "86",
+  "since": "2023",
+  "latest_number": "86",
+  "latest_gap": null,
   "episodes": [
    "86"
   ],
@@ -968,6 +1220,10 @@
   "count": 1,
   "first": "63",
   "latest": "63",
+  "first_number": "63",
+  "since": "2022",
+  "latest_number": "63",
+  "latest_gap": null,
   "episodes": [
    "63"
   ],
@@ -979,21 +1235,29 @@
   "count": 1,
   "first": "63_5",
   "latest": "63_5",
+  "first_number": "63.5",
+  "since": "2022",
+  "latest_number": "63.5",
+  "latest_gap": null,
   "episodes": [
    "63_5"
   ],
   "friends": [
-   "xiPJ",
-   "lovemvno",
    "Juri585",
+   "Kamosoba_P14",
+   "lovemvno",
    "take__0814",
-   "Kamosoba_P14"
+   "xiPJ"
   ]
  },
  "oooTORIBALLooo": {
   "count": 1,
   "first": "14",
   "latest": "14",
+  "first_number": "14",
+  "since": "2021",
+  "latest_number": "14",
+  "latest_gap": null,
   "episodes": [
    "14"
   ],
@@ -1003,6 +1267,10 @@
   "count": 1,
   "first": "27",
   "latest": "27",
+  "first_number": "27",
+  "since": "2021",
+  "latest_number": "27",
+  "latest_gap": null,
   "episodes": [
    "27"
   ],
@@ -1012,6 +1280,10 @@
   "count": 1,
   "first": "116-1",
   "latest": "116-2",
+  "first_number": "116",
+  "since": "2024",
+  "latest_number": "116",
+  "latest_gap": null,
   "episodes": [
    "116-2",
    "116-1"
@@ -1022,6 +1294,10 @@
   "count": 1,
   "first": "101",
   "latest": "101",
+  "first_number": "101",
+  "since": "2024",
+  "latest_number": "101",
+  "latest_gap": null,
   "episodes": [
    "101"
   ],
@@ -1031,6 +1307,10 @@
   "count": 1,
   "first": "141",
   "latest": "141",
+  "first_number": "141",
+  "since": "2025",
+  "latest_number": "141",
+  "latest_gap": null,
   "episodes": [
    "141"
   ],
@@ -1042,21 +1322,29 @@
   "count": 1,
   "first": "63_5",
   "latest": "63_5",
+  "first_number": "63.5",
+  "since": "2022",
+  "latest_number": "63.5",
+  "latest_gap": null,
   "episodes": [
    "63_5"
   ],
   "friends": [
-   "xiPJ",
    "Juri585",
+   "Kamosoba_P14",
    "lovemvno",
    "ogi_0227",
-   "Kamosoba_P14"
+   "xiPJ"
   ]
  },
  "tjmlab": {
   "count": 1,
   "first": "16",
   "latest": "16",
+  "first_number": "16",
+  "since": "2021",
+  "latest_number": "16",
+  "latest_gap": null,
   "episodes": [
    "16"
   ],
@@ -1066,6 +1354,10 @@
   "count": 1,
   "first": "5",
   "latest": "5",
+  "first_number": "5",
+  "since": "2020",
+  "latest_number": "5",
+  "latest_gap": null,
   "episodes": [
    "5"
   ],
@@ -1075,6 +1367,10 @@
   "count": 1,
   "first": "25",
   "latest": "25",
+  "first_number": "25",
+  "since": "2021",
+  "latest_number": "25",
+  "latest_gap": null,
   "episodes": [
    "25"
   ],
@@ -1084,6 +1380,10 @@
   "count": 1,
   "first": "73-1",
   "latest": "73-2",
+  "first_number": "73",
+  "since": "2022",
+  "latest_number": "73",
+  "latest_gap": null,
   "episodes": [
    "73-2",
    "73-1"
@@ -1096,6 +1396,10 @@
   "count": 1,
   "first": "46",
   "latest": "46",
+  "first_number": "46",
+  "since": "2021",
+  "latest_number": "46",
+  "latest_gap": null,
   "episodes": [
    "46"
   ],
@@ -1105,6 +1409,10 @@
   "count": 1,
   "first": "162",
   "latest": "162",
+  "first_number": "162",
+  "since": "2026",
+  "latest_number": "162",
+  "latest_gap": null,
   "episodes": [
    "162"
   ],
@@ -1114,6 +1422,10 @@
   "count": 1,
   "first": "35",
   "latest": "35",
+  "first_number": "35",
+  "since": "2021",
+  "latest_number": "35",
+  "latest_gap": null,
   "episodes": [
    "35"
   ],
@@ -1126,6 +1438,10 @@
   "count": 1,
   "first": "77",
   "latest": "77",
+  "first_number": "77",
+  "since": "2022",
+  "latest_number": "77",
+  "latest_gap": null,
   "episodes": [
    "77"
   ],
