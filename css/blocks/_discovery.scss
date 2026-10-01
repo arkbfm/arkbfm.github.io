@@ -65,6 +65,8 @@
 }
 
 .discovery-section-lead { color: $color-text-dark-secondary; margin-bottom: 20px; }
+// Links inside the lead's running text are underlined, so they don't rely on color alone.
+.discovery-section-lead a { text-decoration: underline; text-underline-offset: 2px; }
 .discovery-meta { color: $color-text-dark-secondary; font-size: .82rem; margin: 6px 0; }
 .discovery-latest-title { margin-bottom: 4px; }
 .discovery-player { border: 0; margin-top: 18px; }
