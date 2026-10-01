@@ -237,11 +237,12 @@ body { background-color: var(--c-tint); color: var(--c-ink); }
   flex: 1;
   flex-direction: column;
   gap: 10px;
-  // The visual lifts and tilts on hover/focus, up to ~8px above the card and ~3px past its sides. The link's box
-  // takes in that room (padding, cancelled by the negative margin, so nothing moves), so the tilted corners are
-  // not clipped (Safari can paint a transformed child only inside its parent's box) and the focus ring goes round them.
-  margin: -8px -4px 0;
-  padding: 8px 4px 0;
+  // The visual lifts and tilts on hover/focus: the wider the card, the higher its top-right corner goes (7px on a
+  // 412px phone, 10px on a 700px single column) and ~3px past its sides. The link's box takes in that room with some
+  // to spare for the corner's anti-aliasing (padding, cancelled by the negative margin, so nothing moves): mobile
+  // browsers can paint a transformed child only inside its parent's box, and the focus ring goes round it.
+  margin: -14px -6px 0;
+  padding: 14px 6px 0;
   &, &:hover, &:focus, &:active { color: var(--c-ink); }
   .ep-visual { transition: transform .18s ease, box-shadow .18s ease; }
   &:hover .ep-visual,
