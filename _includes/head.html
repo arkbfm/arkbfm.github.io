@@ -26,6 +26,8 @@
   <link rel="preload" href="{{ '/fonts/ikamodoki1_0.woff2' | relative_url }}" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="{{ '/fonts/ProjectPaintballDisplay.woff2' | relative_url }}" as="font" type="font/woff2" crossorigin>
   <link rel="shortcut icon" type="image/x-icon" href="{{ site.github.url }}/favicon.ico">
+  {% comment %}iOS's home-screen icon; it also asks for /apple-touch-icon.png on its own, so the file sits at the root.{% endcomment %}
+  <link rel="apple-touch-icon" href="{{ '/apple-touch-icon.png' | relative_url }}">
   {% include structured-data.html %}
   {% include analytics.html %}
 </head>
