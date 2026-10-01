@@ -5,9 +5,9 @@ const HTML = `<!doctype html>
 <style>
 .search-card{max-width:960px}.search-note,#meta,.attrs,.kind{color:rgba(0,0,0,.54)}#meta{margin-top:8px}
 .result{padding:22px 0}.result+.result{border-top:1px solid #eee}.title{font-size:1.5rem}.attrs,.kind{font-size:.86rem;margin:4px 0 9px}.hit{border-top:1px solid #eee;padding-top:12px;margin-top:12px}.text{line-height:1.7}.turn+.turn{margin-top:6px}.turn-speaker{font-weight:700}mark{background:#ffe28a}
-.play{font:inherit;cursor:pointer;color:#fff;background:#1c3c7c;border:0;border-radius:4px;margin-top:10px;padding:7px 11px}.player{position:sticky;bottom:8px;margin-top:16px}
+.hit-actions{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;margin-top:10px}.hit-listen{display:inline-block;font-weight:700;color:#fff;background:var(--c-accent-deep,#0b7a63);border:2px solid var(--c-ink,#0c2e27);border-radius:999px;box-shadow:0 3px 0 var(--c-ink,#0c2e27);padding:7px 16px;text-decoration:none}.hit-listen:hover,.hit-listen:focus-visible{color:#fff;transform:translateY(1px);box-shadow:0 2px 0 var(--c-ink,#0c2e27)}.play{font:inherit;font-size:.86rem;cursor:pointer;color:inherit;background:none;border:0;padding:4px 0;text-decoration:underline}.player{position:sticky;bottom:8px;margin-top:16px}
 @media(max-width:767px){.title{font-size:1.25rem}}
-</style></head><body><header class="header"><div class="header-overlay"><div class="container header-container"><div class="header-left"><h1 class="header-heading"><a href="https://www.arkbfm.com/"><span class="header-heading-ja">あら</span><span class="header-heading-en">B.fm</span></a></h1><div class="header-description">あらBがテクノロジー、音楽、映画などについてゲストを招いて話すポッドキャストです。</div></div><div class="header-search"><form class="header-search-form" id="form" action="/" method="get"><input type="search" id="q" name="q" minlength="2" maxlength="100" required autofocus placeholder="エピソードを検索" aria-label="エピソードを検索" class="header-search-input" autocomplete="off"></form></div></div></div></header>
+</style></head><body><header class="header"><div class="header-overlay"><div class="container header-container"><div class="header-left"><p class="header-heading"><a href="https://www.arkbfm.com/"><span class="header-heading-ja">あら</span><span class="header-heading-en">B.fm</span></a></p><div class="header-description">あらB.fm はゲストと一緒にくだをまく様子をお届けするポッドキャストです。</div></div><div class="header-search"><form class="header-search-form" id="form" action="/" method="get"><input type="search" id="q" name="q" minlength="2" maxlength="100" required autofocus placeholder="エピソードを検索" aria-label="エピソードを検索" class="header-search-input" autocomplete="off"><button type="submit" class="header-search-button">検索</button></form></div></div><nav class="container header-nav" aria-label="サイト内ナビゲーション"><a href="https://www.arkbfm.com/">ホーム</a><a href="https://www.arkbfm.com/listen/">つまみ聴き</a><a href="https://www.arkbfm.com/#start">初めて聴くなら</a><a href="https://www.arkbfm.com/episodes/">全エピソード</a><a href="https://www.arkbfm.com/guests/">出演者</a></nav></div></header>
 <main class="main"><div class="container search-card"><div class="card"><div class="card-header"><h1 class="card-heading">横断検索</h1><p class="search-note">校正済み文字起こし、タイトル、概要、ショーノートを検索します。</p><div id="meta"></div></div><div class="card-body" id="results"></div></div><div class="player" id="player"></div></div></main>
 <script>
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -16,7 +16,7 @@ document.querySelector('#results').addEventListener('click',e=>{const button=e.t
 document.querySelector('#form').addEventListener('submit',async e=>{e.preventDefault();const q=document.querySelector('#q').value.trim();if(q.length<2)return;history.replaceState(null,'','/?q='+encodeURIComponent(q));
 const meta=document.querySelector('#meta'),results=document.querySelector('#results');meta.textContent='検索中…';results.innerHTML='';
 try{const response=await fetch('/api/search',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({q})});const data=await response.json();if(!response.ok)throw new Error(data.error||'検索に失敗しました');
-meta.textContent=data.results.length+'エピソード';results.innerHTML=data.results.map(x=>'<article class="result"><a class="title" href="'+esc(x.url)+'">'+esc(x.title)+'</a><div class="attrs">'+esc(x.published_at)+' · '+esc(x.actors)+'</div><div class="kind">'+esc(x.reason)+'</div>'+x.hits.map(h=>'<div class="hit"><div class="attrs">'+esc(h.timestamp)+(h.fuzzy?' · あいまい一致':'')+'</div><div class="text">'+(h.lines?.length?h.lines.map(line=>'<div class="turn"><span class="turn-speaker">'+esc(line.speaker||'話者不明')+':</span> '+highlight(line.text,q)+'</div>').join(''):'<div class="turn"><span class="turn-speaker">'+esc(h.speaker||'話者不明')+':</span> '+highlight(h.text,q)+'</div>')+'</div><button class="play" data-spotify="'+esc(h.spotify_id)+'" data-start="'+Number(h.start)+'">Spotifyプレイヤーを表示（'+esc(h.timestamp)+'〜）</button></div>').join('')+'</article>').join('')||'<p>一致するエピソードはありませんでした。</p>';
+meta.textContent=data.results.length+'エピソード';results.innerHTML=data.results.map(x=>'<article class="result"><a class="title" href="'+esc(x.url)+'">'+esc(x.title)+'</a><div class="attrs">'+esc(x.published_at)+' · '+esc(x.actors)+'</div><div class="kind">'+esc(x.reason)+'</div>'+x.hits.map(h=>'<div class="hit"><div class="attrs">'+esc(h.timestamp)+(h.fuzzy?' · あいまい一致':'')+'</div><div class="text">'+(h.lines?.length?h.lines.map(line=>'<div class="turn"><span class="turn-speaker">'+esc(line.speaker||'話者不明')+':</span> '+highlight(line.text,q)+'</div>').join(''):'<div class="turn"><span class="turn-speaker">'+esc(h.speaker||'話者不明')+':</span> '+highlight(h.text,q)+'</div>')+'</div><div class="hit-actions"><a class="hit-listen" href="'+esc(h.listen)+'">▶ この場面から聴く（'+esc(h.timestamp)+'〜）</a><button class="play" data-spotify="'+esc(h.spotify_id)+'" data-start="'+Number(h.start)+'">Spotifyで開く</button></div></div>').join('')+'</article>').join('')||'<p>一致するエピソードはありませんでした。</p>';
 }catch(error){meta.textContent=error.message;}});
 const initialQuery=new URLSearchParams(location.search).get('q');if(initialQuery){document.querySelector('#q').value=initialQuery;document.querySelector('#form').requestSubmit()}
 </script><footer class="footer"><div class="container"><div class="footer-copyright">© 2021 <a href="https://www.arkbfm.com/">あらB.fm</a></div></div></footer></body></html>`;
@@ -231,13 +231,13 @@ async function search(env, query, timings = {}) {
     const cacheTerm = variant.toLowerCase() === "ai" ? "AI" : variant;
     const useShortCache = variant.length < 3 && SHORT_SEGMENT_TERMS.has(cacheTerm);
     const segmentSql = useShortCache
-      ? `SELECT s.episode,e.title,e.slug,e.published_at,e.actors,e.description,s.spotify_id,s.start,s.speaker,s.text,s.speaker_turns
+      ? `SELECT s.episode,e.title,e.slug,e.published_at,e.actors,e.description,s.spotify_id,s.part,s.start,s.speaker,s.text,s.speaker_turns
          FROM short_segment_hits h JOIN segments s ON s.rowid=h.segment_rowid JOIN episodes e ON e.id=s.episode
          WHERE h.term=? ORDER BY h.ordinal LIMIT 200`
       : variant.length < 3
-        ? `SELECT s.episode,e.title,e.slug,e.published_at,e.actors,e.description,s.spotify_id,s.start,s.speaker,s.text,s.speaker_turns
+        ? `SELECT s.episode,e.title,e.slug,e.published_at,e.actors,e.description,s.spotify_id,s.part,s.start,s.speaker,s.text,s.speaker_turns
            FROM segments s JOIN episodes e ON e.id=s.episode WHERE s.text LIKE ? LIMIT 200`
-        : `SELECT s.episode,e.title,e.slug,e.published_at,e.actors,e.description,s.spotify_id,s.start,s.speaker,s.text,s.speaker_turns
+        : `SELECT s.episode,e.title,e.slug,e.published_at,e.actors,e.description,s.spotify_id,s.part,s.start,s.speaker,s.text,s.speaker_turns
            FROM segments_fts f JOIN segments s ON s.rowid=f.rowid JOIN episodes e ON e.id=s.episode
            WHERE segments_fts MATCH ? ORDER BY bm25(segments_fts) LIMIT 200`;
     const segmentRows = await env.DB.prepare(segmentSql).bind(useShortCache ? cacheTerm : term).all();
@@ -301,7 +301,7 @@ async function search(env, query, timings = {}) {
     const statements = matches.map(match => match.metadata.kind === "episode"
       ? env.DB.prepare(`SELECT id episode,title,slug,published_at,actors,description,show_notes
                         FROM episodes WHERE id=?`).bind(match.metadata.episode)
-      : env.DB.prepare(`SELECT s.episode,e.title,e.slug,e.published_at,e.actors,e.description,s.spotify_id,s.start,s.speaker,s.text,s.speaker_turns
+      : env.DB.prepare(`SELECT s.episode,e.title,e.slug,e.published_at,e.actors,e.description,s.spotify_id,s.part,s.start,s.speaker,s.text,s.speaker_turns
                         FROM segments s JOIN episodes e ON e.id=s.episode
                         WHERE s.episode=? AND s.segment_id=?`).bind(match.metadata.episode, match.metadata.segment_id));
     const rows = statements.length ? await timed(timings, "hydrate", () => env.DB.batch(statements)) : [];
@@ -330,7 +330,7 @@ async function search(env, query, timings = {}) {
     const candidates = fuzzyTrigrams(query);
     const fuzzyTerm = candidates.map(quoted).join(" OR ");
     const fuzzyRows = await env.DB.prepare(
-      `SELECT s.episode,e.title,e.slug,e.published_at,e.actors,e.description,s.spotify_id,s.start,s.speaker,s.text,s.speaker_turns
+      `SELECT s.episode,e.title,e.slug,e.published_at,e.actors,e.description,s.spotify_id,s.part,s.start,s.speaker,s.text,s.speaker_turns
        FROM segments_fts f JOIN segments s ON s.rowid=f.rowid JOIN episodes e ON e.id=s.episode
        WHERE segments_fts MATCH ? ORDER BY bm25(segments_fts) LIMIT 200`
     ).bind(fuzzyTerm).all();
@@ -381,7 +381,11 @@ async function search(env, query, timings = {}) {
         .map(({ description, speaker_turns, ...hit }) => {
           const lines = labeledExcerpt({ ...hit, speaker_turns }, [query, ...variants, ...trigrams(query)]);
           const start = lines[0]?.start ?? hit.start;
-          return { ...hit, start, timestamp: timestamp(start), lines,
+          // The listening feed plays this moment with captions; a couple of seconds early so the line is not clipped.
+          const from = Math.max(0, Math.floor(start) - 2);
+          const listen = `https://www.arkbfm.com/listen/?ep=${encodeURIComponent(item.slug)}&t=${from}` +
+            (hit.part > 1 ? `&p=${hit.part}` : "") + "&from=search";
+          return { ...hit, start, timestamp: timestamp(start), lines, listen,
             text: lines.map(line => line.text).join(" ") };
         }),
     }));
