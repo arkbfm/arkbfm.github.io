@@ -158,6 +158,14 @@ def build_popular(posts: list[dict]) -> list[dict] | None:
     return [{"slug": slug} for _, slug in sorted(rows, reverse=True)[:POPULAR_LIMIT]]
 
 
+def latest_gap(history: list[dict]) -> str | None:
+    """How long the guest had been away before their latest appearance ("1年9か月ぶり"), None on a first visit.
+    Parts of one recording count as one appearance."""
+    latest = history[-1]
+    earlier = [post for post in history if episode_key(post) != episode_key(latest)]
+    return gap_label(months_between(earlier[-1]["date"], latest["date"])) if earlier else None
+
+
 def main() -> None:
     actors = load_actors()
     posts = load_posts()
@@ -189,6 +197,7 @@ def main() -> None:
                     "count": len({episode_key(item) for item in earlier}) + 1,
                     "prev": before["slug"],
                     "gap": gap_label(months_between(before["date"], post["date"])),
+                    "months": months_between(before["date"], post["date"]),
                 })
 
         index.append({
@@ -215,10 +224,16 @@ def main() -> None:
             "count": len({episode_key(post) for post in history}),
             "first": history[0]["slug"],
             "latest": history[-1]["slug"],
+            # The relationship told on the guest lists: since when, and how the latest visit came about.
+            "first_number": re.sub(r"-\d+$", "", history[0]["number"]),
+            "since": history[0]["date"][:4],
+            "latest_number": re.sub(r"-\d+$", "", history[-1]["number"]),
+            "latest_gap": latest_gap(history),
             "episodes": [post["slug"] for post in reversed(history)],
             "friends": sorted(
                 {other for post in history for other in post["guests"] if other != guest and other in actors},
-                key=lambda other: -sum(other in post["guests"] for post in history),
+                # Ties by name, so the order does not change from run to run with the set's hashing.
+                key=lambda other: (-sum(other in post["guests"] for post in history), other.lower()),
             )[:8],
         }
     write_json(DATA / "guests.json", dict(sorted(guests.items(), key=lambda item: (-item[1]["count"], item[0].lower()))))

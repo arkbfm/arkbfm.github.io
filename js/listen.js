@@ -201,6 +201,8 @@
     });
     head.appendChild(faces);
     next.appendChild(head);
+    // Who this episode is a first visit or a reunion for ("アゾソンさん、1年9か月ぶりの4回目").
+    if (episode.r) next.appendChild(element('p', 'listen-bond', '↺ ' + episode.r));
 
     var trail = trailOf();
     if (trail) next.appendChild(element('p', 'listen-trail', '🧭 ' + trail));
@@ -792,7 +794,7 @@
     startScreen.querySelector('[data-listen-hook-kicker]').textContent = kicker;
     startScreen.querySelector('[data-listen-hook-question]').textContent = clip.text;
     var episode = data.episodes[clip.slug];
-    startScreen.querySelector('[data-listen-hook-episode]').textContent = 'Ep.' + episode.n + ' ' + episode.t;
+    startScreen.querySelector('[data-listen-hook-episode]').textContent = 'Ep.' + episode.n + ' ' + episode.t + (episode.r ? ' · ' + episode.r : '');
     var teaser = startScreen.querySelector('[data-listen-hook-teaser]');
     teaser.hidden = true;
     attachCaptions(clip).then(function () {

@@ -15,9 +15,13 @@
       {% unless card_post.questions %}
         <span class="ep-card-lead">{{ include.lead | default: card_post.description | escape }}</span>
       {% endunless %}
+      {% comment %}Who is here for the first time, and the longest-awaited reunion (a guest back after half a year or more).{% endcomment %}
+      {% assign reunion = nil %}{% assign reunion_months = 5 %}
       {% for comeback in card_ep.returns %}
-        {% if comeback.first %}{% assign guest = site.actors[comeback.id] %}<span class="ep-badge ep-badge-new">{{ guest.name | default: comeback.id }}さん初登場</span>{% endif %}
+        {% if comeback.first %}{% assign guest = site.actors[comeback.id] %}<span class="ep-badge ep-badge-new">{{ guest.name | default: comeback.id }}さん初登場</span>
+        {% elsif comeback.months > reunion_months %}{% assign reunion = comeback %}{% assign reunion_months = comeback.months %}{% endif %}
       {% endfor %}
+      {% if reunion %}{% assign guest = site.actors[reunion.id] %}<span class="ep-card-reunion">{{ guest.name | default: reunion.id }}さん、{{ reunion.gap }}の{{ reunion.count }}回目</span>{% endif %}
     </span>
   </a>
   {% if card_post.questions %}

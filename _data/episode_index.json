@@ -15,7 +15,8 @@
     "first": false,
     "count": 4,
     "prev": "123",
-    "gap": "1年9か月ぶり"
+    "gap": "1年9か月ぶり",
+    "months": 21
    }
   ],
   "audio": "6NOGswVOLNxKGBAkDFj9Hu",
@@ -138,7 +139,8 @@
     "first": false,
     "count": 6,
     "prev": "141",
-    "gap": "11か月ぶり"
+    "gap": "11か月ぶり",
+    "months": 11
    }
   ],
   "audio": "1oDjUR2Hxyw3ushyPYAOkc",
@@ -258,14 +260,16 @@
     "first": false,
     "count": 6,
     "prev": "143",
-    "gap": "9か月ぶり"
+    "gap": "9か月ぶり",
+    "months": 9
    },
    {
     "id": "mutoreimu",
     "first": false,
     "count": 20,
     "prev": "158_5",
-    "gap": "2か月ぶり"
+    "gap": "2か月ぶり",
+    "months": 2
    }
   ],
   "audio": "4tX8t7Sn23wCnZUurAYWfq",
@@ -288,14 +292,16 @@
     "first": false,
     "count": 8,
     "prev": "154",
-    "gap": "5か月ぶり"
+    "gap": "5か月ぶり",
+    "months": 5
    },
    {
     "id": "xiPJ",
     "first": false,
     "count": 28,
     "prev": "161",
-    "gap": "前回に続いて"
+    "gap": "前回に続いて",
+    "months": 1
    }
   ],
   "audio": "7sTRxDWL4Tb60U7rm0BkIZ",
@@ -527,14 +533,16 @@
     "first": false,
     "count": 3,
     "prev": "105",
-    "gap": "2年4か月ぶり"
+    "gap": "2年4か月ぶり",
+    "months": 28
    },
    {
     "id": "xiPJ",
     "first": false,
     "count": 27,
     "prev": "158",
-    "gap": "2か月ぶり"
+    "gap": "2か月ぶり",
+    "months": 2
    }
   ],
   "audio": "6DYOW3gFHv7cSf7rjPRvCR",
@@ -653,7 +661,8 @@
     "first": false,
     "count": 5,
     "prev": "136",
-    "gap": "1年1か月ぶり"
+    "gap": "1年1か月ぶり",
+    "months": 13
    }
   ],
   "audio": "3muxiXElTEimuhGgPEyRQ4",
@@ -796,7 +805,8 @@
     "first": false,
     "count": 16,
     "prev": "152",
-    "gap": "4か月ぶり"
+    "gap": "4か月ぶり",
+    "months": 4
    }
   ],
   "audio": "4rav729ndcRYGWf64MeEAz",
@@ -932,14 +942,16 @@
     "first": false,
     "count": 19,
     "prev": "147_5",
-    "gap": "6か月ぶり"
+    "gap": "6か月ぶり",
+    "months": 6
    },
    {
     "id": "mutoreimu",
     "first": false,
     "count": 19,
     "prev": "157",
-    "gap": "前回に続いて"
+    "gap": "前回に続いて",
+    "months": 1
    }
   ],
   "audio": "3DRIwHwKEeDl2OUlQnEh9f",
@@ -961,7 +973,8 @@
     "first": false,
     "count": 26,
     "prev": "151",
-    "gap": "4か月ぶり"
+    "gap": "4か月ぶり",
+    "months": 4
    }
   ],
   "audio": "1LiGiGjRnzAef0N4HxeCvo",
@@ -1081,14 +1094,16 @@
     "first": false,
     "count": 18,
     "prev": "147_5",
-    "gap": "5か月ぶり"
+    "gap": "5か月ぶり",
+    "months": 5
    },
    {
     "id": "mizuumi",
     "first": false,
     "count": 2,
     "prev": "146",
-    "gap": "5か月ぶり"
+    "gap": "5か月ぶり",
+    "months": 5
    }
   ],
   "audio": "6tQhVF1SUmcqnlrEjXFh6W",
@@ -1191,7 +1206,8 @@
     "first": false,
     "count": 2,
     "prev": "91",
-    "gap": "2年7か月ぶり"
+    "gap": "2年7か月ぶり",
+    "months": 31
    }
   ],
   "audio": "5XXc7kdVRqNryEd3YPmNvP",
@@ -1238,7 +1254,8 @@
     "first": false,
     "count": 7,
     "prev": "144",
-    "gap": "4か月ぶり"
+    "gap": "4か月ぶり",
+    "months": 4
    }
   ],
   "audio": "0DjJkiWdFLGa9yZGpFdeBL",
@@ -1261,14 +1278,16 @@
     "first": false,
     "count": 2,
     "prev": "127",
-    "gap": "1年ぶり"
+    "gap": "1年ぶり",
+    "months": 12
    },
    {
     "id": "mistigrix0123",
     "first": false,
     "count": 2,
     "prev": "138",
-    "gap": "8か月ぶり"
+    "gap": "8か月ぶり",
+    "months": 8
    }
   ],
   "audio": "4clyUJtyZJkUP0UOMrjFiN",
@@ -1290,7 +1309,8 @@
     "first": false,
     "count": 15,
     "prev": "142",
-    "gap": "4か月ぶり"
+    "gap": "4か月ぶり",
+    "months": 4
    }
   ],
   "audio": "17yV6UAlZOl32b9MEeXnxF",
@@ -1312,7 +1332,8 @@
     "first": false,
     "count": 4,
     "prev": "100",
-    "gap": "2年2か月ぶり"
+    "gap": "2年2か月ぶり",
+    "months": 26
    }
   ],
   "audio": "6lpzkEqONPHmsWLDPzFpOq",
@@ -1372,14 +1393,16 @@
     "first": false,
     "count": 25,
     "prev": "149",
-    "gap": "前回に続いて"
+    "gap": "前回に続いて",
+    "months": 1
    },
    {
     "id": "SesameElegy",
     "first": false,
     "count": 7,
     "prev": "118.5",
-    "gap": "1年3か月ぶり"
+    "gap": "1年3か月ぶり",
+    "months": 15
    }
   ],
   "audio": "4Ftm00azLg9ttZMvSoR1Ca",
@@ -1426,7 +1449,8 @@
     "first": false,
     "count": 24,
     "prev": "139",
-    "gap": "3か月ぶり"
+    "gap": "3か月ぶり",
+    "months": 3
    }
   ],
   "audio": "5AEHhj0SO5dbHnNgDRSoUX",
@@ -1462,14 +1486,16 @@
     "first": false,
     "count": 7,
     "prev": "122-2",
-    "gap": "1年ぶり"
+    "gap": "1年ぶり",
+    "months": 12
    },
    {
     "id": "sisisisisyamoo",
     "first": false,
     "count": 6,
     "prev": "122-2",
-    "gap": "1年ぶり"
+    "gap": "1年ぶり",
+    "months": 12
    }
   ],
   "audio": "7GnyUxE9tpdQlluv8zz6Vk",
@@ -1509,14 +1535,16 @@
     "first": false,
     "count": 18,
     "prev": "138_5",
-    "gap": "4か月ぶり"
+    "gap": "4か月ぶり",
+    "months": 4
    },
    {
     "id": "mutoreimu",
     "first": false,
     "count": 17,
     "prev": "140",
-    "gap": "3か月ぶり"
+    "gap": "3か月ぶり",
+    "months": 3
    }
   ],
   "audio": "5ivx4BecF0IOWGwxIsaoKr",
@@ -1555,7 +1583,8 @@
     "first": false,
     "count": 2,
     "prev": "98-2",
-    "gap": "2年ぶり"
+    "gap": "2年ぶり",
+    "months": 24
    }
   ],
   "audio": "5IS1VxV3xvdNC38GI6Ji7k",
@@ -1595,7 +1624,8 @@
     "first": false,
     "count": 5,
     "prev": "140",
-    "gap": "3か月ぶり"
+    "gap": "3か月ぶり",
+    "months": 3
    },
    {
     "id": "mizuumi",
@@ -1646,7 +1676,8 @@
     "first": false,
     "count": 4,
     "prev": "73-2",
-    "gap": "3年1か月ぶり"
+    "gap": "3年1か月ぶり",
+    "months": 37
    }
   ],
   "audio": "5J9FIeDXM8guFLhE4SYZoo",
@@ -1689,7 +1720,8 @@
     "first": false,
     "count": 6,
     "prev": "137",
-    "gap": "4か月ぶり"
+    "gap": "4か月ぶり",
+    "months": 4
    }
   ],
   "audio": "0Vhyb8tZ875lnIPpz9bmeQ",
@@ -1732,7 +1764,8 @@
     "first": false,
     "count": 5,
     "prev": "119-2",
-    "gap": "1年ぶり"
+    "gap": "1年ぶり",
+    "months": 12
    }
   ],
   "audio": "04zJDHC2Z7LlpSpFwnQWHP",
@@ -1779,7 +1812,8 @@
     "first": false,
     "count": 14,
     "prev": "132",
-    "gap": "5か月ぶり"
+    "gap": "5か月ぶり",
+    "months": 5
    }
   ],
   "audio": "5MQ2kAyeiy2TKWpaQyRPm1",
@@ -1831,7 +1865,8 @@
     "first": false,
     "count": 5,
     "prev": "133",
-    "gap": "5か月ぶり"
+    "gap": "5か月ぶり",
+    "months": 5
    }
   ],
   "audio": "3HIVzaPVQijJhaBSuUpAQs",
@@ -1879,14 +1914,16 @@
     "first": false,
     "count": 4,
     "prev": "112",
-    "gap": "1年2か月ぶり"
+    "gap": "1年2か月ぶり",
+    "months": 14
    },
    {
     "id": "mutoreimu",
     "first": false,
     "count": 16,
     "prev": "138_5",
-    "gap": "前回に続いて"
+    "gap": "前回に続いて",
+    "months": 1
    }
   ],
   "audio": "0xoOt9SOzYLxgfGgysIvQC",
@@ -1929,7 +1966,8 @@
     "first": false,
     "count": 23,
     "prev": "133",
-    "gap": "4か月ぶり"
+    "gap": "4か月ぶり",
+    "months": 4
    }
   ],
   "audio": "2q906qAGMiDjY8bgcrBjCK",
@@ -1969,14 +2007,16 @@
     "first": false,
     "count": 17,
     "prev": "131_5-1",
-    "gap": "3か月ぶり"
+    "gap": "3か月ぶり",
+    "months": 3
    },
    {
     "id": "mutoreimu",
     "first": false,
     "count": 15,
     "prev": "135-2",
-    "gap": "2か月ぶり"
+    "gap": "2か月ぶり",
+    "months": 2
    }
   ],
   "audio": "1s1l23txXwAaNQelIgwxFn",
@@ -2063,7 +2103,8 @@
     "first": false,
     "count": 5,
     "prev": "131",
-    "gap": "3か月ぶり"
+    "gap": "3か月ぶり",
+    "months": 3
    }
   ],
   "audio": "6sLwPIjH2jztswQiqdtoH7",
@@ -2110,7 +2151,8 @@
     "first": false,
     "count": 4,
     "prev": "106",
-    "gap": "1年3か月ぶり"
+    "gap": "1年3か月ぶり",
+    "months": 15
    }
   ],
   "audio": "58fIaGMH5bUvYE8V2JVWu6",
@@ -2145,7 +2187,8 @@
     "first": false,
     "count": 14,
     "prev": "126",
-    "gap": "4か月ぶり"
+    "gap": "4か月ぶり",
+    "months": 4
    }
   ],
   "audio": "2xHyO3tR6ineCS62qWSY02",
@@ -2180,7 +2223,8 @@
     "first": false,
     "count": 14,
     "prev": "126",
-    "gap": "4か月ぶり"
+    "gap": "4か月ぶり",
+    "months": 4
    }
   ],
   "audio": "5VuvQFRmj6XxsosinH3Lzf",
@@ -2215,7 +2259,8 @@
     "first": false,
     "count": 6,
     "prev": "125",
-    "gap": "5か月ぶり"
+    "gap": "5か月ぶり",
+    "months": 5
    }
   ],
   "audio": "7CxOJFjSJZ1aI0ucicqaL1",
@@ -2255,14 +2300,16 @@
     "first": false,
     "count": 4,
     "prev": "104",
-    "gap": "1年2か月ぶり"
+    "gap": "1年2か月ぶり",
+    "months": 14
    },
    {
     "id": "xiPJ",
     "first": false,
     "count": 22,
     "prev": "129",
-    "gap": "前回に続いて"
+    "gap": "前回に続いて",
+    "months": 1
    }
   ],
   "audio": "0Uv7GVVJFM5zZ5bRxTNzRL",
@@ -2309,7 +2356,8 @@
     "first": false,
     "count": 13,
     "prev": "124",
-    "gap": "4か月ぶり"
+    "gap": "4か月ぶり",
+    "months": 4
    }
   ],
   "audio": "5kKk8X5pVFuwv7biwVvSqE",
@@ -2352,7 +2400,8 @@
     "first": false,
     "count": 16,
     "prev": "111_5-2",
-    "gap": "10か月ぶり"
+    "gap": "10か月ぶり",
+    "months": 10
    }
   ],
   "audio": "6XUtApMk1oe372JvdqASCM",
@@ -2391,7 +2440,8 @@
     "first": false,
     "count": 4,
     "prev": "121-3",
-    "gap": "4か月ぶり"
+    "gap": "4か月ぶり",
+    "months": 4
    }
   ],
   "audio": "4c0lfBLTyUHazCOGXJXHjr",
@@ -2474,7 +2524,8 @@
     "first": false,
     "count": 21,
     "prev": "118.5",
-    "gap": "6か月ぶり"
+    "gap": "6か月ぶり",
+    "months": 6
    }
   ],
   "audio": "2KBZ4IF314qeUPuhdA2Vb8",
@@ -2593,7 +2644,8 @@
     "first": false,
     "count": 13,
     "prev": "117-3",
-    "gap": "4か月ぶり"
+    "gap": "4か月ぶり",
+    "months": 4
    }
   ],
   "audio": "7vIvqwmcxeySmxtAezp9LC",
@@ -2624,7 +2676,8 @@
     "first": false,
     "count": 5,
     "prev": "94",
-    "gap": "1年3か月ぶり"
+    "gap": "1年3か月ぶり",
+    "months": 15
    }
   ],
   "audio": "794oodwaMcYGn05SWGVAma",
@@ -2655,7 +2708,8 @@
     "first": false,
     "count": 12,
     "prev": "114",
-    "gap": "5か月ぶり"
+    "gap": "5か月ぶり",
+    "months": 5
    }
   ],
   "audio": "5vyBjP8vbfwQlPFpzLlfkx",
@@ -2690,7 +2744,8 @@
     "first": false,
     "count": 3,
     "prev": "83-2",
-    "gap": "1年7か月ぶり"
+    "gap": "1年7か月ぶり",
+    "months": 19
    }
   ],
   "audio": "2s8soMRp6OI4xMmthe0HD7",
@@ -2726,14 +2781,16 @@
     "first": false,
     "count": 6,
     "prev": "99",
-    "gap": "1年ぶり"
+    "gap": "1年ぶり",
+    "months": 12
    },
    {
     "id": "sisisisisyamoo",
     "first": false,
     "count": 5,
     "prev": "99",
-    "gap": "1年ぶり"
+    "gap": "1年ぶり",
+    "months": 12
    }
   ],
   "audio": "2LjxNXAyY8R1Xnq4fpAyJm",
@@ -2765,14 +2822,16 @@
     "first": false,
     "count": 6,
     "prev": "99",
-    "gap": "1年ぶり"
+    "gap": "1年ぶり",
+    "months": 12
    },
    {
     "id": "sisisisisyamoo",
     "first": false,
     "count": 5,
     "prev": "99",
-    "gap": "1年ぶり"
+    "gap": "1年ぶり",
+    "months": 12
    }
   ],
   "audio": "6nCrka4dHmm4nlTp8mGUH0",
@@ -2803,7 +2862,8 @@
     "first": false,
     "count": 3,
     "prev": "97-3",
-    "gap": "1年1か月ぶり"
+    "gap": "1年1か月ぶり",
+    "months": 13
    }
   ],
   "audio": "1vvMPy9t4S1WuGK8Wq4kn7",
@@ -2830,7 +2890,8 @@
     "first": false,
     "count": 3,
     "prev": "97-3",
-    "gap": "1年1か月ぶり"
+    "gap": "1年1か月ぶり",
+    "months": 13
    }
   ],
   "audio": "64Z58HG3OPvrBh9GduKnBR",
@@ -2865,7 +2926,8 @@
     "first": false,
     "count": 3,
     "prev": "97-3",
-    "gap": "1年ぶり"
+    "gap": "1年ぶり",
+    "months": 12
    }
   ],
   "audio": "1snbyso0HzHD2AKkN5xqzH",
@@ -2960,7 +3022,8 @@
     "first": false,
     "count": 4,
     "prev": "96-2",
-    "gap": "1年ぶり"
+    "gap": "1年ぶり",
+    "months": 12
    }
   ],
   "audio": "44luVD27Q20P1wU0g50Dne",
@@ -3011,7 +3074,8 @@
     "first": false,
     "count": 4,
     "prev": "96-2",
-    "gap": "11か月ぶり"
+    "gap": "11か月ぶり",
+    "months": 11
    }
   ],
   "audio": "4MQSgxdzKyEOLQP501lvjS",
@@ -3045,7 +3109,8 @@
     "first": false,
     "count": 20,
     "prev": "118-2",
-    "gap": "前回に続いて"
+    "gap": "前回に続いて",
+    "months": 0
    },
    {
     "id": "chihiroiinamae",
@@ -3056,14 +3121,16 @@
     "first": false,
     "count": 6,
     "prev": "115-3",
-    "gap": "2か月ぶり"
+    "gap": "2か月ぶり",
+    "months": 2
    },
    {
     "id": "hiropon160",
     "first": false,
     "count": 6,
     "prev": "113",
-    "gap": "3か月ぶり"
+    "gap": "3か月ぶり",
+    "months": 3
    }
   ],
   "audio": "1cFcRMSzyKG3gDoU1rlnvZ",
@@ -3118,7 +3185,8 @@
     "first": false,
     "count": 19,
     "prev": "111_5-2",
-    "gap": "3か月ぶり"
+    "gap": "3か月ぶり",
+    "months": 3
    }
   ],
   "audio": "0H3BW0bAMEp14lalQuBJBh",
@@ -3149,7 +3217,8 @@
     "first": false,
     "count": 19,
     "prev": "111_5-2",
-    "gap": "3か月ぶり"
+    "gap": "3か月ぶり",
+    "months": 3
    }
   ],
   "audio": "5pHnYbAixZb3OaOyoyipXL",
@@ -3180,7 +3249,8 @@
     "first": false,
     "count": 12,
     "prev": "112",
-    "gap": "3か月ぶり"
+    "gap": "3か月ぶり",
+    "months": 3
    }
   ],
   "audio": "16ViDXkMK9JXKfrc1ABuS1",
@@ -3219,7 +3289,8 @@
     "first": false,
     "count": 12,
     "prev": "112",
-    "gap": "3か月ぶり"
+    "gap": "3か月ぶり",
+    "months": 3
    }
   ],
   "audio": "3oiSKKKw7UFrJKc7MAT5YN",
@@ -3250,7 +3321,8 @@
     "first": false,
     "count": 12,
     "prev": "112",
-    "gap": "2か月ぶり"
+    "gap": "2か月ぶり",
+    "months": 2
    }
   ],
   "audio": "57z4lAMl8gEPmDLxWT1B5D",
@@ -3345,7 +3417,8 @@
     "first": false,
     "count": 5,
     "prev": "103-2",
-    "gap": "6か月ぶり"
+    "gap": "6か月ぶり",
+    "months": 6
    }
   ],
   "audio": "4qB0VoXswjNViNIRnYGU8w",
@@ -3376,7 +3449,8 @@
     "first": false,
     "count": 5,
     "prev": "103-2",
-    "gap": "6か月ぶり"
+    "gap": "6か月ぶり",
+    "months": 6
    }
   ],
   "audio": "76ECW3Yu9Kr8VGqeBOsIpa",
@@ -3407,7 +3481,8 @@
     "first": false,
     "count": 5,
     "prev": "103-2",
-    "gap": "6か月ぶり"
+    "gap": "6か月ぶり",
+    "months": 6
    }
   ],
   "audio": "5rjQVktRedU57XSMiWCERD",
@@ -3434,7 +3509,8 @@
     "first": false,
     "count": 11,
     "prev": "107",
-    "gap": "4か月ぶり"
+    "gap": "4か月ぶり",
+    "months": 4
    }
   ],
   "audio": "51G1DVeFcBejwBb7RuGeA0",
@@ -3469,7 +3545,8 @@
     "first": false,
     "count": 5,
     "prev": "87",
-    "gap": "1年4か月ぶり"
+    "gap": "1年4か月ぶり",
+    "months": 16
    }
   ],
   "audio": "7nQv7Zkx23gMP6TEtHjVEH",
@@ -3513,14 +3590,16 @@
     "first": false,
     "count": 3,
     "prev": "85-2",
-    "gap": "1年2か月ぶり"
+    "gap": "1年2か月ぶり",
+    "months": 14
    },
    {
     "id": "mutoreimu",
     "first": false,
     "count": 11,
     "prev": "109",
-    "gap": "2か月ぶり"
+    "gap": "2か月ぶり",
+    "months": 2
    }
   ],
   "audio": "56NEuauZxqAixAHPusALMi",
@@ -3556,14 +3635,16 @@
     "first": false,
     "count": 15,
     "prev": "101_5",
-    "gap": "6か月ぶり"
+    "gap": "6か月ぶり",
+    "months": 6
    },
    {
     "id": "xiPJ",
     "first": false,
     "count": 18,
     "prev": "103-2",
-    "gap": "5か月ぶり"
+    "gap": "5か月ぶり",
+    "months": 5
    }
   ],
   "audio": "5KYveVShY7jKJoprisiaYr",
@@ -3599,14 +3680,16 @@
     "first": false,
     "count": 15,
     "prev": "101_5",
-    "gap": "6か月ぶり"
+    "gap": "6か月ぶり",
+    "months": 6
    },
    {
     "id": "xiPJ",
     "first": false,
     "count": 18,
     "prev": "103-2",
-    "gap": "5か月ぶり"
+    "gap": "5か月ぶり",
+    "months": 5
    }
   ],
   "audio": "22BCMG1It9P55Y6PUvjBGL",
@@ -3633,7 +3716,8 @@
     "first": false,
     "count": 2,
     "prev": "89",
-    "gap": "1年1か月ぶり"
+    "gap": "1年1か月ぶり",
+    "months": 13
    }
   ],
   "audio": "3e2V7h74QTXi6cltCaGYyK",
@@ -3668,7 +3752,8 @@
     "first": false,
     "count": 3,
     "prev": "38",
-    "gap": "2年7か月ぶり"
+    "gap": "2年7か月ぶり",
+    "months": 31
    }
   ],
   "audio": "1EIkW3g30LNQCc3FOrYOJv",
@@ -3699,7 +3784,8 @@
     "first": false,
     "count": 3,
     "prev": "38",
-    "gap": "2年5か月ぶり"
+    "gap": "2年5か月ぶり",
+    "months": 29
    }
   ],
   "audio": "59u8a20WQcv4KoYs56zbyZ",
@@ -3734,7 +3820,8 @@
     "first": false,
     "count": 10,
     "prev": "102-2",
-    "gap": "4か月ぶり"
+    "gap": "4か月ぶり",
+    "months": 4
    }
   ],
   "audio": "6T8VuOFXcdfcpdK1YA7eHf",
@@ -3813,7 +3900,8 @@
     "first": false,
     "count": 10,
     "prev": "90-2",
-    "gap": "8か月ぶり"
+    "gap": "8か月ぶり",
+    "months": 8
    }
   ],
   "audio": "4edjtmOw6fPoFIa6D528O8",
@@ -3848,7 +3936,8 @@
     "first": false,
     "count": 3,
     "prev": "88",
-    "gap": "10か月ぶり"
+    "gap": "10か月ぶり",
+    "months": 10
    }
   ],
   "audio": "01QwzS3lbBfF6Nj9tPsFdC",
@@ -3884,14 +3973,16 @@
     "first": false,
     "count": 2,
     "prev": "12",
-    "gap": "3年1か月ぶり"
+    "gap": "3年1か月ぶり",
+    "months": 37
    },
    {
     "id": "saikoro19937",
     "first": false,
     "count": 2,
     "prev": "18",
-    "gap": "2年10か月ぶり"
+    "gap": "2年10か月ぶり",
+    "months": 34
    }
   ],
   "audio": "3sWmTF7Dj2aYiIFNHGDl3a",
@@ -3926,7 +4017,8 @@
     "first": false,
     "count": 3,
     "prev": "74-2",
-    "gap": "1年5か月ぶり"
+    "gap": "1年5か月ぶり",
+    "months": 17
    }
   ],
   "audio": "7noYvlbKsbXrtNjF4ebAqE",
@@ -3958,14 +4050,16 @@
     "first": false,
     "count": 17,
     "prev": "95",
-    "gap": "4か月ぶり"
+    "gap": "4か月ぶり",
+    "months": 4
    },
    {
     "id": "SesameElegy",
     "first": false,
     "count": 4,
     "prev": "84-2",
-    "gap": "8か月ぶり"
+    "gap": "8か月ぶり",
+    "months": 8
    }
   ],
   "audio": "7cSX0rK6poxf0Zheq9R68C",
@@ -4005,14 +4099,16 @@
     "first": false,
     "count": 17,
     "prev": "95",
-    "gap": "3か月ぶり"
+    "gap": "3か月ぶり",
+    "months": 3
    },
    {
     "id": "SesameElegy",
     "first": false,
     "count": 4,
     "prev": "84-2",
-    "gap": "7か月ぶり"
+    "gap": "7か月ぶり",
+    "months": 7
    }
   ],
   "audio": "3f5UvWZAKKKWAMNnpXvQ9L",
@@ -4034,7 +4130,8 @@
     "first": false,
     "count": 9,
     "prev": "93",
-    "gap": "4か月ぶり"
+    "gap": "4か月ぶり",
+    "months": 4
    }
   ],
   "audio": "0JgB44ZK16CTSQLWDrUL5q",
@@ -4065,7 +4162,8 @@
     "first": false,
     "count": 9,
     "prev": "93",
-    "gap": "4か月ぶり"
+    "gap": "4か月ぶり",
+    "months": 4
    }
   ],
   "audio": "0QQ1milDCbwFIRKNGXGIg7",
@@ -4100,7 +4198,8 @@
     "first": false,
     "count": 14,
     "prev": "89_5-2",
-    "gap": "前回に続いて"
+    "gap": "前回に続いて",
+    "months": 1
    }
   ],
   "audio": "3PcTndSHV7r9ODh0Rgl4x6",
@@ -4167,7 +4266,8 @@
     "first": false,
     "count": 13,
     "prev": "77_5-3",
-    "gap": "1年ぶり"
+    "gap": "1年ぶり",
+    "months": 12
    }
   ],
   "audio": "6YhBvqKTUjGOW1SrqWvIi3",
@@ -4202,7 +4302,8 @@
     "first": false,
     "count": 3,
     "prev": "51",
-    "gap": "1年10か月ぶり"
+    "gap": "1年10か月ぶり",
+    "months": 22
    }
   ],
   "audio": "1SX6pQEJOgIBEJLvX6FM6K",
@@ -4234,14 +4335,16 @@
     "first": false,
     "count": 5,
     "prev": "80",
-    "gap": "1年ぶり"
+    "gap": "1年ぶり",
+    "months": 12
    },
    {
     "id": "sisisisisyamoo",
     "first": false,
     "count": 4,
     "prev": "80",
-    "gap": "1年ぶり"
+    "gap": "1年ぶり",
+    "months": 12
    }
   ],
   "audio": "21kbxpB9Pa2nEpKCMwctCL",
@@ -4352,7 +4455,8 @@
     "first": false,
     "count": 2,
     "prev": "58",
-    "gap": "1年7か月ぶり"
+    "gap": "1年7か月ぶり",
+    "months": 19
    }
   ],
   "audio": "3gLXVpLm0X5DcGjPb1T85V",
@@ -4379,7 +4483,8 @@
     "first": false,
     "count": 2,
     "prev": "58",
-    "gap": "1年7か月ぶり"
+    "gap": "1年7か月ぶり",
+    "months": 19
    }
   ],
   "audio": "4SSCPPg79ytWQkalgpQc84",
@@ -4414,7 +4519,8 @@
     "first": false,
     "count": 2,
     "prev": "58",
-    "gap": "1年7か月ぶり"
+    "gap": "1年7か月ぶり",
+    "months": 19
    }
   ],
   "audio": "6FZXkC9K8Z0Guoks9L1evT",
@@ -4453,7 +4559,8 @@
     "first": false,
     "count": 3,
     "prev": "57-2",
-    "gap": "1年7か月ぶり"
+    "gap": "1年7か月ぶり",
+    "months": 19
    }
   ],
   "audio": "0RygjBpCTPV8qwwa7Rjfrx",
@@ -4488,7 +4595,8 @@
     "first": false,
     "count": 3,
     "prev": "57-2",
-    "gap": "1年7か月ぶり"
+    "gap": "1年7か月ぶり",
+    "months": 19
    }
   ],
   "audio": "4c3XPC43k3aI7AXnvUsZ7F",
@@ -4519,7 +4627,8 @@
     "first": false,
     "count": 13,
     "prev": "77_5-3",
-    "gap": "10か月ぶり"
+    "gap": "10か月ぶり",
+    "months": 10
    }
   ],
   "audio": "6N2qYzeJnPJLhkJ18JY4lJ",
@@ -4546,7 +4655,8 @@
     "first": false,
     "count": 4,
     "prev": "55",
-    "gap": "1年7か月ぶり"
+    "gap": "1年7か月ぶり",
+    "months": 19
    }
   ],
   "audio": "2nZ0nCc0P8aq8afHOmYzEb",
@@ -4573,7 +4683,8 @@
     "first": false,
     "count": 16,
     "prev": "84-2",
-    "gap": "4か月ぶり"
+    "gap": "4か月ぶり",
+    "months": 4
    }
   ],
   "audio": "0nVUODmBlkfiNPyFP41vZF",
@@ -4604,7 +4715,8 @@
     "first": false,
     "count": 4,
     "prev": "24",
-    "gap": "2年2か月ぶり"
+    "gap": "2年2か月ぶり",
+    "months": 26
    }
   ],
   "audio": "3fWCzqd6PEcWsZTx9Du4bl",
@@ -4631,7 +4743,8 @@
     "first": false,
     "count": 8,
     "prev": "85-2",
-    "gap": "4か月ぶり"
+    "gap": "4か月ぶり",
+    "months": 4
    }
   ],
   "audio": "3ZcYLI2J9cXy0rTqXwm481",
@@ -4706,7 +4819,8 @@
     "first": false,
     "count": 9,
     "prev": "76",
-    "gap": "9か月ぶり"
+    "gap": "9か月ぶり",
+    "months": 9
    }
   ],
   "audio": "2A8dySglVMjAZcsmWewuv7",
@@ -4741,7 +4855,8 @@
     "first": false,
     "count": 9,
     "prev": "76",
-    "gap": "8か月ぶり"
+    "gap": "8か月ぶり",
+    "months": 8
    }
   ],
   "audio": "6jCv46r5TKFfERv4DGhszE",
@@ -4817,14 +4932,16 @@
     "first": false,
     "count": 15,
     "prev": "78-2",
-    "gap": "6か月ぶり"
+    "gap": "6か月ぶり",
+    "months": 6
    },
    {
     "id": "SesameElegy",
     "first": false,
     "count": 3,
     "prev": "78-2",
-    "gap": "6か月ぶり"
+    "gap": "6か月ぶり",
+    "months": 6
    }
   ],
   "audio": "0SK1E5tZOlUE0Lsp97K0wp",
@@ -4856,14 +4973,16 @@
     "first": false,
     "count": 2,
     "prev": "64-2",
-    "gap": "10か月ぶり"
+    "gap": "10か月ぶり",
+    "months": 10
    },
    {
     "id": "mutoreimu",
     "first": false,
     "count": 7,
     "prev": "67-2",
-    "gap": "10か月ぶり"
+    "gap": "10か月ぶり",
+    "months": 10
    }
   ],
   "audio": "5M9jF7Mp26KmpTczcHt8iE",
@@ -4894,7 +5013,8 @@
     "first": false,
     "count": 2,
     "prev": "9",
-    "gap": "2年5か月ぶり"
+    "gap": "2年5か月ぶり",
+    "months": 29
    }
   ],
   "audio": "6w4FgpqonSAcgdDvBeojQV",
@@ -4925,7 +5045,8 @@
     "first": false,
     "count": 3,
     "prev": "52-4",
-    "gap": "1年3か月ぶり"
+    "gap": "1年3か月ぶり",
+    "months": 15
    }
   ],
   "audio": "7e8Dm7PsOb0ovZnFZtflbD",
@@ -4957,14 +5078,16 @@
     "first": false,
     "count": 2,
     "prev": "31",
-    "gap": "1年7か月ぶり"
+    "gap": "1年7か月ぶり",
+    "months": 19
    },
    {
     "id": "sai_enlightened",
     "first": false,
     "count": 2,
     "prev": "63",
-    "gap": "11か月ぶり"
+    "gap": "11か月ぶり",
+    "months": 11
    }
   ],
   "audio": "2ikIoXmbgjfKOvijgLcbAM",
@@ -4995,7 +5118,8 @@
     "first": false,
     "count": 4,
     "prev": "68",
-    "gap": "8か月ぶり"
+    "gap": "8か月ぶり",
+    "months": 8
    }
   ],
   "audio": "42J9BM3cWbJ7n7BBGSmSEc",
@@ -5043,7 +5167,8 @@
     "first": false,
     "count": 3,
     "prev": "31",
-    "gap": "1年4か月ぶり"
+    "gap": "1年4か月ぶり",
+    "months": 16
    },
    {
     "id": "mkmchng",
@@ -5091,14 +5216,16 @@
     "first": false,
     "count": 2,
     "prev": "64-2",
-    "gap": "7か月ぶり"
+    "gap": "7か月ぶり",
+    "months": 7
    },
    {
     "id": "mutoreimu",
     "first": false,
     "count": 7,
     "prev": "67-2",
-    "gap": "7か月ぶり"
+    "gap": "7か月ぶり",
+    "months": 7
    }
   ],
   "audio": "5GC9tYzEO0eq8yJfSrTdAy",
@@ -5142,14 +5269,16 @@
     "first": false,
     "count": 15,
     "prev": "78-2",
-    "gap": "前回に続いて"
+    "gap": "前回に続いて",
+    "months": 1
    },
    {
     "id": "SesameElegy",
     "first": false,
     "count": 3,
     "prev": "78-2",
-    "gap": "前回に続いて"
+    "gap": "前回に続いて",
+    "months": 1
    }
   ],
   "audio": "2eU7SrFCUpGDfTrTxFq7KJ",
@@ -5188,7 +5317,8 @@
     "first": false,
     "count": 2,
     "prev": "9",
-    "gap": "2年1か月ぶり"
+    "gap": "2年1か月ぶり",
+    "months": 25
    }
   ],
   "audio": "4lXLx2X5NKIxxFfLNx1e5a",
@@ -5223,7 +5353,8 @@
     "first": false,
     "count": 3,
     "prev": "52-4",
-    "gap": "11か月ぶり"
+    "gap": "11か月ぶり",
+    "months": 11
    }
   ],
   "audio": "4jkp3hVL4Gfzl7IKASjyGM",
@@ -5255,14 +5386,16 @@
     "first": false,
     "count": 2,
     "prev": "40",
-    "gap": "1年1か月ぶり"
+    "gap": "1年1か月ぶり",
+    "months": 13
    },
    {
     "id": "Q_chan_zzz",
     "first": false,
     "count": 3,
     "prev": "75",
-    "gap": "3か月ぶり"
+    "gap": "3か月ぶり",
+    "months": 3
    }
   ],
   "audio": "66i9mCnN9OU8NZdLqUmy5w",
@@ -5302,14 +5435,16 @@
     "first": false,
     "count": 2,
     "prev": "40",
-    "gap": "1年ぶり"
+    "gap": "1年ぶり",
+    "months": 12
    },
    {
     "id": "Q_chan_zzz",
     "first": false,
     "count": 3,
     "prev": "75",
-    "gap": "2か月ぶり"
+    "gap": "2か月ぶり",
+    "months": 2
    }
   ],
   "audio": "33EEQov0OvLx9PXMxTEfkV",
@@ -5351,28 +5486,32 @@
     "first": false,
     "count": 2,
     "prev": "66",
-    "gap": "5か月ぶり"
+    "gap": "5か月ぶり",
+    "months": 5
    },
    {
     "id": "SesameElegy",
     "first": false,
     "count": 2,
     "prev": "71",
-    "gap": "4か月ぶり"
+    "gap": "4か月ぶり",
+    "months": 4
    },
    {
     "id": "mof_mmm",
     "first": false,
     "count": 2,
     "prev": "72-2",
-    "gap": "3か月ぶり"
+    "gap": "3か月ぶり",
+    "months": 3
    },
    {
     "id": "xiPJ",
     "first": false,
     "count": 14,
     "prev": "77",
-    "gap": "前回に続いて"
+    "gap": "前回に続いて",
+    "months": 1
    }
   ],
   "audio": "28plKZ3NTZZLMMj2IsGz8X",
@@ -5400,14 +5539,16 @@
     "first": false,
     "count": 4,
     "prev": "57-2",
-    "gap": "8か月ぶり"
+    "gap": "8か月ぶり",
+    "months": 8
    },
    {
     "id": "sisisisisyamoo",
     "first": false,
     "count": 3,
     "prev": "44",
-    "gap": "1年ぶり"
+    "gap": "1年ぶり",
+    "months": 12
    }
   ],
   "audio": "702dQ4QDxUs1b95wuPFhy3",
@@ -5434,7 +5575,8 @@
     "first": false,
     "count": 2,
     "prev": "22",
-    "gap": "1年5か月ぶり"
+    "gap": "1年5か月ぶり",
+    "months": 17
    }
   ],
   "audio": "2LpFZCqrQwdGXZV4OODjxd",
@@ -5465,7 +5607,8 @@
     "first": false,
     "count": 12,
     "prev": "64-2",
-    "gap": "5か月ぶり"
+    "gap": "5か月ぶり",
+    "months": 5
    }
   ],
   "audio": "38negXweW1akrzOyTY4sxU",
@@ -5495,28 +5638,32 @@
     "first": false,
     "count": 2,
     "prev": "66",
-    "gap": "5か月ぶり"
+    "gap": "5か月ぶり",
+    "months": 5
    },
    {
     "id": "SesameElegy",
     "first": false,
     "count": 2,
     "prev": "71",
-    "gap": "4か月ぶり"
+    "gap": "4か月ぶり",
+    "months": 4
    },
    {
     "id": "mof_mmm",
     "first": false,
     "count": 2,
     "prev": "72-2",
-    "gap": "3か月ぶり"
+    "gap": "3か月ぶり",
+    "months": 3
    },
    {
     "id": "xiPJ",
     "first": false,
     "count": 14,
     "prev": "77",
-    "gap": "前回に続いて"
+    "gap": "前回に続いて",
+    "months": 1
    }
   ],
   "audio": "2uyCFtXrfiNLRabCQhjtlx",
@@ -5543,7 +5690,8 @@
     "first": false,
     "count": 12,
     "prev": "64-2",
-    "gap": "4か月ぶり"
+    "gap": "4か月ぶり",
+    "months": 4
    }
   ],
   "audio": "0HGD7RgZSpQRC9bf7KU8Ph",
@@ -5570,7 +5718,8 @@
     "first": false,
     "count": 12,
     "prev": "64-2",
-    "gap": "4か月ぶり"
+    "gap": "4か月ぶり",
+    "months": 4
    }
   ],
   "audio": "4iET6uOLCNQYgyiDhaD8SZ",
@@ -5602,7 +5751,8 @@
     "first": false,
     "count": 13,
     "prev": "74-2",
-    "gap": "前回に続いて"
+    "gap": "前回に続いて",
+    "months": 1
    }
   ],
   "audio": "5NWO3bb25MbyuiY1c4qKne",
@@ -5645,7 +5795,8 @@
     "first": false,
     "count": 8,
     "prev": "65",
-    "gap": "4か月ぶり"
+    "gap": "4か月ぶり",
+    "months": 4
    }
   ],
   "audio": "7m1fvGowbLCd4ebly9BNgf",
@@ -5680,7 +5831,8 @@
     "first": false,
     "count": 2,
     "prev": "10",
-    "gap": "1年10か月ぶり"
+    "gap": "1年10か月ぶり",
+    "months": 22
    }
   ],
   "audio": "273cZa6sCB6sciQl3dU6a4",
@@ -5712,14 +5864,16 @@
     "first": false,
     "count": 2,
     "prev": "59",
-    "gap": "6か月ぶり"
+    "gap": "6か月ぶり",
+    "months": 6
    },
    {
     "id": "xiPJ",
     "first": false,
     "count": 12,
     "prev": "72-2",
-    "gap": "前回に続いて"
+    "gap": "前回に続いて",
+    "months": 1
    }
   ],
   "audio": "6cEbV02dUYC7JwgYDS6hGd",
@@ -5775,14 +5929,16 @@
     "first": false,
     "count": 2,
     "prev": "59",
-    "gap": "6か月ぶり"
+    "gap": "6か月ぶり",
+    "months": 6
    },
    {
     "id": "xiPJ",
     "first": false,
     "count": 12,
     "prev": "72-2",
-    "gap": "前回に続いて"
+    "gap": "前回に続いて",
+    "months": 1
    }
   ],
   "audio": "1T9uRDvsDUBZuRU0rF0O68",
@@ -5822,7 +5978,8 @@
     "first": false,
     "count": 3,
     "prev": "35",
-    "gap": "11か月ぶり"
+    "gap": "11か月ぶり",
+    "months": 11
    }
   ],
   "audio": "49LZ9F5lI4PWeCie58WcMv",
@@ -5858,7 +6015,8 @@
     "first": false,
     "count": 3,
     "prev": "35",
-    "gap": "10か月ぶり"
+    "gap": "10か月ぶり",
+    "months": 10
    }
   ],
   "audio": "5fjnZbWMuK4d3AnsvDwGnG",
@@ -5898,7 +6056,8 @@
     "first": false,
     "count": 11,
     "prev": "69-2",
-    "gap": "前回に続いて"
+    "gap": "前回に続いて",
+    "months": 1
    }
   ],
   "audio": "6lyFUidZUJq7W54CbGA1LZ",
@@ -5942,7 +6101,8 @@
     "first": false,
     "count": 11,
     "prev": "69-2",
-    "gap": "前回に続いて"
+    "gap": "前回に続いて",
+    "months": 1
    }
   ],
   "audio": "5tiVxyLJpkrpYma6lXICAs",
@@ -6026,7 +6186,8 @@
     "first": false,
     "count": 10,
     "prev": "67-2",
-    "gap": "前回に続いて"
+    "gap": "前回に続いて",
+    "months": 1
    }
   ],
   "audio": "6VLMrsvOoUFXif8bVpg6MQ",
@@ -6110,7 +6271,8 @@
     "first": false,
     "count": 3,
     "prev": "24",
-    "gap": "1年ぶり"
+    "gap": "1年ぶり",
+    "months": 12
    }
   ],
   "audio": "089MtNhTXGYljFVqScEWup",
@@ -6154,14 +6316,16 @@
     "first": false,
     "count": 6,
     "prev": "62-2",
-    "gap": "前回に続いて"
+    "gap": "前回に続いて",
+    "months": 1
    },
    {
     "id": "xiPJ",
     "first": false,
     "count": 10,
     "prev": "69-1",
-    "gap": "前回に続いて"
+    "gap": "前回に続いて",
+    "months": 0
    }
   ],
   "audio": "5l9m8MjPsavjFFepJXoBpz",
@@ -6229,7 +6393,8 @@
     "first": false,
     "count": 10,
     "prev": "67-1",
-    "gap": "前回に続いて"
+    "gap": "前回に続いて",
+    "months": 0
    }
   ],
   "audio": "38jz2yG3Jn1WTSKVCkTwSF",
@@ -6272,7 +6437,8 @@
     "first": false,
     "count": 3,
     "prev": "33",
-    "gap": "9か月ぶり"
+    "gap": "9か月ぶり",
+    "months": 9
    }
   ],
   "audio": "5ICCKKe12Nn1hRdUfWxjId",
@@ -6313,14 +6479,16 @@
     "first": false,
     "count": 11,
     "prev": "60-2",
-    "gap": "2か月ぶり"
+    "gap": "2か月ぶり",
+    "months": 2
    },
    {
     "id": "go_o2",
     "first": false,
     "count": 2,
     "prev": "10",
-    "gap": "1年7か月ぶり"
+    "gap": "1年7か月ぶり",
+    "months": 19
    }
   ],
   "audio": "1fIkDVwfncbTZEklR1OEmw",
@@ -6352,14 +6520,16 @@
     "first": false,
     "count": 6,
     "prev": "62-2",
-    "gap": "前回に続いて"
+    "gap": "前回に続いて",
+    "months": 1
    },
    {
     "id": "xiPJ",
     "first": false,
     "count": 9,
     "prev": "64_5",
-    "gap": "前回に続いて"
+    "gap": "前回に続いて",
+    "months": 1
    }
   ],
   "audio": "0EW5cJ5wIR62Gp82M8F98w",
@@ -6422,7 +6592,8 @@
     "first": false,
     "count": 7,
     "prev": "64_5",
-    "gap": "前回に続いて"
+    "gap": "前回に続いて",
+    "months": 1
    }
   ],
   "audio": "3xPBr9AUJ7Ibo6qqdUUZEF",
@@ -6454,14 +6625,16 @@
     "first": false,
     "count": 6,
     "prev": "56-3",
-    "gap": "2か月ぶり"
+    "gap": "2か月ぶり",
+    "months": 2
    },
    {
     "id": "xiPJ",
     "first": false,
     "count": 8,
     "prev": "63_5",
-    "gap": "前回に続いて"
+    "gap": "前回に続いて",
+    "months": 0
    }
   ],
   "audio": "2aVIcM3tCM6WnXGoVybt1g",
@@ -6494,14 +6667,16 @@
     "first": false,
     "count": 11,
     "prev": "60-2",
-    "gap": "前回に続いて"
+    "gap": "前回に続いて",
+    "months": 1
    },
    {
     "id": "go_o2",
     "first": false,
     "count": 2,
     "prev": "10",
-    "gap": "1年6か月ぶり"
+    "gap": "1年6か月ぶり",
+    "months": 18
    }
   ],
   "audio": "40f2oKykK9jw6jgQCVZjaX",
@@ -6553,7 +6728,8 @@
     "first": false,
     "count": 7,
     "prev": "62-2",
-    "gap": "前回に続いて"
+    "gap": "前回に続いて",
+    "months": 0
    }
   ],
   "audio": "1utuvdWBgeRKVMFVyzW4Uw",
@@ -6638,14 +6814,16 @@
     "first": false,
     "count": 6,
     "prev": "59",
-    "gap": "2か月ぶり"
+    "gap": "2か月ぶり",
+    "months": 2
    },
    {
     "id": "mutoreimu",
     "first": false,
     "count": 5,
     "prev": "60-2",
-    "gap": "前回に続いて"
+    "gap": "前回に続いて",
+    "months": 1
    }
   ],
   "audio": "1Z1CXZApiQ4RWULONfni0M",
@@ -6685,14 +6863,16 @@
     "first": false,
     "count": 6,
     "prev": "59",
-    "gap": "前回に続いて"
+    "gap": "前回に続いて",
+    "months": 1
    },
    {
     "id": "mutoreimu",
     "first": false,
     "count": 5,
     "prev": "60-2",
-    "gap": "前回に続いて"
+    "gap": "前回に続いて",
+    "months": 0
    }
   ],
   "audio": "0Dl2VV7W4g6dEFDwIeID96",
@@ -6768,14 +6948,16 @@
     "first": false,
     "count": 10,
     "prev": "56-2",
-    "gap": "2か月ぶり"
+    "gap": "2か月ぶり",
+    "months": 2
    },
    {
     "id": "mutoreimu",
     "first": false,
     "count": 4,
     "prev": "30",
-    "gap": "8か月ぶり"
+    "gap": "8か月ぶり",
+    "months": 8
    }
   ],
   "audio": "4ndadCJhI4LY1asJfttqFq",
@@ -6811,14 +6993,16 @@
     "first": false,
     "count": 10,
     "prev": "56-2",
-    "gap": "2か月ぶり"
+    "gap": "2か月ぶり",
+    "months": 2
    },
    {
     "id": "mutoreimu",
     "first": false,
     "count": 4,
     "prev": "30",
-    "gap": "8か月ぶり"
+    "gap": "8か月ぶり",
+    "months": 8
    }
   ],
   "audio": "6tcov3nCGN7kjWcIrve5Zl",
@@ -6854,14 +7038,16 @@
     "first": false,
     "count": 2,
     "prev": "23",
-    "gap": "9か月ぶり"
+    "gap": "9か月ぶり",
+    "months": 9
    },
    {
     "id": "asesama_",
     "first": false,
     "count": 3,
     "prev": "44",
-    "gap": "4か月ぶり"
+    "gap": "4か月ぶり",
+    "months": 4
    }
   ],
   "audio": "3bXP0BFg3yYB9FvwwPqj77",
@@ -6903,7 +7089,8 @@
     "first": false,
     "count": 5,
     "prev": "56-3",
-    "gap": "前回に続いて"
+    "gap": "前回に続いて",
+    "months": 0
    },
    {
     "id": "gekihihi",
@@ -6999,14 +7186,16 @@
     "first": false,
     "count": 2,
     "prev": "23",
-    "gap": "9か月ぶり"
+    "gap": "9か月ぶり",
+    "months": 9
    },
    {
     "id": "asesama_",
     "first": false,
     "count": 3,
     "prev": "44",
-    "gap": "4か月ぶり"
+    "gap": "4か月ぶり",
+    "months": 4
    }
   ],
   "audio": "7uCYwqHaT7K4L890F0pd2H",
@@ -7049,7 +7238,8 @@
     "first": false,
     "count": 4,
     "prev": "53-2",
-    "gap": "2か月ぶり"
+    "gap": "2か月ぶり",
+    "months": 2
    },
    {
     "id": "IRFDK",
@@ -7060,7 +7250,8 @@
     "first": false,
     "count": 5,
     "prev": "53-2",
-    "gap": "2か月ぶり"
+    "gap": "2か月ぶり",
+    "months": 2
    },
    {
     "id": "manjimiya",
@@ -7116,14 +7307,16 @@
     "first": false,
     "count": 4,
     "prev": "53-2",
-    "gap": "前回に続いて"
+    "gap": "前回に続いて",
+    "months": 1
    },
    {
     "id": "morazumorazu",
     "first": false,
     "count": 9,
     "prev": "49",
-    "gap": "2か月ぶり"
+    "gap": "2か月ぶり",
+    "months": 2
    }
   ],
   "audio": "0ZUmYaYTQAWFsiVRHGWX3n",
@@ -7163,14 +7356,16 @@
     "first": false,
     "count": 4,
     "prev": "53-2",
-    "gap": "前回に続いて"
+    "gap": "前回に続いて",
+    "months": 1
    },
    {
     "id": "morazumorazu",
     "first": false,
     "count": 9,
     "prev": "49",
-    "gap": "2か月ぶり"
+    "gap": "2か月ぶり",
+    "months": 2
    }
   ],
   "audio": "6wZt8AUdRe7ikSN3a4px51",
@@ -7213,7 +7408,8 @@
     "first": false,
     "count": 3,
     "prev": "35",
-    "gap": "4か月ぶり"
+    "gap": "4か月ぶり",
+    "months": 4
    }
   ],
   "audio": "19hQYxOOZ7ZSLxSQSUKqz5",
@@ -7313,14 +7509,16 @@
     "first": false,
     "count": 3,
     "prev": "45",
-    "gap": "2か月ぶり"
+    "gap": "2か月ぶり",
+    "months": 2
    },
    {
     "id": "Weisweiler",
     "first": false,
     "count": 4,
     "prev": "41",
-    "gap": "2か月ぶり"
+    "gap": "2か月ぶり",
+    "months": 2
    }
   ],
   "audio": "2ePQGOhnlERB98i6EMBjW3",
@@ -7380,14 +7578,16 @@
     "first": false,
     "count": 3,
     "prev": "45",
-    "gap": "2か月ぶり"
+    "gap": "2か月ぶり",
+    "months": 2
    },
    {
     "id": "Weisweiler",
     "first": false,
     "count": 4,
     "prev": "41",
-    "gap": "2か月ぶり"
+    "gap": "2か月ぶり",
+    "months": 2
    }
   ],
   "audio": "5jkBflxAMGRLmPUZg4vIvy",
@@ -7450,7 +7650,8 @@
     "first": false,
     "count": 2,
     "prev": "11",
-    "gap": "1年1か月ぶり"
+    "gap": "1年1か月ぶり",
+    "months": 13
    }
   ],
   "audio": "6PRhz0Tj2ItMTlA5gvxaZ1",
@@ -7472,7 +7673,8 @@
     "first": false,
     "count": 2,
     "prev": "11",
-    "gap": "1年1か月ぶり"
+    "gap": "1年1か月ぶり",
+    "months": 13
    }
   ],
   "audio": "3vTfVAexkMtK45sJNf6shm",
@@ -7494,7 +7696,8 @@
     "first": false,
     "count": 2,
     "prev": "11",
-    "gap": "1年1か月ぶり"
+    "gap": "1年1か月ぶり",
+    "months": 13
    }
   ],
   "audio": "0SO6UrQyd2dLcDbBuWK8bg",
@@ -7516,7 +7719,8 @@
     "first": false,
     "count": 2,
     "prev": "11",
-    "gap": "1年1か月ぶり"
+    "gap": "1年1か月ぶり",
+    "months": 13
    }
   ],
   "audio": "0milFiO633lMNziKnZOOcD",
@@ -7538,7 +7742,8 @@
     "first": false,
     "count": 2,
     "prev": "50",
-    "gap": "前回に続いて"
+    "gap": "前回に続いて",
+    "months": 0
    }
   ],
   "audio": "6lwSG7qDVvHtSiwJZTnwqc",
@@ -7579,7 +7784,8 @@
     "first": false,
     "count": 8,
     "prev": "48",
-    "gap": "前回に続いて"
+    "gap": "前回に続いて",
+    "months": 0
    }
   ],
   "audio": "1aS0U3jlT28MGEDNQWBUWs",
@@ -7606,7 +7812,8 @@
     "first": false,
     "count": 7,
     "prev": "47",
-    "gap": "前回に続いて"
+    "gap": "前回に続いて",
+    "months": 0
    }
   ],
   "audio": "2tnKOGDzQuyUZgRfUmTCFp",
@@ -7628,7 +7835,8 @@
     "first": false,
     "count": 6,
     "prev": "30",
-    "gap": "4か月ぶり"
+    "gap": "4か月ぶり",
+    "months": 4
    }
   ],
   "audio": "6TT4uLO2qMh00NdmIgWuSD",
@@ -7679,7 +7887,8 @@
     "first": false,
     "count": 2,
     "prev": "43",
-    "gap": "前回に続いて"
+    "gap": "前回に続いて",
+    "months": 0
    }
   ],
   "audio": "753TrMQBijFdbi0MbHVDBW",
@@ -7715,14 +7924,16 @@
     "first": false,
     "count": 2,
     "prev": "42",
-    "gap": "前回に続いて"
+    "gap": "前回に続いて",
+    "months": 0
    },
    {
     "id": "sisisisisyamoo",
     "first": false,
     "count": 2,
     "prev": "42",
-    "gap": "前回に続いて"
+    "gap": "前回に続いて",
+    "months": 0
    }
   ],
   "audio": "4mOLFhOvIJFZ714h077BAo",
@@ -7802,7 +8013,8 @@
     "first": false,
     "count": 3,
     "prev": "39",
-    "gap": "前回に続いて"
+    "gap": "前回に続いて",
+    "months": 0
    }
   ],
   "audio": "3pIL17WGkz8ioq90SKxxU3",
@@ -7857,7 +8069,8 @@
     "first": false,
     "count": 2,
     "prev": "36",
-    "gap": "前回に続いて"
+    "gap": "前回に続いて",
+    "months": 1
    }
   ],
   "audio": "7kjmdLl0705IuoH8RSzx1q",
@@ -7884,7 +8097,8 @@
     "first": false,
     "count": 2,
     "prev": "37",
-    "gap": "前回に続いて"
+    "gap": "前回に続いて",
+    "months": 1
    }
   ],
   "audio": "58UhCxQok5flfTGYXnrPV2",
@@ -7955,14 +8169,16 @@
     "first": false,
     "count": 2,
     "prev": "2",
-    "gap": "1年2か月ぶり"
+    "gap": "1年2か月ぶり",
+    "months": 14
    },
    {
     "id": "AHA_oretama",
     "first": false,
     "count": 2,
     "prev": "4",
-    "gap": "1年ぶり"
+    "gap": "1年ぶり",
+    "months": 12
    }
   ],
   "audio": "5klPHh9UMbZ45zVOwdTXQ3",
@@ -8003,7 +8219,8 @@
     "first": false,
     "count": 2,
     "prev": "32",
-    "gap": "前回に続いて"
+    "gap": "前回に続いて",
+    "months": 0
    }
   ],
   "audio": "5pRbQtPnGwfY1oLaQnOZgB",
@@ -8054,7 +8271,8 @@
     "first": false,
     "count": 2,
     "prev": "13",
-    "gap": "7か月ぶり"
+    "gap": "7か月ぶり",
+    "months": 7
    }
   ],
   "audio": "2MI69j5I7zyF6gmxksGxAe",
@@ -8082,14 +8300,16 @@
     "first": false,
     "count": 5,
     "prev": "29",
-    "gap": "前回に続いて"
+    "gap": "前回に続いて",
+    "months": 0
    },
    {
     "id": "mutoreimu",
     "first": false,
     "count": 3,
     "prev": "29",
-    "gap": "前回に続いて"
+    "gap": "前回に続いて",
+    "months": 0
    }
   ],
   "audio": "6eRSd1lHg9DdvW0sWt8UAN",
@@ -8117,14 +8337,16 @@
     "first": false,
     "count": 4,
     "prev": "17",
-    "gap": "4か月ぶり"
+    "gap": "4か月ぶり",
+    "months": 4
    },
    {
     "id": "mutoreimu",
     "first": false,
     "count": 2,
     "prev": "21",
-    "gap": "2か月ぶり"
+    "gap": "2か月ぶり",
+    "months": 2
    }
   ],
   "audio": "3PGQ4PDXU6BAX9fgW5x1hq",
@@ -8264,14 +8486,16 @@
     "first": false,
     "count": 2,
     "prev": "7",
-    "gap": "9か月ぶり"
+    "gap": "9か月ぶり",
+    "months": 9
    },
    {
     "id": "matyunmatyun",
     "first": false,
     "count": 3,
     "prev": "12",
-    "gap": "6か月ぶり"
+    "gap": "6か月ぶり",
+    "months": 6
    }
   ],
   "audio": "0oll04pAY94VhYIh3xIVYj",
@@ -8363,7 +8587,8 @@
     "first": false,
     "count": 3,
     "prev": "17",
-    "gap": "2か月ぶり"
+    "gap": "2か月ぶり",
+    "months": 2
    }
   ],
   "audio": "5r3pqTq9QZUrhGil4QmHRI",
@@ -8453,14 +8678,16 @@
     "first": false,
     "count": 2,
     "prev": "3",
-    "gap": "7か月ぶり"
+    "gap": "7か月ぶり",
+    "months": 7
    },
    {
     "id": "morazumorazu",
     "first": false,
     "count": 3,
     "prev": "15",
-    "gap": "前回に続いて"
+    "gap": "前回に続いて",
+    "months": 1
    }
   ],
   "audio": "050puDU5jo0XCV89f85wAg",
@@ -8511,7 +8738,8 @@
     "first": false,
     "count": 2,
     "prev": "1",
-    "gap": "8か月ぶり"
+    "gap": "8か月ぶり",
+    "months": 8
    }
   ],
   "audio": "5lPBBebCA9zyJTInfD0cCe",
@@ -8576,7 +8804,8 @@
     "first": false,
     "count": 2,
     "prev": "6",
-    "gap": "3か月ぶり"
+    "gap": "3か月ぶり",
+    "months": 3
    }
   ],
   "audio": "5GXxkBX5sLgzdtGNLsHv6h",

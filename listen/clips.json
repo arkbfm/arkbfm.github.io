@@ -14,7 +14,16 @@ episodes talk about the same subject is in /listen/related.json, fetched after t
 {%- assign ep = site.data.episode_index | where: "slug", post.slug | first -%}
 {%- assign audio = post.audio_url | split: "," -%}
 {%- assign files = site.data.audio_sources[post.slug] | default: empty -%}
-{{ post.slug | jsonify }}:{"n":{{ ep.number | default: post.slug | jsonify }},"t":{{ ep.subtitle | default: post.title | jsonify }},"a":[{% for audio_id in audio %}{{ audio_id | strip | jsonify }}{% unless forloop.last %},{% endunless %}{% endfor %}],"u":{{ files | jsonify }},"g":[{% for guest_id in ep.guests limit:4 %}{% assign guest = site.actors[guest_id] %}[{{ guest.name | default: guest_id | jsonify }},{{ guest.image_url | default: "" | jsonify }}]{% unless forloop.last %},{% endunless %}{% endfor %}]}{% unless forloop.last %},{% endunless %}
+{%- comment -%}"r": who this episode is a first visit or the longest-awaited reunion (half a year or more) for, said in a line.{%- endcomment -%}
+{%- assign bond = "" -%}{%- assign reunion = nil -%}{%- assign reunion_months = 5 -%}
+{%- for comeback in ep.returns -%}
+{%- assign bond_guest = site.actors[comeback.id] -%}
+{%- if comeback.first -%}{%- assign bond = bond | append: " / " | append: bond_guest.name | append: "さん初登場" -%}
+{%- elsif comeback.months > reunion_months -%}{%- assign reunion = comeback -%}{%- assign reunion_months = comeback.months -%}{%- endif -%}
+{%- endfor -%}
+{%- if reunion -%}{%- assign bond_guest = site.actors[reunion.id] -%}{%- capture reunion_text -%}{{ bond_guest.name }}さん、{{ reunion.gap }}の{{ reunion.count }}回目{%- endcapture -%}{%- assign bond = bond | append: " / " | append: reunion_text -%}{%- endif -%}
+{%- assign bond = bond | remove_first: " / " -%}
+{{ post.slug | jsonify }}:{"n":{{ ep.number | default: post.slug | jsonify }},"t":{{ ep.subtitle | default: post.title | jsonify }},"a":[{% for audio_id in audio %}{{ audio_id | strip | jsonify }}{% unless forloop.last %},{% endunless %}{% endfor %}],"u":{{ files | jsonify }},"g":[{% for guest_id in ep.guests limit:4 %}{% assign guest = site.actors[guest_id] %}[{{ guest.name | default: guest_id | jsonify }},{{ guest.image_url | default: "" | jsonify }}]{% unless forloop.last %},{% endunless %}{% endfor %}]{% if bond != "" %},"r":{{ bond | jsonify }}{% endif %}}{% unless forloop.last %},{% endunless %}
 {%- endfor -%}
 },"clips":[
 {%- assign first_clip = true -%}
