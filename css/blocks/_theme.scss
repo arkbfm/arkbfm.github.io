@@ -237,6 +237,11 @@ body { background-color: var(--c-tint); color: var(--c-ink); }
   flex: 1;
   flex-direction: column;
   gap: 10px;
+  // The visual lifts and tilts on hover/focus, up to ~8px above the card and ~3px past its sides. The link's box
+  // takes in that room (padding, cancelled by the negative margin, so nothing moves), so the tilted corners are
+  // not clipped (Safari can paint a transformed child only inside its parent's box) and the focus ring goes round them.
+  margin: -8px -4px 0;
+  padding: 8px 4px 0;
   &, &:hover, &:focus, &:active { color: var(--c-ink); }
   .ep-visual { transition: transform .18s ease, box-shadow .18s ease; }
   &:hover .ep-visual,
