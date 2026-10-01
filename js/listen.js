@@ -708,7 +708,10 @@
     if (at >= clip.end) advance(true);
   }
 
-  audio.preload = 'auto';
+  // Until the first tap the file is only opened at the answer, not buffered ahead: with 'auto', Chrome pulled
+  // about 14 MB while the start screen waited (about 8 MB with 'metadata'), even for visitors who never pressed play.
+  // begin() switches to 'auto'; the answer still starts at once.
+  audio.preload = 'metadata';
   audio.addEventListener('loadedmetadata', function () {
     if (pendingSeek === null) return;
     audio.currentTime = pendingSeek;
@@ -734,6 +737,7 @@
 
   function begin() {
     started = true;
+    audio.preload = 'auto';
     startScreen.hidden = true;
     track('listen_begin', { theme: theme ? theme.id : 'all', from_link: /[?&](c|ep)=/.test(window.location.search) });
     // This tap is the gesture browsers want before audio; later clips start on their own, even with the screen locked.
