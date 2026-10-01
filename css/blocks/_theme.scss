@@ -489,7 +489,8 @@ body { background-color: var(--c-tint); color: var(--c-ink); }
   padding: 8px 16px;
   width: 100%;
 }
-.archive-years { flex-wrap: nowrap; margin: 0; overflow-x: auto; }
+// A scrolling row clips whatever leaves it: room above and below lets a chip tilt on hover/focus without losing its corners.
+.archive-years { flex-wrap: nowrap; margin: 0; overflow-x: auto; padding: 6px 2px; }
 .archive-count { font-size: .85rem; font-weight: bold; margin: 6px 0 0; }
 .archive-year { border-bottom: 3px solid var(--c-teal); font-size: 1.4rem; margin: 28px 0 14px; padding-bottom: 4px; scroll-margin-top: 130px; }
 .archive-item[hidden], .archive-year[hidden], .ep-grid[hidden], .archive-count[hidden], .archive-empty[hidden] { display: none; }
