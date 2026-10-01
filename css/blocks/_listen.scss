@@ -20,7 +20,7 @@
 .theme-tile-meta { color: var(--c-accent); font-size: .8rem; font-weight: bold; margin-top: auto; }
 @media (prefers-reduced-motion: reduce) { .theme-tile { transition: none; } }
 // Home hero: "つづきから" for a returning listener and the three questions of the day.
-.home-today { margin-top: 16px; }
+.home-today { margin: 18px 0 4px; }
 .home-today[hidden] { display: none; }
 .home-resume {
   background: var(--c-ink);
@@ -33,6 +33,46 @@
   &:hover, &:focus { color: var(--c-cream); }
 }
 .home-today-label { color: var(--c-accent); font-size: .85rem; font-weight: bold; margin: 0 0 6px; }
+// The day's first question, dressed as a card of the feed: the episode's faces, the question, the words the
+// talk opens on and where in the episode it is.
+.home-today-card {
+  background: var(--c-teal) url($splat-white) no-repeat left -30px top -22px / 120px auto;
+  border: 2px solid var(--c-ink);
+  border-radius: 20px;
+  box-shadow: 0 4px 0 var(--c-ink);
+  color: var(--c-ink);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 10px;
+  max-width: 640px;
+  padding: 16px 18px;
+  transition: transform .12s ease, box-shadow .12s ease;
+  &:hover, &:focus { color: var(--c-ink); transform: translateY(-2px); box-shadow: 0 6px 0 var(--c-ink); }
+}
+.home-today-faces {
+  display: flex;
+  justify-content: flex-end;
+  img { background: #fff; border: 2px solid var(--c-ink); border-radius: 50%; height: 36px; margin-left: -8px; object-fit: cover; width: 36px; }
+}
+.home-today-ep { font-size: .8rem; font-weight: bold; margin-top: -4px; }
+.home-today-question { font-size: 1.3rem; font-weight: 900; line-height: 1.4; }
+.home-today-line {
+  align-items: center;
+  background: rgba(255, 255, 255, .92);
+  border-radius: 14px;
+  display: flex;
+  font-size: .9rem;
+  gap: 8px;
+  padding: 8px 12px;
+  img { border-radius: 50%; flex: none; height: 28px; object-fit: cover; width: 28px; }
+  b { color: var(--c-accent); flex: none; font-size: .75rem; }
+  span { min-width: 0; }
+}
+.home-today-line[hidden] { display: none; }
+.home-today-foot { align-items: center; display: flex; flex-wrap: wrap; gap: 6px 12px; }
+.home-today-play { background: var(--c-ink); border-radius: 999px; color: #fff; font-weight: 900; padding: 6px 16px; }
+.home-today-where { font-size: .8rem; font-weight: bold; }
 .home-today-list {
   counter-reset: today;
   display: grid;
@@ -69,9 +109,9 @@
   span { color: var(--c-muted); font-size: .75rem; }
 }
 @media (min-width: 900px) {
-  .home-today-list { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .home-today-list { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: 640px; }
 }
-@media (prefers-reduced-motion: reduce) { .home-today-list a { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .home-today-list a, .home-today-card { transition: none; } }
 
 .theme-more {
   margin-top: 14px;

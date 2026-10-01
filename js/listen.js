@@ -536,7 +536,11 @@
     if (playing && playing.catch) {
       playing.catch(function (error) {
         // Refused without a tap (the page restored in the background, say): the start screen asks for one.
-        if (error && error.name === 'NotAllowedError' && current) { started = false; showHook(current, 'つまみ聴き'); }
+        if (error && error.name === 'NotAllowedError' && current) {
+          started = false;
+          audio.preload = 'metadata';
+          showHook(current, hookKicker);
+        }
       });
     }
   }
@@ -766,11 +770,14 @@
     setTimeout(function () { advance(false); }, 1500);
   });
 
-  function begin() {
+  // What the start screen's kicker says for this visit ("今日の1問", "つづきから", the theme...).
+  var hookKicker = 'つまみ聴き';
+
+  function begin(auto) {
     started = true;
     audio.preload = 'auto';
     startScreen.hidden = true;
-    track('listen_begin', { theme: theme ? theme.id : 'all', from_link: /[?&](c|ep)=/.test(window.location.search) });
+    track('listen_begin', { theme: theme ? theme.id : 'all', from_link: /[?&](c|ep)=/.test(window.location.search), auto: auto === true });
     // This tap is the gesture browsers want before audio; later clips start on their own, even with the screen locked.
     if (current) playAudio();
   }
@@ -968,7 +975,11 @@
     applyRate();
     go(first, 0);
     playButton.disabled = false;
-    showHook(first, kicker || (chosen ? chosen.emoji + ' ' + chosen.label : 'つまみ聴き'));
+    hookKicker = kicker || (chosen ? chosen.emoji + ' ' + chosen.label : 'つまみ聴き');
+    // Arriving from a tap on the site (home, the day's questions, つづきから, search), the feed tries to play at
+    // once; a browser that wants a tap on this page refuses, and the start screen asks for it (playAudio).
+    if (/[?&](from=(home|today|search)|resume=1)/.test(query)) begin(true);
+    else showHook(first, hookKicker);
   }).catch(function () {
     card.textContent = '読み込めませんでした。時間をおいて開き直してください。';
   });

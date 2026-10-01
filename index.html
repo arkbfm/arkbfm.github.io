@@ -8,22 +8,22 @@ layout: default
   <section class="home-hero" aria-labelledby="intro-heading">
     <h2 id="intro-heading">今夜は誰と、<br>何の話で、くだをまく？</h2>
     <p class="home-hero-lead">{{ site.data.episode_index.size }}回分の雑談から、気になる話や人を探してみてください。どこから聴いても、だいたい脱線しています。</p>
+    {% comment %}Filled by js/home-today.js: "つづきから" for returning listeners and three questions of the day.{% endcomment %}
+    <div class="home-today" data-home-today data-listen="{{ '/listen/' | relative_url }}" data-headlines="{{ '/listen/headlines.json' | relative_url }}" data-captions="{{ '/listen/captions/' | relative_url }}" hidden></div>
     <form class="discovery-search" action="https://search.arkbfm.com/" method="get" role="search">
       <label class="visually-hidden" for="home-search">話題・出演者からエピソードを探す</label>
       <input id="home-search" type="search" name="q" placeholder="話題・出演者からエピソードを探す" required>
       <button type="submit">検索</button>
     </form>
     <div class="home-random">
-      <a class="home-random-button home-listen-button" href="{{ '/listen/' | relative_url }}">▶ つまみ聴き</a>
-      <span>「問い」への答えだけを、次々に。答えが終わると、同じテーマを話す別の回へつながります。</span>
+      <a class="home-random-button home-listen-button" href="{{ '/listen/?from=home' | relative_url }}">▶ つまみ聴き</a>
+      <span>会話の途中から、次々に。ひと区切りつくと、同じテーマを話す別の回へつながります。</span>
       <ul class="home-listen-perks" aria-label="つまみ聴きでできること">
         <li>💬 字幕と話し手の顔</li>
         <li>⏩ 2倍速まで</li>
         <li>🔒 画面ロックしても再生</li>
       </ul>
     </div>
-    {% comment %}Filled by js/home-today.js: "つづきから" for returning listeners and three questions of the day.{% endcomment %}
-    <div class="home-today" data-home-today data-listen="{{ '/listen/' | relative_url }}" data-headlines="{{ '/listen/headlines.json' | relative_url }}" hidden></div>
   </section>
 
   <section class="home-latest" aria-labelledby="latest-heading">
@@ -59,6 +59,8 @@ layout: default
 
   {% include theme-map.html %}
 
+  {% comment %}Editors' picks with distinct subjects first, then the episodes listened to longest, without repeats.{% endcomment %}
+  {% assign start_slugs = "|" %}
   <section class="discovery-section" id="start" aria-labelledby="start-heading">
     <div class="discovery-section-heading">
       <div>
@@ -66,26 +68,20 @@ layout: default
         <h2 id="start-heading">初めて聴くなら</h2>
       </div>
     </div>
-    <p class="discovery-section-lead">よく見つけられ、じっくり聴かれた回から、話題の違う3本を選びました。</p>
+    <p class="discovery-section-lead">話題の違う3本と、配信後30日間の平均再生時間が長かった回です。</p>
     <div class="ep-grid">
       {% for feature in site.data.featured_episodes %}
         {% assign feature_slug = feature.url | split: '/' | last %}
+        {% assign start_slugs = start_slugs | append: feature_slug | append: "|" %}
         {% include episode-card.html slug=feature_slug lead=feature.description %}
       {% endfor %}
-    </div>
-  </section>
-
-  <section class="discovery-section" aria-labelledby="popular-heading">
-    <div class="discovery-section-heading">
-      <div>
-        <p class="discovery-kicker">聴きごたえ</p>
-        <h2 id="popular-heading">じっくり聴かれている回</h2>
-      </div>
-    </div>
-    <p class="discovery-section-lead">配信後30日間の平均再生時間が長かった回です。</p>
-    <div class="ep-grid">
+      {% assign popular_shown = 0 %}
       {% for item in site.data.popular_episodes %}
-        {% include episode-card.html slug=item.slug %}
+        {% assign popular_key = "|" | append: item.slug | append: "|" %}
+        {% if popular_shown < 3 %}{% unless start_slugs contains popular_key %}
+          {% include episode-card.html slug=item.slug %}
+          {% assign popular_shown = popular_shown | plus: 1 %}
+        {% endunless %}{% endif %}
       {% endfor %}
     </div>
   </section>
