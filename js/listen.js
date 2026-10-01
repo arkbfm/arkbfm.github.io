@@ -496,7 +496,8 @@
     audio.defaultPlaybackRate = rate;
     audio.playbackRate = rate;
     rateButton.textContent = rate + '×';
-    rateButton.setAttribute('aria-label', '再生速度 ' + rate + '倍（押して変更）');
+    // The label starts with the visible "1.5×", so voice control finds the button by what it shows.
+    rateButton.setAttribute('aria-label', rate + '× 再生速度（押して変更）');
   }
 
   function playAudio() {
