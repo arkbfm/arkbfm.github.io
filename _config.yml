@@ -360,6 +360,8 @@ exclude:
   - _posts/html
   - _posts/workflowy
 future: true
+# The listening feed's captions: one clip at a time from the search Worker (cloudflare-search/worker.js).
+captions_api: https://search.arkbfm.com/api/captions
 # GA4 measurement ID (G-XXXXXXXXXX). Empty: no analytics is loaded.
 google_analytics: G-8Y6RJ822X8
 hashtag: arkbfm

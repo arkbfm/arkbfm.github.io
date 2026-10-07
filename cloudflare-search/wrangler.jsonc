@@ -12,6 +12,11 @@
       "name": "SEARCH_RATE_LIMIT",
       "namespace_id": "1001",
       "simple": { "limit": 30, "period": 60 }
+    },
+    {
+      "name": "CAPTION_RATE_LIMIT",
+      "namespace_id": "1002",
+      "simple": { "limit": 30, "period": 60 }
     }
   ],
   "ai": { "binding": "AI" },

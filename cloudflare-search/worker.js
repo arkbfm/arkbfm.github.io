@@ -391,9 +391,178 @@ async function search(env, query, timings = {}) {
     }));
 }
 
+// Captions for the listening feed (www.arkbfm.com/listen/ and the home page's question of the day): one
+// clip's lines per request, cut from the rows scripts/build_captions.py writes (captions.sql). Those rows
+// hold only published answers' spans, so no request can reach past them or into a hidden question.
+const CAPTION_ORIGINS = new Set([
+  "https://www.arkbfm.com", "https://arkbfm.com", "http://localhost:4000", "http://127.0.0.1:4000",
+]);
+// Must match BUCKET_SECONDS and MARGIN_SECONDS in scripts/build_captions.py.
+const CAPTION_BUCKET_SECONDS = 300;
+const CAPTION_LEAD_SECONDS = 5;
+// The longest moment (?ep=&t=&e=) served at once; the page asks for a longer one in pieces.
+const CAPTION_MAX_SPAN_SECONDS = 1800;
+const CAPTION_CACHE_TTL_SECONDS = 86400;
+const CAPTION_BROWSER_TTL_SECONDS = 3600;
+const CAPTION_MISSING_TTL_SECONDS = 300;
+// The generation is read from D1 at most this often per isolate, so a cache hit costs no D1 query.
+const CAPTION_VERSION_TTL_MS = 60000;
+// Slugs are like "166", "101_5" or "118.5".
+const CLIP_ID = /^[0-9A-Za-z_.-]{1,40}\.c?\d{1,4}$/;
+const EPISODE_SLUG = /^[0-9A-Za-z_.-]{1,40}$/;
+let captionVersion = { value: null, at: -Infinity };
+
+function captionHeaders(origin, cacheControl) {
+  return {
+    "content-type": "application/json; charset=utf-8",
+    "cache-control": cacheControl,
+    "access-control-allow-origin": origin,
+    "access-control-allow-methods": "GET",
+    vary: "Origin",
+    "x-content-type-options": "nosniff",
+    "x-robots-tag": "noindex, nofollow, noarchive",
+  };
+}
+
+// Returns { clip } or { episode, part, start, end } (part 0-based, seconds), or { error }.
+function parseCaptionRequest(params) {
+  const clip = params.get("c");
+  const episode = params.get("ep");
+  if (clip !== null && episode !== null) return { error: "c と ep は同時に指定できません" };
+  if (clip !== null) return CLIP_ID.test(clip) ? { clip } : { error: "クリップIDが不正です" };
+  if (episode === null) return { error: "c または ep を指定してください" };
+  if (!EPISODE_SLUG.test(episode)) return { error: "エピソードが不正です" };
+  const integer = (name, fallback) => {
+    const value = params.get(name);
+    if (value === null && fallback !== undefined) return fallback;
+    return /^\d{1,6}$/.test(value ?? "") ? Number(value) : NaN;
+  };
+  const part = integer("p", 1), start = integer("t"), end = integer("e");
+  if (!(part >= 1 && part <= 9) || !(start <= 86400) || !(end <= 86400)) return { error: "時刻またはパートが不正です" };
+  if (end <= start || end - start > CAPTION_MAX_SPAN_SECONDS) {
+    return { error: `区間は${CAPTION_MAX_SPAN_SECONDS}秒以内で指定してください` };
+  }
+  return { episode, part: part - 1, start, end };
+}
+
+// The page's own rule (js/listen.js): lines and voice changes of the clip's part from a little before its
+// start to its end, the voice already talking at that point, and only the speakers those name.
+// rows: the part's buckets that overlap the clip, in order.
+function sliceCaptions(rows, speakers, { part, start, end }) {
+  const from = start - CAPTION_LEAD_SECONDS;
+  const inClip = entry => entry[0] === part && entry[1] >= from && entry[1] < end;
+  const lines = [], turns = [];
+  let before = null;
+  rows.forEach((row, index) => {
+    const rowTurns = JSON.parse(row.turns);
+    if (index === 0) {
+      before = row.carry ? JSON.parse(row.carry) : null;
+      for (const turn of rowTurns) if (turn[1] < from) before = turn;
+    }
+    lines.push(...JSON.parse(row.lines).filter(inClip));
+    turns.push(...rowTurns.filter(inClip));
+  });
+  if (!lines.length) return null;
+  if (before) turns.unshift(before);
+  const used = new Set([...lines.map(line => line[2]), ...turns.map(turn => turn[2])]);
+  const shown = Object.fromEntries(Object.entries(speakers).filter(([key]) => used.has(key)));
+  return turns.length ? { speakers: shown, lines, turns } : { speakers: shown, lines };
+}
+
+async function captionCacheVersion(env) {
+  if (Date.now() - captionVersion.at < CAPTION_VERSION_TTL_MS) return captionVersion.value;
+  try {
+    const row = await env.DB.prepare("SELECT version FROM caption_cache_version WHERE id=1").first();
+    captionVersion = { value: row?.version || null, at: Date.now() };
+  } catch (error) {
+    // Serve from D1 uncached rather than fail; try again on the next request.
+    console.error("caption cache version unavailable", error);
+    return null;
+  }
+  return captionVersion.value;
+}
+
+async function lookupCaptions(env, wanted) {
+  let span = wanted;
+  if (wanted.clip) {
+    const clip = await env.DB.prepare("SELECT episode,part,start,end FROM caption_clips WHERE id=?")
+      .bind(wanted.clip).first();
+    if (!clip) return null;
+    span = clip;
+  }
+  const first = Math.max(0, Math.floor((span.start - CAPTION_LEAD_SECONDS) / CAPTION_BUCKET_SECONDS));
+  const last = Math.max(first, Math.floor((span.end - 0.001) / CAPTION_BUCKET_SECONDS));
+  const [chunks, episode] = await env.DB.batch([
+    env.DB.prepare(`SELECT bucket,lines,turns,carry FROM caption_chunks
+                    WHERE episode=? AND part=? AND bucket BETWEEN ? AND ? ORDER BY bucket`)
+      .bind(span.episode, span.part, first, last),
+    env.DB.prepare("SELECT speakers FROM caption_episodes WHERE episode=?").bind(span.episode),
+  ]);
+  const speakers = episode.results[0] ? JSON.parse(episode.results[0].speakers) : {};
+  return sliceCaptions(chunks.results, speakers, span);
+}
+
+async function captions(request, env, ctx) {
+  const origin = request.headers.get("origin");
+  // Only the site's own pages may ask; scripted downloads without a browser's Origin are turned away.
+  if (!CAPTION_ORIGINS.has(origin)) {
+    return new Response(JSON.stringify({ error: "許可されていない参照元です" }), { status: 403,
+      headers: { ...headers, vary: "Origin" } });
+  }
+  const reply = (data, status, cacheControl = "no-store", extraHeaders = {}) =>
+    new Response(typeof data === "string" ? data : JSON.stringify(data),
+      { status, headers: { ...captionHeaders(origin, cacheControl), ...extraHeaders } });
+  if (request.method === "OPTIONS") {
+    return new Response(null, { status: 204, headers: captionHeaders(origin, "public, max-age=86400") });
+  }
+  if (request.method !== "GET") return reply({ error: "GETのみ利用できます" }, 405, "no-store", { allow: "GET, OPTIONS" });
+
+  // Its own budget, so listening never uses up searches (and the other way round).
+  const rate = await env.CAPTION_RATE_LIMIT.limit({ key: request.headers.get("cf-connecting-ip") || "unknown" });
+  if (!rate.success) return reply({ error: "字幕の取得が多すぎます。1分後にお試しください" }, 429, "no-store", { "retry-after": "60" });
+
+  const wanted = parseCaptionRequest(new URL(request.url).searchParams);
+  if (wanted.error) return reply({ error: wanted.error }, 400);
+
+  const version = await captionCacheVersion(env);
+  const cache = version ? globalThis.caches?.default : undefined;
+  const cacheUrl = new URL(request.url);
+  cacheUrl.pathname = "/__caption_cache/v1";
+  cacheUrl.search = new URLSearchParams(wanted.clip ? { v: version, c: wanted.clip }
+    : { v: version, ep: wanted.episode, p: wanted.part, t: wanted.start, e: wanted.end }).toString();
+  const cacheKey = new Request(cacheUrl.toString(), { method: "GET" });
+  let cached;
+  try { cached = await cache?.match(cacheKey); }
+  catch (error) { console.error("caption cache read unavailable", error); }
+  if (cached) {
+    return reply(await cached.text(), cached.status,
+      `public, max-age=${cached.status === 200 ? CAPTION_BROWSER_TTL_SECONDS : CAPTION_MISSING_TTL_SECONDS}`,
+      { "x-caption-cache": "HIT" });
+  }
+
+  let found;
+  try {
+    found = await lookupCaptions(env, wanted);
+  } catch (error) {
+    // Most likely the tables are being swapped by captions.sql; the page plays on without captions.
+    console.error("captions unavailable", error);
+    return reply({ error: "字幕を読み込めませんでした" }, 503, "no-store", { "retry-after": "60" });
+  }
+  const status = found ? 200 : 404;
+  const body = JSON.stringify(found || { error: "字幕が見つかりません" });
+  if (cache && ctx?.waitUntil) {
+    const entry = new Response(body, { status, headers: { "content-type": "application/json; charset=utf-8",
+      "cache-control": `public, max-age=${found ? CAPTION_CACHE_TTL_SECONDS : CAPTION_MISSING_TTL_SECONDS}` } });
+    ctx.waitUntil(cache.put(cacheKey, entry).catch(error => console.error("caption cache write unavailable", error)));
+  }
+  return reply(body, status,
+    `public, max-age=${found ? CAPTION_BROWSER_TTL_SECONDS : CAPTION_MISSING_TTL_SECONDS}`, { "x-caption-cache": "MISS" });
+}
+
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
+    if (url.pathname === "/api/captions") return captions(request, env, ctx);
     if (request.method === "GET" && url.pathname === "/") {
       return new Response(HTML, { headers: { ...headers, "content-type": "text/html; charset=utf-8" } });
     }
@@ -463,4 +632,5 @@ export default {
   },
 };
 
-export { normalize, semanticQuery, trigrams, fuzzyTrigrams, editDistance, rerankCandidates, labeledExcerpt };
+export { normalize, semanticQuery, trigrams, fuzzyTrigrams, editDistance, rerankCandidates, labeledExcerpt,
+  parseCaptionRequest, sliceCaptions };

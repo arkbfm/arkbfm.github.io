@@ -9,3 +9,4 @@ vectors.ndjson
 .wrangler/
 node_modules/
 speaker-turns-migration.sql
+captions.sql

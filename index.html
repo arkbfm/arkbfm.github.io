@@ -9,7 +9,7 @@ layout: default
     <h2 id="intro-heading">今夜は誰と、<br>何の話で、くだをまく？</h2>
     <p class="home-hero-lead">{{ site.data.episode_index.size }}回分の雑談から、気になる話や人を探してみてください。どこから聴いても、だいたい脱線しています。</p>
     {% comment %}Filled by js/home-today.js: "つづきから" for returning listeners and three questions of the day.{% endcomment %}
-    <div class="home-today" data-home-today data-listen="{{ '/listen/' | relative_url }}" data-headlines="{{ '/listen/headlines.json' | relative_url }}" data-captions="{{ '/listen/captions/' | relative_url }}" hidden></div>
+    <div class="home-today" data-home-today data-listen="{{ '/listen/' | relative_url }}" data-headlines="{{ '/listen/headlines.json' | relative_url }}" data-captions="{{ site.captions_api }}" hidden></div>
     <form class="discovery-search" action="https://search.arkbfm.com/" method="get" role="search">
       <label class="visually-hidden" for="home-search">話題・出演者からエピソードを探す</label>
       <input id="home-search" type="search" name="q" placeholder="話題・出演者からエピソードを探す" required>

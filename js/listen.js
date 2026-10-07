@@ -409,22 +409,67 @@
     statsElement.textContent = saved.count ? '今日 ' + saved.count + '本 · ' + Math.round(saved.seconds / 60) + '分' : '';
   }
 
-  // Captions: one file per episode (scripts/build_captions.py), fetched once and shared by its clips.
+  // Captions: only the clip's own lines, from the search Worker (GET /api/captions in cloudflare-search/worker.js,
+  // data from scripts/build_captions.py), fetched once per clip in this visit. A moment without a question id
+  // (?ep=&t=&e=) is asked for in pieces of at most CAPTION_SPAN seconds, the Worker's limit.
   var captionBase = root.getAttribute('data-captions');
+  var CAPTION_SPAN = 1800;
   var captionFiles = {};
 
-  function captionsFor(slug) {
-    if (!captionFiles[slug]) {
-      captionFiles[slug] = fetch(captionBase + encodeURIComponent(slug) + '.json')
-        .then(function (response) { return response.ok ? response.json() : null; })
-        .catch(function () { return null; });
+  // Null when there are no captions there; a rejection when they could not be fetched just now.
+  function captionRequest(query) {
+    return fetch(captionBase + '?' + query).then(function (response) {
+      if (response.status === 404) return null;
+      if (!response.ok) throw new Error('captions ' + response.status);
+      return response.json();
+    });
+  }
+
+  // A long moment's pieces as one file: each piece after the first starts with a lead-in its predecessor has.
+  function joinPieces(pieces, starts) {
+    var joined = null;
+    pieces.forEach(function (piece, index) {
+      if (!piece) return;
+      if (!joined) {
+        joined = { speakers: piece.speakers || {}, lines: piece.lines || [], turns: piece.turns || [] };
+        return;
+      }
+      var fresh = function (entry) { return entry[1] >= starts[index]; };
+      Object.keys(piece.speakers || {}).forEach(function (key) { joined.speakers[key] = piece.speakers[key]; });
+      joined.lines = joined.lines.concat((piece.lines || []).filter(fresh));
+      joined.turns = joined.turns.concat((piece.turns || []).filter(fresh));
+    });
+    return joined;
+  }
+
+  function captionsFor(clip) {
+    var file = data.episodes[clip.slug].u[clip.part];
+    var end = Math.ceil(file && file[1] ? Math.min(clip.end, file[1]) : clip.end);
+    var key = clip.id || clip.slug + '@' + clip.part + '@' + clip.start + '-' + end;
+    if (!captionFiles[key]) {
+      var loading;
+      if (clip.id) {
+        loading = captionRequest('c=' + encodeURIComponent(clip.id));
+      } else {
+        var starts = [];
+        for (var from = Math.floor(clip.start); from < end; from += CAPTION_SPAN) starts.push(from);
+        loading = Promise.all(starts.map(function (start) {
+          return captionRequest('ep=' + encodeURIComponent(clip.slug) + '&p=' + (clip.part + 1) + '&t=' + start +
+            '&e=' + Math.min(end, start + CAPTION_SPAN));
+        })).then(function (pieces) { return joinPieces(pieces, starts); });
+      }
+      captionFiles[key] = loading.catch(function () {
+        // Too many requests or offline: play on without captions, and ask again when the clip comes back.
+        delete captionFiles[key];
+        return null;
+      });
     }
-    return captionFiles[slug];
+    return captionFiles[key];
   }
 
   // The clip's own lines (its audio part, from a little before its start to its end).
   function attachCaptions(clip) {
-    return captionsFor(clip.slug).then(function (file) {
+    return captionsFor(clip).then(function (file) {
       if (!file) return clip;
       clip.speakers = file.speakers;
       var inClip = function (entry) { return entry[0] === clip.part && entry[1] >= clip.start - 5 && entry[1] < clip.end; };
@@ -737,8 +782,8 @@
     if ((clip.end - at) / rate <= PEEK_SECONDS && !paused) {
       if (upcoming === null) {
         upcoming = chooseNext(clip) || false;
-        // Fetch the next episode's captions now, so its first line shows the moment it starts.
-        if (upcoming) captionsFor(upcoming.slug);
+        // Fetch the next clip's captions now, so its first line shows the moment it starts.
+        if (upcoming) captionsFor(upcoming);
       }
       if (upcoming) peek(upcoming);
     }

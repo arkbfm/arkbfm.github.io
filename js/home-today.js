@@ -36,16 +36,15 @@
     return hms.replace(/^00:/, '').replace(/^0(\d)/, '$1');
   }
 
-  // The first words said in the answer, with who says them: from the episode's caption file, fetched once the
-  // rest of the page is in (one episode's file, about 100 KB).
+  // The first words said in the answer, with who says them: from the question's captions (the search Worker's
+  // GET /api/captions, the same request the listening feed makes), fetched once the rest of the page is in.
   function openingLine(item, target) {
     var base = box.getAttribute('data-captions');
     if (!base || !item[4]) return;
-    var slug = item[0].slice(0, item[0].lastIndexOf('.'));
     var start = seconds(item[4]);
     var part = (item[6] || 1) - 1;
     var load = function () {
-      fetch(base + encodeURIComponent(slug) + '.json').then(function (response) { return response.ok ? response.json() : null; }).then(function (file) {
+      fetch(base + '?c=' + encodeURIComponent(item[0])).then(function (response) { return response.ok ? response.json() : null; }).then(function (file) {
         var said = file && (file.lines || []).filter(function (entry) { return entry[0] === part && entry[1] >= start - 2; })[0];
         if (!said) return;
         var speaker = (file.speakers || {})[said[2]];

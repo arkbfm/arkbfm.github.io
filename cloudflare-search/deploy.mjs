@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { readFileSync } from "node:fs";
-import { bumpSearchCacheVersion } from "./cache_version.mjs";
+import { bumpCaptionCacheVersion, bumpSearchCacheVersion } from "./cache_version.mjs";
 
 for (const line of readFileSync(new URL(".env", import.meta.url), "utf8").split(/\r?\n/)) {
   const match = line.match(/^([^#=]+)=(.*)$/);
@@ -11,18 +11,28 @@ const account = process.env.CLOUDFLARE_ACCOUNT_ID;
 const token = process.env.CLOUDFLARE_API_TOKEN;
 if (!account || !token) throw new Error("CLOUDFLARE_ACCOUNT_ID and CLOUDFLARE_API_TOKEN are required");
 
-// The Worker reads per-turn speaker labels; do not deploy before D1 has them.
-const readinessResponse = await fetch(`https://api.cloudflare.com/client/v4/accounts/${account}/d1/database/390de978-7db4-409c-9b55-e3f221b2b6a5/query`, {
-  method: "POST",
-  headers: { authorization: `Bearer ${token}`, "content-type": "application/json" },
-  body: JSON.stringify({ sql: "SELECT count(*) AS missing FROM segments WHERE speaker_turns IS NULL" }),
-});
-const readiness = await readinessResponse.json();
-if (!readinessResponse.ok || !readiness.success) {
-  throw new Error(`Speaker turn readiness check failed: ${JSON.stringify(readiness.errors || readiness)}`);
+async function d1(sql) {
+  const response = await fetch(`https://api.cloudflare.com/client/v4/accounts/${account}/d1/database/390de978-7db4-409c-9b55-e3f221b2b6a5/query`, {
+    method: "POST",
+    headers: { authorization: `Bearer ${token}`, "content-type": "application/json" },
+    body: JSON.stringify({ sql }),
+  });
+  const body = await response.json();
+  if (!response.ok || !body.success) throw new Error(JSON.stringify(body.errors || body));
+  return body.result?.[0]?.results?.[0];
 }
-const missing = readiness.result?.[0]?.results?.[0]?.missing;
+
+// The Worker reads per-turn speaker labels; do not deploy before D1 has them.
+let missing;
+try { ({ missing } = await d1("SELECT count(*) AS missing FROM segments WHERE speaker_turns IS NULL")); }
+catch (error) { throw new Error(`Speaker turn readiness check failed: ${error.message}`); }
 if (missing !== 0) throw new Error(`Cannot deploy: ${missing} search chunks lack speaker labels`);
+
+// The Worker serves the listening feed's captions from D1 (captions.sql, from scripts/build_captions.py).
+let captions;
+try { captions = await d1("SELECT (SELECT count(*) FROM caption_clips) AS clips, (SELECT count(*) FROM caption_chunks) AS chunks"); }
+catch (error) { throw new Error(`Cannot deploy: caption tables are missing; apply captions.sql first (${error.message})`); }
+if (!captions?.clips || !captions?.chunks) throw new Error("Cannot deploy: caption tables are empty; apply captions.sql first");
 
 const metadata = {
   main_module: "worker.js",
@@ -30,6 +40,7 @@ const metadata = {
   bindings: [
     { type: "d1", name: "DB", database_id: "390de978-7db4-409c-9b55-e3f221b2b6a5" },
     { type: "ratelimit", name: "SEARCH_RATE_LIMIT", namespace_id: "1001", simple: { limit: 30, period: 60 } },
+    { type: "ratelimit", name: "CAPTION_RATE_LIMIT", namespace_id: "1002", simple: { limit: 30, period: 60 } },
     { type: "ai", name: "AI" },
     { type: "vectorize", name: "VECTORS", index_name: "arkbfm-search" },
   ],
@@ -50,6 +61,9 @@ if (!response.ok || !result.success) throw new Error(JSON.stringify(result.error
 console.log("uploaded Worker arkbfm-search");
 await bumpSearchCacheVersion(account, token);
 console.log("invalidated search cache");
+// New Worker code may cut captions differently; stop serving the old cut from edge caches.
+await bumpCaptionCacheVersion(account, token);
+console.log("invalidated caption cache");
 
 if (process.argv.includes("--attach-domain") || process.argv.includes("--detach-domain")) {
   const api = async (path, options = {}) => {

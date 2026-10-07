@@ -1,8 +1,11 @@
-"""Write captions for the listening feed: /listen/captions/<slug>.json, one file per episode.
+"""Write the listening feed's captions as a private D1 import, cloudflare-search/captions.sql.
 
-Only the talk inside published questions' answer spans is written (headline questions in front matter,
-chapter questions in _data/chapter_questions.json that are not hidden), so the transcript is never
-published whole and nothing from a hidden question's span leaks unless another public answer covers it.
+The search Worker (cloudflare-search/worker.js, GET /api/captions) hands out one clip's lines at a time,
+so the captions are never a set of static files anyone can download in one go. Only the talk inside
+published questions' answer spans is written (headline questions in front matter, chapter questions in
+_data/chapter_questions.json that are not hidden), so the transcript is never published whole and nothing
+from a hidden question's span leaks unless another public answer covers it. The SQL holds transcript text:
+it is gitignored like import.sql, never committed.
 
 Transcript segments run about 30 seconds, too long to read along, so each is cut into short lines at
 sentence ends, and long sentences at BudouX phrase boundaries (as podclip's burned-in subtitles do);
@@ -14,11 +17,13 @@ line takes whoever talks most during it, and "turns" marks every point where the
 the face can switch mid-line.
 
     python scripts/build_captions.py        # needs: pip install budoux
+    cd cloudflare-search; npx wrangler d1 execute arkbfm-search --remote --file=captions.sql
 """
 
 import bisect
 import json
 import re
+import secrets
 import sys
 from pathlib import Path
 
@@ -28,7 +33,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from build_site_data import load_actors  # noqa: E402
 from locate_questions import POSTS, ROOT, read_questions, split_front  # noqa: E402
 
-OUTPUT = ROOT / "listen" / "captions"
+OUTPUT = ROOT / "cloudflare-search" / "captions.sql"
 TRANSCRIPTS = ROOT / "transcripts"
 CHAPTER_QUESTIONS = ROOT / "_data" / "chapter_questions.json"
 # A caption line holds at most this many characters (two lines on a phone), as in podclip.
@@ -46,6 +51,10 @@ CLAUSE_END = re.compile(r"(ね|よね|よ|な|けど|けれど|ので|から|っ
 # Marks where the page may wrap a line: between BudouX phrases (the page turns it into a zero-width space).
 BREAK = "|"
 PARSER = budoux.load_default_japanese_parser()
+# D1 rows: each episode part's lines in buckets of this many seconds (the Worker reads only the buckets a
+# clip touches), and one INSERT kept well under D1's 100 KB statement limit.
+BUCKET_SECONDS = 300
+STATEMENT_BYTES = 60_000
 
 
 def seconds(value: str) -> int:
@@ -179,11 +188,69 @@ class Turns:
         return found
 
 
+def clips_of(slug: str, front: str, chapter_questions: list[dict]) -> list[tuple[str, int, int, int]]:
+    """(id, part, start, end) of the episode's published clips, with the ids listen/clips.json gives them:
+    "slug.N" for the Nth headline question in front matter, "slug.cN" for the Nth chapter question (hidden
+    ones keep their number but are left out)."""
+    clips = []
+    for index, question in enumerate(read_questions(front), 1):
+        if question.get("time") and question.get("end"):
+            clips.append((f"{slug}.{index}", int(question.get("part") or 1) - 1,
+                          seconds(question["time"]), seconds(question["end"])))
+    for index, question in enumerate(chapter_questions, 1):
+        if not question.get("hidden"):
+            clips.append((f"{slug}.c{index}", int(question.get("part") or 1) - 1,
+                          seconds(question["time"]), seconds(question["end"])))
+    return clips
+
+
+def quote(value) -> str:
+    if value is None:
+        return "NULL"
+    if isinstance(value, (int, float)):
+        return str(value)
+    return "'" + str(value).replace("\x00", "").replace("'", "''") + "'"
+
+
+def packed(value) -> str:
+    return json.dumps(value, ensure_ascii=False, separators=(",", ":"))
+
+
+def inserts(table: str, columns: str, rows: list[tuple]) -> list[str]:
+    """Multi-row INSERTs, each under STATEMENT_BYTES."""
+    statements, values, size = [], [], 0
+    for row in rows:
+        value = "(" + ",".join(quote(item) for item in row) + ")"
+        if values and size + len(value.encode("utf-8")) > STATEMENT_BYTES:
+            statements.append(f"INSERT INTO {table} ({columns}) VALUES\n" + ",\n".join(values) + ";")
+            values, size = [], 0
+        values.append(value)
+        size += len(value.encode("utf-8"))
+    if values:
+        statements.append(f"INSERT INTO {table} ({columns}) VALUES\n" + ",\n".join(values) + ";")
+    return statements
+
+
+def buckets_of(slug: str, lines: list[list], turns: list[list]) -> list[tuple]:
+    """(episode, part, bucket, lines, turns, carry) rows, one per BUCKET_SECONDS of a part that has captions.
+    carry is the last voice change before the bucket, so a clip starting mid-talk still knows who talks."""
+    rows = {}
+    for line in lines:
+        rows.setdefault((line[0], int(line[1] // BUCKET_SECONDS)), ([], []))[0].append(line)
+    for turn in turns:
+        rows.setdefault((turn[0], int(turn[1] // BUCKET_SECONDS)), ([], []))[1].append(turn)
+    result = []
+    for (part, bucket), (bucket_lines, bucket_turns) in sorted(rows.items()):
+        earlier = [turn for turn in turns if turn[0] == part and turn[1] < bucket * BUCKET_SECONDS]
+        result.append((slug, part, bucket, packed(bucket_lines), packed(bucket_turns),
+                       packed(earlier[-1]) if earlier else None))
+    return result
+
+
 def main() -> None:
     actors = load_actors()
     chapter_questions = json.loads(CHAPTER_QUESTIONS.read_text(encoding="utf-8"))
-    OUTPUT.mkdir(parents=True, exist_ok=True)
-    written = set()
+    clip_rows, speaker_rows, chunk_rows = [], [], []
     total = 0
     for path in sorted(POSTS.glob("*.md")):
         match = re.match(r"\d{4}-\d{2}-\d{2}-(.+)\.md$", path.name)
@@ -245,19 +312,43 @@ def main() -> None:
                 if key and key != previous:
                     changes.append([part, round(at, 1), key])
                     previous = key
-        payload = {"speakers": speakers, "lines": lines}
-        if changes:
-            payload["turns"] = changes
-        out = OUTPUT / f"{slug}.json"
-        out.write_text(json.dumps(payload, ensure_ascii=False, separators=(",", ":")) + "\n",
-                       encoding="utf-8", newline="\n")
-        written.add(out.name)
+        # The Worker joins buckets in order and the page looks lines up by time: keep each part time-ordered.
+        lines.sort(key=lambda line: (line[0], line[1]))
+        changes.sort(key=lambda turn: (turn[0], turn[1]))
+        clip_rows += [(clip_id, slug, part, start, end)
+                      for clip_id, part, start, end in clips_of(slug, front, chapter_questions.get(slug, []))]
+        speaker_rows.append((slug, packed(speakers)))
+        chunk_rows += buckets_of(slug, lines, changes)
         total += len(lines)
-    for stale in OUTPUT.glob("*.json"):
-        if stale.name not in written:
-            stale.unlink()
-    size = sum(path.stat().st_size for path in OUTPUT.glob("*.json"))
-    print(f"{len(written)} episodes, {total} caption lines, {size // 1024} KB")
+
+    # Built into *_next tables and swapped in at the end, so the Worker never reads a half-written set.
+    # WITHOUT ROWID makes each row a single write against D1's daily write quota.
+    statements = [
+        "DROP TABLE IF EXISTS caption_clips_next;",
+        "DROP TABLE IF EXISTS caption_episodes_next;",
+        "DROP TABLE IF EXISTS caption_chunks_next;",
+        "CREATE TABLE caption_clips_next (id TEXT PRIMARY KEY, episode TEXT NOT NULL, part INTEGER NOT NULL, "
+        "start REAL NOT NULL, end REAL NOT NULL) WITHOUT ROWID;",
+        "CREATE TABLE caption_episodes_next (episode TEXT PRIMARY KEY, speakers TEXT NOT NULL) WITHOUT ROWID;",
+        "CREATE TABLE caption_chunks_next (episode TEXT NOT NULL, part INTEGER NOT NULL, bucket INTEGER NOT NULL, "
+        "lines TEXT NOT NULL, turns TEXT NOT NULL, carry TEXT, PRIMARY KEY (episode, part, bucket)) WITHOUT ROWID;",
+        *inserts("caption_clips_next", "id,episode,part,start,end", clip_rows),
+        *inserts("caption_episodes_next", "episode,speakers", speaker_rows),
+        *inserts("caption_chunks_next", "episode,part,bucket,lines,turns,carry", chunk_rows),
+        "DROP TABLE IF EXISTS caption_clips;",
+        "DROP TABLE IF EXISTS caption_episodes;",
+        "DROP TABLE IF EXISTS caption_chunks;",
+        "ALTER TABLE caption_clips_next RENAME TO caption_clips;",
+        "ALTER TABLE caption_episodes_next RENAME TO caption_episodes;",
+        "ALTER TABLE caption_chunks_next RENAME TO caption_chunks;",
+        # A new generation makes every data center stop serving the old captions from its edge cache.
+        "CREATE TABLE IF NOT EXISTS caption_cache_version (id INTEGER PRIMARY KEY CHECK (id=1), version TEXT NOT NULL);",
+        "INSERT INTO caption_cache_version (id,version) "
+        f"VALUES (1,{quote(secrets.token_hex(16))}) ON CONFLICT(id) DO UPDATE SET version=excluded.version;",
+    ]
+    OUTPUT.write_text("\n".join(statements) + "\n", encoding="utf-8", newline="\n")
+    print(f"{len(speaker_rows)} episodes, {len(clip_rows)} clips, {len(chunk_rows)} chunks, {total} caption lines, "
+          f"{OUTPUT.stat().st_size // 1024} KB -> {OUTPUT.relative_to(ROOT).as_posix()}")
 
 
 if __name__ == "__main__":

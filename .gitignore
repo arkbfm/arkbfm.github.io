@@ -7,3 +7,5 @@ _posts/html/
 /transcripts/
 /verify_out.txt
 __pycache__/
+# Captions are served one clip at a time by the search Worker (cloudflare-search/captions.sql); never publish them as files.
+/listen/captions/
