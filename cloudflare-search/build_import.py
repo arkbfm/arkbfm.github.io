@@ -46,9 +46,18 @@ def speaker_turns(chunk: list[dict], identities: dict) -> str:
     """Store each turn's codepoint length, confirmed name, and start time."""
     turns = []
     for segment in chunk:
-        identity = identities.get(segment.get("speaker"), {})
-        name = identity.get("name") if identity.get("status") == "confirmed" else None
-        turns.append([len(segment["text"]), name, float(segment["start"])])
+        # Keep search chunks stable while retaining changes of voice inside an ASR segment.
+        pieces = segment.get("speaker_segments") or [segment]
+        if "".join(piece["text"] for piece in pieces) != segment["text"]:
+            raise ValueError("speaker_segments must preserve the complete segment text")
+        for index, piece in enumerate(pieces):
+            identity = identities.get(piece.get("speaker"), {})
+            name = identity.get("name") if identity.get("status") == "confirmed" else None
+            turn = [len(piece["text"]), name, float(piece["start"])]
+            if segment.get("speaker_segments"):
+                # ASR segments are joined by a space; pieces within one segment are not.
+                turn.append(1 if index == len(pieces) - 1 else 0)
+            turns.append(turn)
     return json.dumps(turns, ensure_ascii=False, separators=(",", ":"))
 
 
@@ -89,8 +98,9 @@ def main() -> None:
             segment_keys.add(key)
             identities = transcript.get("speaker_identities", {})
             names = []
-            for segment in chunk:
-                identity = identities.get(segment.get("speaker"), {})
+            for piece in (piece for segment in chunk
+                          for piece in (segment.get("speaker_segments") or [segment])):
+                identity = identities.get(piece.get("speaker"), {})
                 name = identity.get("name") if identity.get("status") == "confirmed" else None
                 if name and name not in names:
                     names.append(name)

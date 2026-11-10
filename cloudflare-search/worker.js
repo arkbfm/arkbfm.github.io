@@ -95,9 +95,9 @@ function labeledExcerpt(hit, needles, limit = 280) {
   }
   const chars = Array.from(hit.text);
   let offset = 0;
-  const turns = packed.map(([length, speaker, start]) => {
+  const turns = packed.map(([length, speaker, start, gap = 1]) => {
     const text = chars.slice(offset, offset + length).join("");
-    offset += length + 1;
+    offset += length + gap;
     return { speaker: speaker || "話者不明", start, text };
   });
   if (offset - 1 !== chars.length || turns.some(turn => !turn.text)) {

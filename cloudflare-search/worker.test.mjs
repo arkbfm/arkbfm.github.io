@@ -77,6 +77,20 @@ assert.equal(worker.labeledExcerpt({ ...mixedHit, speaker_turns: null }, ["検�
   "あらB / ピジェ");
 console.log("speaker turn excerpt checks passed");
 
+const contiguousHit = {
+  ...mixedHit,
+  text: firstTurn + secondTurn,
+  speaker_turns: JSON.stringify([
+    [Array.from(firstTurn).length, "あらB", 10, 0],
+    [Array.from(secondTurn).length, "ピジェ", 20, 1],
+  ]),
+};
+const contiguousLines = worker.labeledExcerpt(contiguousHit, ["検索語"]);
+assert.equal(contiguousLines[0].speaker, "ピジェ");
+assert.equal(contiguousLines[0].start, 20);
+assert.equal(contiguousLines[0].text, secondTurn);
+console.log("word-aligned speaker pieces without added spaces passed");
+
 // Captions for the listening feed (GET /api/captions), against a real SQLite database standing in for D1.
 const { DatabaseSync } = await import("node:sqlite");
 let importCount = 0;

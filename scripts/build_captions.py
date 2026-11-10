@@ -284,7 +284,13 @@ def main() -> None:
             return keys[actor_id]
 
         lines = []
-        for segment in data.get("segments", []):
+        # Word-aligned speaker pieces have real speech times; older transcripts fall back
+        # to the original ASR segment and the diarization overlap calculation below.
+        segments = [dict(piece, part=segment.get("part", 1),
+                         speaker_aligned=bool(segment.get("speaker_segments")))
+                    for segment in data.get("segments", [])
+                    for piece in (segment.get("speaker_segments") or [segment])]
+        for segment in segments:
             part = segment.get("part", 1) - 1
             start, end = float(segment["start"]), float(segment["end"])
             if not any(p == part and start < high + MARGIN_SECONDS and end > low - MARGIN_SECONDS for p, low, high in spans):
@@ -297,7 +303,8 @@ def main() -> None:
                 until = at + (end - start) * len(piece.replace(BREAK, "")) / length
                 # Keep only lines inside an answer span; a segment can straddle a span's edge.
                 if any(p == part and low - MARGIN_SECONDS <= at < high for p, low, high in spans):
-                    speaker = key_of(turns.speaker(part, at, until)) or fallback or ""
+                    speaker = (fallback if segment.get("speaker_aligned") else
+                               key_of(turns.speaker(part, at, until)) or fallback) or ""
                     lines.append([part, round(at, 1), speaker, piece])
                 at = until
         if not lines:
