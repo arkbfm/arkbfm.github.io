@@ -15557,5 +15557,109 @@
     "question": "桜井政博のゲーム作り動画はなぜすごい？"
    }
   ]
+ ],
+ "167": [
+  [
+   {
+    "slug": "78-1",
+    "episode": "Ep. 78-1 What are we born for and what do we do to live",
+    "chapter": "教養と解釈、ChatGPT、フェミニズムの簒奪",
+    "reason": "AIと教養・解釈の関係を議論",
+    "time": "01:37:09",
+    "end": "01:47:49",
+    "id": "78-1.c6",
+    "question": "AIがAIを作る社会で、人間に理解できる教養は生まれる？"
+   },
+   {
+    "slug": "150",
+    "episode": "Ep. 150 Growing Up, Growing Old",
+    "chapter": "生成AIと教育",
+    "reason": "生成AIの教育・利用への影響を議論",
+    "time": "00:28:44",
+    "end": "00:44:06",
+    "q": 2,
+    "id": "150.2",
+    "question": "生成AIは職場の作業指示をどう見直す？"
+   },
+   {
+    "slug": "103-1",
+    "episode": "Ep. 103-1 AI Suggests Eating Poop for Lunch",
+    "chapter": "ジョークを解するAI, 資本主義とものづくり",
+    "reason": "AIの能力と限界についての会話",
+    "time": "00:17:51",
+    "end": "00:37:51",
+    "q": 1,
+    "id": "103-1.1",
+    "question": "AIはジョークを理解できる？"
+   }
+  ],
+  [
+   {
+    "slug": "166",
+    "episode": "Ep. 166 Already FIRE",
+    "chapter": "自由な時間と、いまの生活",
+    "reason": "自由の意味を時間と働き方から考察",
+    "time": "01:23:04",
+    "end": "01:32:22",
+    "id": "166.c18",
+    "question": "老後ではなく「今」自由に生きるとは、どういうこと？"
+   },
+   {
+    "slug": "158_5",
+    "episode": "Ep. 158.5 Look Back in Anger",
+    "chapter": "表現の自由と憲法",
+    "reason": "法律用語としての自由の解釈を扱う",
+    "time": "00:49:27",
+    "end": "01:08:50",
+    "q": 2,
+    "id": "158_5.2",
+    "question": "表現の自由と憲法の関係は？",
+    "part": 1
+   },
+   {
+    "slug": "160",
+    "episode": "Ep. 160 The Medium Is the Message",
+    "chapter": "善悪とは何か",
+    "reason": "善悪の基準を問い、刑罰の根拠に通じる",
+    "time": "00:44:48",
+    "end": "00:47:05",
+    "id": "160.c14",
+    "question": "善人と悪人を分ける基準は、なぜ定まらないのか？"
+   }
+  ],
+  [
+   {
+    "slug": "158",
+    "episode": "Ep. 158 Vampire Maxxing",
+    "chapter": "AI時代に自分でブログを書く意味",
+    "reason": "AI時代に自分で書く意味を考察",
+    "time": "02:14:45",
+    "end": "02:34:45",
+    "id": "158.c27",
+    "question": "LLMの文章を味わって読めないのはなぜ？"
+   },
+   {
+    "slug": "150",
+    "episode": "Ep. 150 Growing Up, Growing Old",
+    "chapter": "生成AIと教育",
+    "reason": "生成AIと教育・文章の関わり",
+    "time": "00:28:44",
+    "end": "00:44:06",
+    "q": 2,
+    "id": "150.2",
+    "question": "生成AIは職場の作業指示をどう見直す？"
+   },
+   {
+    "slug": "97-3",
+    "episode": "Ep. 97-3 AI is Doing It",
+    "chapter": "AIがやってますと言う人たち",
+    "reason": "AIが文章を書くことへの批判的視点",
+    "time": "00:00:00",
+    "end": "00:03:48",
+    "id": "97-3.1",
+    "question": "「AIがやってます」と言う人たちとは？",
+    "q": 1
+   }
+  ]
  ]
 }

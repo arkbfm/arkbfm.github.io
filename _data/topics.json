@@ -2,12 +2,12 @@
  {
   "label": "AI",
   "q": "AI",
-  "count": 55
+  "count": 56
  },
  {
   "label": "本",
   "q": "読書",
-  "count": 39
+  "count": 40
  },
  {
   "label": "映画",
@@ -32,11 +32,11 @@
  {
   "label": "仕事",
   "q": "仕事",
-  "count": 50
+  "count": 51
  },
  {
   "label": "旅行",
   "q": "旅行",
-  "count": 33
+  "count": 34
  }
 ]

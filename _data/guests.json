@@ -1,13 +1,14 @@
 {
  "xiPJ": {
-  "count": 28,
+  "count": 29,
   "first": "43",
-  "latest": "163",
+  "latest": "167",
   "first_number": "43",
   "since": "2021",
-  "latest_number": "163",
-  "latest_gap": "前回に続いて",
+  "latest_number": "167",
+  "latest_gap": "3か月ぶり",
   "episodes": [
+   "167",
    "163",
    "161",
    "158",
