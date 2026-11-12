@@ -350,6 +350,7 @@ exclude:
   - Gemfile.lock
   - LICENSE.txt
   - README.md
+  - CLAUDE.md
   - cloudflare-search
   - docker
   - docker-compose.yml
