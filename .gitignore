@@ -9,3 +9,4 @@ _posts/html/
 __pycache__/
 # Captions are served one clip at a time by the search Worker (cloudflare-search/captions.sql); never publish them as files.
 /listen/captions/
+.DS_Store
