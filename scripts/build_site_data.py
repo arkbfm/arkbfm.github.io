@@ -61,9 +61,17 @@ def load_actors() -> dict[str, dict]:
     return actors
 
 
+def unquote(value: str) -> str:
+    """Drop one pair of surrounding quotes; a title like `Ep. 49 "Season 2"` keeps its own."""
+    value = value.strip()
+    if len(value) >= 2 and value[0] == value[-1] and value[0] in "'\"":
+        return value[1:-1]
+    return value
+
+
 def front_value(front: str, key: str) -> str:
     match = re.search(rf"^{key}:[ \t]*(.*)$", front, re.MULTILINE)
-    return match.group(1).strip().strip("'\"") if match else ""
+    return unquote(match.group(1)) if match else ""
 
 
 def load_posts() -> list[dict]:

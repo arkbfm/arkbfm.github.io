@@ -12,7 +12,7 @@
             <div class="ep-hero-text">
               <h1 class="ep-hero-title">
                 <a href="{{ page.url | prepend:site.github.url }}">
-                  {% if ep %}<span class="ep-hero-number">Ep.{{ ep.number }}</span> {{ ep.subtitle }}{% else %}{{ page.title }}{% endif %}
+                  {% if ep %}<span class="ep-hero-number">Ep.{{ ep.number }}</span> {{ ep.subtitle | escape }}{% else %}{{ page.title | escape }}{% endif %}
                 </a>
               </h1>
               {% if ep %}
@@ -76,7 +76,7 @@
               内容紹介
             </h2>
             <p>
-              {{ page.description }}
+              {{ page.description | escape }}
             </p>
             <h2>
               出演者
@@ -86,7 +86,7 @@
                 {% assign actor = site.actors[actor_id] %}
                 {% assign actor_page = site.data.guests[actor_id] %}
                 <a href="{% if actor_page %}{{ '/guest/' | append: actor_id | append: '/' | prepend:site.github.url }}{% else %}{{ actor.url }}{% endif %}" class="actor"{% unless actor_page %} target="_blank"{% endunless %}>
-                  <img src="{{ actor.image_url | replace_first: '/images/actors/', '/images/actors/s/' | prepend:site.github.url }}" alt="{{ actor.name }}" class="actor-image" width="72" height="72">
+                  <img src="{{ actor.image_url | replace_first: '/images/actors/', '/images/actors/s/' | prepend:site.github.url }}" alt="{{ actor.name | escape }}" class="actor-image" width="72" height="72">
                   <br>
                   {{ actor.name }}
                   {% if actor_page %}<small class="actor-count">出演{{ actor_page.count }}回</small>{% endif %}

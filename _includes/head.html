@@ -1,19 +1,19 @@
 <head>
   <meta charset="utf-8">
-  <title>{% if page.title %}{{ page.title }} | {{ site.title }}{% elsif page.url == '/' %}{{ site.title }} | ゲストと一緒にくだをまくポッドキャスト{% else %}{{ site.title }}{% endif %}</title>
+  <title>{% if page.title %}{{ page.title | escape }} | {{ site.title }}{% elsif page.url == '/' %}{{ site.title }} | ゲストと一緒にくだをまくポッドキャスト{% else %}{{ site.title }}{% endif %}</title>
   {% comment %}One address per page: /episode/166 and /episode/166.html serve the same file.{% endcomment %}
   {% if page.url == '/404.html' %}<meta name="robots" content="noindex">{% else %}<link rel="canonical" href="{{ page.url | replace: '.html', '' | absolute_url }}">{% endif %}
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#29bd9d">
-  <meta name="description" content="{% if page.description %}{{ page.description }}{% else %}{{ site.description }}{% endif %}">
+  <meta name="description" content="{{ page.description | default: site.description | escape }}">
   {% comment %}Episode and question pages share the episode's image; question pages (clip) carry the question as their title.{% endcomment %}
   {% if page.layout == 'article' %}{% capture share_image %}{{ site.url }}/images/og/{{ page.slug }}.jpg{% endcapture %}{% elsif page.layout == 'clip' and page.image %}{% capture share_image %}{{ site.url }}{{ page.image }}{% endcapture %}{% elsif page.layout == 'clip' %}{% capture share_image %}{{ site.url }}/images/og/{{ page.episode }}.jpg{% endcapture %}{% else %}{% capture share_image %}{{ site.url }}/images/artwork.png{% endcapture %}{% endif %}
   <meta name="twitter:card" content="{% if page.layout == 'article' or page.layout == 'clip' %}summary_large_image{% else %}summary{% endif %}">
   <meta name="twitter:image" content="{{ share_image }}">
-  <meta name="twitter:description" content="{% if page.description %}{{ page.description }}{% else %}{{ site.description }}{% endif %}">
-  <meta name="twitter:title" content="{% if page.title %}{{ page.title }} | {% endif %}{{ site.title }}">
+  <meta name="twitter:description" content="{{ page.description | default: site.description | escape }}">
+  <meta name="twitter:title" content="{% if page.title %}{{ page.title | escape }} | {% endif %}{{ site.title }}">
   <meta property="og:title" content="{{ page.title | default: site.title | escape }}">
-  <meta property="og:description" content="{% if page.description %}{{ page.description }}{% else %}{{ site.description }}{% endif %}">
+  <meta property="og:description" content="{{ page.description | default: site.description | escape }}">
   <meta property="og:image" content="{{ share_image }}">
   <meta property="og:site_name" content="{{ site.title }}">
   <meta property="og:type" content="{% if page.layout == 'article' or page.layout == 'clip' %}article{% else %}website{% endif %}">

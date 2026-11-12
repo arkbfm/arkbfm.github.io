@@ -101,6 +101,14 @@ def notes_text(raw: str) -> str:
     return " ".join(line.strip() for line in lines if line.strip() and not line.startswith("http"))
 
 
+def unquote(value: str) -> str:
+    """Drop one pair of surrounding quotes; a title like `Ep. 49 "Season 2"` keeps its own."""
+    value = value.strip()
+    if len(value) >= 2 and value[0] == value[-1] and value[0] in "'\"":
+        return value[1:-1]
+    return value
+
+
 def load_episodes() -> list[dict]:
     episodes = []
     chapter_questions = json.loads(CHAPTER_QUESTIONS.read_text(encoding="utf-8")) if CHAPTER_QUESTIONS.exists() else {}
@@ -115,7 +123,7 @@ def load_episodes() -> list[dict]:
         if not parts:
             continue
         title = re.search(r"^title:[ \t]*(.*)$", front, re.MULTILINE)
-        title = re.sub(r"\s*\([^)]*\)\s*$", "", title.group(1).strip().strip("'\"")) if title else slug
+        title = re.sub(r"\s*\([^)]*\)\s*$", "", unquote(title.group(1))) if title else slug
         segments = load_segments(slug)
         raw_segments = transcript_texts(slug)
         part_ends = {}
