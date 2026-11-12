@@ -129,6 +129,24 @@
     if (window.arkbfmTrack) window.arkbfmTrack(name, params);
   }
 
+  // What every clip event carries, so one event is enough to tell how much of which answer was heard.
+  function clipParams(clip) {
+    return {
+      clip_id: keyOf(clip), episode: clip.slug, theme: theme ? theme.id : 'all',
+      length_seconds: Math.round(clip.end - clip.start),
+      heard_seconds: Math.round(lastAt === null || clip !== current ? 0 : Math.max(0, Math.min(lastAt, clip.end) - clip.start))
+    };
+  }
+
+  // A clip left without finishing or skipping it: going back, jumping in the history, changing the theme,
+  // or closing the page. Without this the last clip of a visit has a start and nothing after it.
+  function leave(reason) {
+    if (!current || !started || current.closed) return;
+    var params = clipParams(current);
+    params.reason = reason;
+    track('listen_clip_leave', params);
+  }
+
   function via(clip, how) {
     if (!clip) return clip;
     var copy = {};
@@ -684,7 +702,12 @@
 
   function show(clip, direction, how) {
     var previous = current;
+    if (previous) {
+      leave(direction < 0 ? 'back' : clip.via === 'theme_pick' && how !== 'history' ? 'theme' : 'history');
+      previous.closed = true;
+    }
     current = clip;
+    clip.closed = false;
     upcoming = null;
     lastAt = null;
     heard[keyOf(clip)] = true;
@@ -706,18 +729,19 @@
     upcoming = position < history.length - 1 ? history[position + 1] : chooseNext(clip) || false;
     renderUpcoming();
     renderPast();
+    // `started` is false for the clip waiting behind the start screen: it has been shown, not played yet
+    // (listen_begin then carries its clip_id).
     track('listen_clip_start', {
-      clip_id: keyOf(clip), episode: clip.slug, via: how || clip.via || 'first', theme: theme ? theme.id : 'all', headline: clip.headline
+      clip_id: keyOf(clip), episode: clip.slug, via: how || clip.via || 'first', theme: theme ? theme.id : 'all', headline: clip.headline,
+      length_seconds: Math.round(clip.end - clip.start), started: started
     });
     try { window.history.replaceState(null, '', address()); } catch (error) { /* file:// or sandboxed */ }
   }
 
   function advance(complete) {
     if (!data || !current) return;
-    track(complete ? 'listen_clip_complete' : 'listen_skip', {
-      clip_id: keyOf(current), episode: current.slug, theme: theme ? theme.id : 'all',
-      heard_seconds: Math.round(lastAt === null ? 0 : Math.max(0, lastAt - current.start))
-    });
+    track(complete ? 'listen_clip_complete' : 'listen_skip', clipParams(current));
+    current.closed = true;
     if (complete) {
       stats(current.end - current.start);
       session.count += 1;
@@ -810,6 +834,9 @@
   });
   // A clip that runs to the very end of its file.
   audio.addEventListener('ended', function () { if (current && current.reached) advance(true); });
+  // Closing the tab or leaving for another page mid-answer. Not visibilitychange: the feed keeps playing with
+  // the screen locked or the tab in the background.
+  window.addEventListener('pagehide', function () { leave('close'); });
   audio.addEventListener('error', function () {
     if (!current || !audio.getAttribute('src')) return;
     card.classList.remove('is-buffering');
@@ -824,7 +851,10 @@
     started = true;
     audio.preload = 'auto';
     startScreen.hidden = true;
-    track('listen_begin', { theme: theme ? theme.id : 'all', from_link: /[?&](c|ep)=/.test(window.location.search), auto: auto === true });
+    track('listen_begin', {
+      theme: theme ? theme.id : 'all', from_link: /[?&](c|ep)=/.test(window.location.search), auto: auto === true,
+      clip_id: current ? keyOf(current) : ''
+    });
     // This tap is the gesture browsers want before audio; later clips start on their own, even with the screen locked.
     if (current) playAudio();
   }
