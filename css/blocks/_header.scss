@@ -106,6 +106,12 @@
         background: rgba(255, 255, 255, 0.25);
         border-color: rgba(255, 255, 255, 0.8);
       }
+
+      // Keyboard users need more than a slightly brighter border to see where they are.
+      &:focus-visible {
+        outline: 2px solid #fff;
+        outline-offset: 2px;
+      }
     }
   }
 }

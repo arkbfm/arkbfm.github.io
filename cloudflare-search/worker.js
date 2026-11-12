@@ -19,7 +19,8 @@ try{const response=await fetch('/api/search',{method:'POST',headers:{'content-ty
 meta.textContent=data.results.length+'エピソード';results.innerHTML=data.results.map(x=>'<article class="result"><a class="title" href="'+esc(x.url)+'">'+esc(x.title)+'</a><div class="attrs">'+esc(x.published_at)+' · '+esc(x.actors)+'</div><div class="kind">'+esc(x.reason)+'</div>'+x.hits.map(h=>'<div class="hit"><div class="attrs">'+esc(h.timestamp)+(h.fuzzy?' · あいまい一致':'')+'</div><div class="text">'+(h.lines?.length?h.lines.map(line=>'<div class="turn"><span class="turn-speaker">'+esc(line.speaker||'話者不明')+':</span> '+highlight(line.text,q)+'</div>').join(''):'<div class="turn"><span class="turn-speaker">'+esc(h.speaker||'話者不明')+':</span> '+highlight(h.text,q)+'</div>')+'</div><div class="hit-actions"><a class="hit-listen" href="'+esc(h.listen)+'">▶ この場面から聴く（'+esc(h.timestamp)+'〜）</a><button class="play" data-spotify="'+esc(h.spotify_id)+'" data-start="'+Number(h.start)+'">Spotifyで開く</button></div></div>').join('')+'</article>').join('')||'<p>一致するエピソードはありませんでした。</p>';
 }catch(error){meta.textContent=error.message;}});
 const initialQuery=new URLSearchParams(location.search).get('q');if(initialQuery){document.querySelector('#q').value=initialQuery;document.querySelector('#form').requestSubmit()}
-</script><footer class="footer"><div class="container"><div class="footer-copyright">© 2021 <a href="https://www.arkbfm.com/">あらB.fm</a></div></div></footer></body></html>`;
+document.querySelector('#year').textContent=new Date().getFullYear();
+</script><footer class="footer"><div class="container"><div class="footer-copyright">© 2020–<span id="year"></span> <a href="https://www.arkbfm.com/">あらB.fm</a></div></div></footer></body></html>`;
 
 const headers = {
   "content-type": "application/json; charset=utf-8",
