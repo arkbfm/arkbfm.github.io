@@ -6,9 +6,9 @@
   <a class="ep-card-link" href="{{ card_post.url | prepend:site.github.url }}">
     {% include episode-visual.html ep=card_ep %}
     <span class="ep-card-body">
-      <span class="ep-card-title">{{ card_ep.subtitle }}</span>
+      <span class="ep-card-title">{{ card_ep.subtitle | escape }}</span>
       <span class="ep-card-guests">
-        {%- for guest_id in card_ep.guests -%}{% assign guest = site.actors[guest_id] %}{{ guest.name | default: guest_id }}{% unless forloop.last %}・{% endunless %}{%- endfor -%}
+        {%- for guest_id in card_ep.guests -%}{% assign guest = site.actors[guest_id] %}{{ guest.name | default: guest_id | escape }}{% unless forloop.last %}・{% endunless %}{%- endfor -%}
         {%- if card_ep.guests.size > 0 %}とあらB{% else %}あらB{% endif -%}
       </span>
       {% include episode-meta.html ep=card_ep %}
@@ -18,10 +18,10 @@
       {% comment %}Who is here for the first time, and the longest-awaited reunion (a guest back after half a year or more).{% endcomment %}
       {% assign reunion = nil %}{% assign reunion_months = 5 %}
       {% for comeback in card_ep.returns %}
-        {% if comeback.first %}{% assign guest = site.actors[comeback.id] %}<span class="ep-badge ep-badge-new">{{ guest.name | default: comeback.id }}さん初登場</span>
+        {% if comeback.first %}{% assign guest = site.actors[comeback.id] %}<span class="ep-badge ep-badge-new">{{ guest.name | default: comeback.id | escape }}さん初登場</span>
         {% elsif comeback.months > reunion_months %}{% assign reunion = comeback %}{% assign reunion_months = comeback.months %}{% endif %}
       {% endfor %}
-      {% if reunion %}{% assign guest = site.actors[reunion.id] %}<span class="ep-card-reunion">{{ guest.name | default: reunion.id }}さん、{{ reunion.gap }}の{{ reunion.count }}回目</span>{% endif %}
+      {% if reunion %}{% assign guest = site.actors[reunion.id] %}<span class="ep-card-reunion">{{ guest.name | default: reunion.id | escape }}さん、{{ reunion.gap }}の{{ reunion.count }}回目</span>{% endif %}
     </span>
   </a>
   {% if card_post.questions %}
@@ -30,7 +30,7 @@
     {% assign first_question = card_post.questions | first %}
     <a class="ep-card-q" data-question-flip href="{% include question-url.html url=card_url slug=card_post.slug question=first_question index=1 %}">
       <span class="ep-card-q-icon" aria-hidden="true">Q</span>
-      <span class="ep-card-q-window">{% for question in card_post.questions %}<span class="ep-card-q-item{% if forloop.first %} is-active{% endif %}" data-href="{% include question-url.html url=card_url slug=card_post.slug question=question index=forloop.index %}">{{ question.text | default: question }}</span>{% endfor %}</span>
+      <span class="ep-card-q-window">{% for question in card_post.questions %}<span class="ep-card-q-item{% if forloop.first %} is-active{% endif %}" data-href="{% include question-url.html url=card_url slug=card_post.slug question=question index=forloop.index %}">{{ question.text | default: question | escape }}</span>{% endfor %}</span>
       {% if first_question.time %}<span class="ep-card-q-play" aria-hidden="true">▶ 聴く</span>{% endif %}
     </a>
   {% endif %}

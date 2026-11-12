@@ -9,10 +9,10 @@ layout: default
     <img src="{{ guest.image_url | prepend:site.github.url }}" alt="" width="128" height="128">
     <div>
       <p class="discovery-kicker">出演者</p>
-      <h1>{{ guest.name }}さん</h1>
+      <h1>{{ guest.name | escape }}さん</h1>
       <p class="guest-hero-stats"><strong>{{ stats.count }}</strong>回出演{% if first_post %} · 初登場は<a href="{{ first_post.url | prepend:site.github.url }}">Ep.{{ stats.first | replace: '_', '.' }}</a>（{{ first_post.date | date: "%Y年%-m月" }}）{% endif %}</p>
       <p class="guest-hero-links">
-        <a href="https://search.arkbfm.com/?q={{ guest.name | uri_escape }}">{{ guest.name }}さんの発言を検索</a>
+        <a href="https://search.arkbfm.com/?q={{ guest.name | url_encode }}">{{ guest.name | escape }}さんの発言を検索</a>
         {% comment %}Performers without an SNS account point at the X home page; they get no link.{% endcomment %}{% unless guest.url == nil or guest.url == 'https://x.com/' or guest.url == 'https://twitter.com/' %}<a href="{{ guest.url }}" target="_blank" rel="noopener noreferrer">SNS ↗</a>{% endunless %}
       </p>
     </div>
@@ -26,7 +26,7 @@ layout: default
           {% assign friend = site.actors[friend_id] %}
           <a href="{{ '/guest/' | append: friend_id | append: '/' | prepend:site.github.url }}" class="guest-chip">
             <img src="{{ friend.image_url | replace_first: '/images/actors/', '/images/actors/s/' | prepend:site.github.url }}" alt="" width="56" height="56" loading="lazy">
-            <span class="guest-chip-name">{{ friend.name }}</span>
+            <span class="guest-chip-name">{{ friend.name | escape }}</span>
           </a>
         {% endfor %}
       </div>

@@ -6,9 +6,9 @@ layout: default
 {% assign ep = site.data.episode_index | where: "slug", page.episode | first %}
 <div class="container clip-page">
   <p class="discovery-kicker">あらB.fm の問い</p>
-  <h1 class="clip-question">{{ page.question }}</h1>
+  <h1 class="clip-question">{{ page.question | escape }}</h1>
   <p class="clip-where">
-    <a href="{{ post.url | relative_url }}">Ep.{{ ep.number }} {{ ep.subtitle }}</a>{% if page.chapter %}「{{ page.chapter }}」{% endif %}
+    <a href="{{ post.url | relative_url }}">Ep.{{ ep.number }} {{ ep.subtitle | escape }}</a>{% if page.chapter %}「{{ page.chapter | escape }}」{% endif %}
     · {% if page.part %}パート{{ page.part }} {% endif %}{{ page.time }}〜 · 約{{ page.minutes }}分
   </p>
   {% if ep %}<a class="clip-visual" href="{{ post.url | relative_url }}">{% include episode-visual.html ep=ep size="large" %}</a>{% endif %}
@@ -21,8 +21,8 @@ layout: default
   {% include subscribe-links.html place="clip" lead="あらB.fm はゲストと一緒にくだをまくポッドキャスト。いつものアプリでフォロー" %}
   {% if page.notes %}
     <section class="clip-notes" aria-labelledby="clip-notes-heading">
-      <h2 id="clip-notes-heading">この章のショーノート{% if page.chapter %}「{{ page.chapter }}」{% endif %}</h2>
-      <ul>{% for note in page.notes %}<li>{{ note }}</li>{% endfor %}</ul>
+      <h2 id="clip-notes-heading">この章のショーノート{% if page.chapter %}「{{ page.chapter | escape }}」{% endif %}</h2>
+      <ul>{% for note in page.notes %}<li>{{ note | escape }}</li>{% endfor %}</ul>
     </section>
   {% endif %}
   {% if page.related %}
@@ -31,8 +31,8 @@ layout: default
       <ul>
         {% for item in page.related %}
           <li>
-            <a href="{{ '/q/' | append: item.page | append: '/' | relative_url }}"><strong>{{ item.question }}</strong><span>{{ item.episode }}</span></a>
-            {% if item.reason %}<small>{{ item.reason }}</small>{% endif %}
+            <a href="{{ '/q/' | append: item.page | append: '/' | relative_url }}"><strong>{{ item.question | escape }}</strong><span>{{ item.episode | escape }}</span></a>
+            {% if item.reason %}<small>{{ item.reason | escape }}</small>{% endif %}
           </li>
         {% endfor %}
       </ul>

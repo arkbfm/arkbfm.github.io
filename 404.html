@@ -15,7 +15,7 @@ sitemap: false
   </div>
   <div class="discovery-chips not-found-themes" aria-label="テーマから聴く">
     {% for theme in site.data.themes %}
-      <a href="{{ '/listen/' | relative_url }}?theme={{ theme.id }}">{{ theme.emoji }} {{ theme.label }}<span>{{ theme.clips.size }}</span></a>
+      <a href="{{ '/listen/' | relative_url }}?theme={{ theme.id }}">{{ theme.emoji }} {{ theme.label | escape }}<span>{{ theme.clips.size }}</span></a>
     {% endfor %}
   </div>
   <form class="discovery-search" action="https://search.arkbfm.com/" method="get" role="search">

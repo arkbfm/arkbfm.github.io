@@ -3,7 +3,7 @@ since when, and how their latest visit came about. Params: id, stats (_data/gues
 {% assign guest = site.actors[include.id] %}{% assign stats = include.stats %}
 <a href="{{ '/guest/' | append: include.id | append: '/' | prepend:site.github.url }}" class="guest-chip">
   <img src="{{ guest.image_url | replace_first: '/images/actors/', '/images/actors/s/' | prepend:site.github.url }}" alt="" width="56" height="56" loading="lazy">
-  <span class="guest-chip-name">{{ guest.name }}</span>
+  <span class="guest-chip-name">{{ guest.name | escape }}</span>
   {% if stats.count > 1 %}
     <span class="guest-chip-count">{{ stats.count }}回 · {{ stats.since }}年から</span>
     <span class="guest-chip-story">最近 Ep.{{ stats.latest_number }} · {% if stats.latest_gap == '前回に続いて' %}続けて出演{% else %}{{ stats.latest_gap }}{% endif %}</span>

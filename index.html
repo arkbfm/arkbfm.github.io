@@ -38,12 +38,12 @@ layout: default
     <div class="home-latest-layout">
       <a class="home-latest-visual" href="{{ latest.url | prepend:site.github.url }}" aria-label="Ep.{{ latest_ep.number }} {{ latest_ep.subtitle | escape }} のショーノート">{% include episode-visual.html ep=latest_ep size="large" %}</a>
       <div>
-        <h3 class="home-latest-title"><a href="{{ latest.url | prepend:site.github.url }}">{{ latest_ep.subtitle }}</a></h3>
+        <h3 class="home-latest-title"><a href="{{ latest.url | prepend:site.github.url }}">{{ latest_ep.subtitle | escape }}</a></h3>
         {% include episode-meta.html ep=latest_ep %}
         {% if latest.questions %}
           <ul class="ep-questions ep-questions-compact" aria-label="この回で話していること">
             {% assign latest_url = latest.url | prepend:site.github.url %}
-            {% for question in latest.questions %}<li>{% if question.time %}<a href="{% include question-url.html url=latest_url slug=latest.slug question=question index=forloop.index %}">{{ question.text }}</a>{% else %}{{ question.text | default: question }}{% endif %}</li>{% endfor %}
+            {% for question in latest.questions %}<li>{% if question.time %}<a href="{% include question-url.html url=latest_url slug=latest.slug question=question index=forloop.index %}">{{ question.text | escape }}</a>{% else %}{{ question.text | default: question | escape }}{% endif %}</li>{% endfor %}
           </ul>
         {% else %}
           <p class="discovery-latest-description">{{ latest.description | escape }}</p>
