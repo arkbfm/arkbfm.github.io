@@ -1304,6 +1304,19 @@
   ],
   "friends": []
  },
+ "shion_ion": {
+  "count": 1,
+  "first": "168",
+  "latest": "168",
+  "first_number": "168",
+  "since": "2026",
+  "latest_number": "168",
+  "latest_gap": null,
+  "episodes": [
+   "168"
+  ],
+  "friends": []
+ },
  "syncat2": {
   "count": 1,
   "first": "141",

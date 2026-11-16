@@ -15661,5 +15661,95 @@
     "q": 1
    }
   ]
+ ],
+ "168": [
+  [
+   {
+    "slug": "167",
+    "episode": "Ep. 167 Crime and Corpus",
+    "chapter": "3人と3つのAIで大会に出る",
+    "reason": "AI活用でも成果が問われる大会の話",
+    "time": "01:57:00",
+    "end": "02:04:30",
+    "id": "167.c28",
+    "question": "3人と3つのAIで大会に出る時、どう分担した？"
+   },
+   {
+    "slug": "158",
+    "episode": "Ep. 158 Vampire Maxxing",
+    "chapter": "LLM評価と報酬モデル",
+    "reason": "AIの成果を評価する仕組みの話",
+    "time": "02:42:43",
+    "end": "02:45:59",
+    "id": "158.c30",
+    "question": "報酬モデルへの最適化で、LLMはどう偏ってしまうのか？"
+   },
+   {
+    "slug": "166",
+    "episode": "Ep. 166 Already FIRE",
+    "chapter": "AIで自分用ゲームを作る",
+    "reason": "AIで作っても成果に繋がらない例",
+    "time": "03:17:16",
+    "end": "03:31:51",
+    "q": 3,
+    "id": "166.3",
+    "question": "公開しない「ゴミ」ゲームをAIで作るのは、なぜ楽しい？"
+   }
+  ],
+  [
+   {
+    "slug": "164",
+    "episode": "Ep. 164 All Work and All Play",
+    "chapter": "裏切り要素とネタバレのジレンマ",
+    "reason": "知識が体験を変える点が共通",
+    "time": "01:10:33",
+    "end": "01:18:12",
+    "part": 1
+   },
+   {
+    "slug": "165",
+    "episode": "Ep. 165 Making Sense",
+    "chapter": "薪サウナと、便利さだけではない感覚",
+    "reason": "知識や技術と体験の関係を考察",
+    "time": "00:37:19",
+    "end": "00:39:52",
+    "id": "165.c10",
+    "question": "便利な時代に、薪サウナやアロマキャンドルが楽しまれるのはなぜ？"
+   }
+  ],
+  [
+   {
+    "slug": "84-1",
+    "episode": "Ep. 84-1 Lessons from Returnee Classmates",
+    "chapter": "道徳の教科書、教育の現場",
+    "reason": "教育の現場と教科書の役割を論じる",
+    "time": "01:30:30",
+    "end": "01:48:23",
+    "q": 3,
+    "id": "84-1.3",
+    "question": "道徳の教科書には何が書かれている？"
+   },
+   {
+    "slug": "150",
+    "episode": "Ep. 150 Growing Up, Growing Old",
+    "chapter": "生成AIと教育",
+    "reason": "生成AI時代の教育のあり方を考察",
+    "time": "00:23:40",
+    "end": "00:43:40",
+    "id": "150.c6",
+    "question": "生成AIのパーソナライズで何を設定すると便利になる？"
+   },
+   {
+    "slug": "88",
+    "episode": "Ep. 88 Working Hard for the Marathon",
+    "chapter": "練習の止め時、マラソンのモチベ、教育の必要性",
+    "reason": "学びのモチベーションと教育の必要性",
+    "time": "00:25:27",
+    "end": "00:30:28",
+    "id": "88.2",
+    "question": "練習を続けるため、やめ時をどう決める？",
+    "q": 2
+   }
+  ]
  ]
 }

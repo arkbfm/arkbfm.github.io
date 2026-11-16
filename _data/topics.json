@@ -2,7 +2,7 @@
  {
   "label": "AI",
   "q": "AI",
-  "count": 56
+  "count": 57
  },
  {
   "label": "本",
@@ -17,12 +17,12 @@
  {
   "label": "漫画",
   "q": "漫画",
-  "count": 63
+  "count": 64
  },
  {
   "label": "ゲーム",
   "q": "ゲーム",
-  "count": 71
+  "count": 72
  },
  {
   "label": "音楽",
@@ -32,7 +32,7 @@
  {
   "label": "仕事",
   "q": "仕事",
-  "count": 51
+  "count": 52
  },
  {
   "label": "旅行",

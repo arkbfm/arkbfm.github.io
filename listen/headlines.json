@@ -10,7 +10,7 @@ episode subtitle, start, end, audio part (1-based), faces (guests', then the hos
 {%- for post in site.posts -%}
 {%- assign ep = site.data.episode_index | where: "slug", post.slug | first -%}
 {%- for question in post.questions -%}
-{%- if question.time and question.end -%}
+{%- if post.audio_url and question.time and question.end -%}
 {%- unless first_item %},{% endunless -%}
 {%- assign first_item = false -%}
 [{{ post.slug | append: "." | append: forloop.index | jsonify }},{{ question.text | jsonify }},{{ ep.number | default: post.slug | jsonify }},{{ ep.subtitle | default: post.title | jsonify }},{{ question.time | jsonify }},{{ question.end | jsonify }},{{ question.part | default: 1 }},[

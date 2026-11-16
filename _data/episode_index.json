@@ -1,5 +1,24 @@
 [
  {
+  "slug": "168",
+  "number": "168",
+  "subtitle": "Think Outside the Output",
+  "date": "2026-11-17",
+  "guests": [
+   "shion_ion"
+  ],
+  "minutes": 158,
+  "chapter_count": 31,
+  "returns": [
+   {
+    "id": "shion_ion",
+    "first": true
+   }
+  ],
+  "audio": "",
+  "scenes": []
+ },
+ {
   "slug": "167",
   "number": "167",
   "subtitle": "Crime and Corpus",

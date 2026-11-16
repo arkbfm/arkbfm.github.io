@@ -320,6 +320,10 @@ actors:
     image_url: /images/actors/yamaken37.png
     name: やまけん
     url: https://twitter.com/yamaken37
+  shion_ion:
+    image_url: /images/actors/shion_ion.jpg
+    name: シオン
+    url: https://x.com/shion_ion
 author: ark_B
 description: あらB.fm はゲストと一緒にくだをまく様子をお届けするポッドキャストです。
 description_long: あらB.fm はゲストと一緒にくだをまく様子をお届けするポッドキャストです。

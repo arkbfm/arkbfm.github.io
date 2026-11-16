@@ -32,13 +32,14 @@
               <div class="ep-questions-box">
                 <h2>この回で話していること</h2>
                 <ul class="ep-questions">
-                  {% for question in page.questions %}<li{% if question.time and question.end %} data-clip="{{ page.slug }}.{{ forloop.index }}"{% endif %}{% if question.part %} data-part="{{ question.part }}"{% endif %}>{{ question.text | default: question | escape }}</li>{% endfor %}
+                  {% for question in page.questions %}<li{% if page.audio_url and question.time and question.end %} data-clip="{{ page.slug }}.{{ forloop.index }}"{% endif %}{% if question.part %} data-part="{{ question.part }}"{% endif %}>{{ question.text | default: question | escape }}</li>{% endfor %}
                 </ul>
               </div>
             {% endif %}
             {% comment %}Moments (questions, chapters, quotes) play in the listening feed; this compact embed plays the whole
             episode. Later audio parts fold away, so the chapters stay close to the questions on a phone.{% endcomment %}
             <section class="episode-player" id="episode-player" data-slug="{{ page.slug }}" data-listen="{{ '/listen/' | relative_url }}" aria-labelledby="episode-player-heading">
+              {% if page.audio_url %}
               <h2 id="episode-player-heading" class="episode-player-heading">全編を聴く <small>Spotify</small></h2>
               {% assign audio_urls = page.audio_url | split: "," %}
               {% for audio_id in audio_urls %}
@@ -49,6 +50,10 @@
                 </div>
                 {% if forloop.last and forloop.index > 1 %}</details>{% endif %}
               {% endfor %}
+              {% else %}
+              <h2 id="episode-player-heading" class="episode-player-heading">音声公開準備中</h2>
+              <p>音声の公開後、このページから全編とつまみ聴きをお楽しみいただけます。</p>
+              {% endif %}
             </section>
             <div class="ep-follow">{% include subscribe-links.html place="episode" lead="気に入ったら、番組をフォロー" %}</div>
             {% comment %}Draft quotes (unverified speaker or wording) only show in local builds.{% endcomment %}
@@ -99,14 +104,14 @@
             {% assign chapter_questions = site.data.chapter_questions[page.slug] | where_exp: "question", "question.hidden != true" %}
             {% if page.questions or chapter_questions.size > 0 %}
               <section class="ep-all-questions" aria-labelledby="all-questions-heading">
-                <h2 id="all-questions-heading">この回で聴ける問い</h2>
+                <h2 id="all-questions-heading">{% if page.audio_url %}この回で聴ける問い{% else %}この回の問い{% endif %}</h2>
                 <ol>
                   {% for question in page.questions %}{% if question.time %}
                     {% capture question_page %}{{ page.slug | append: '-' | append: forloop.index | slugify }}{% endcapture %}
-                    <li data-time="{{ question.time }}"{% if question.end %} data-clip="{{ page.slug }}.{{ forloop.index }}"{% endif %}{% if question.part %} data-part="{{ question.part }}"{% endif %}><a href="{% if question.end %}{{ '/listen/' | relative_url }}?c={{ page.slug | append: '.' | append: forloop.index | uri_escape }}{% else %}{{ '/q/' | append: question_page | append: '/' | relative_url }}{% endif %}"><time>{% if question.part and question.part > 1 %}パート{{ question.part }} {% endif %}{{ question.time }}</time>{{ question.text | escape }}</a></li>
+                    <li data-time="{{ question.time }}"{% if page.audio_url and question.end %} data-clip="{{ page.slug }}.{{ forloop.index }}"{% endif %}{% if question.part %} data-part="{{ question.part }}"{% endif %}><a href="{% if page.audio_url and question.end %}{{ '/listen/' | relative_url }}?c={{ page.slug | append: '.' | append: forloop.index | uri_escape }}{% else %}{{ '/q/' | append: question_page | append: '/' | relative_url }}{% endif %}"><time>{% if question.part and question.part > 1 %}パート{{ question.part }} {% endif %}{{ question.time }}</time>{{ question.text | escape }}</a></li>
                   {% endif %}{% endfor %}
                   {% for question in site.data.chapter_questions[page.slug] %}{% unless question.hidden %}
-                    <li data-time="{{ question.time }}" data-clip="{{ page.slug }}.c{{ forloop.index }}"{% if question.part %} data-part="{{ question.part }}"{% endif %}><a href="{{ '/listen/' | relative_url }}?c={{ page.slug | append: '.c' | append: forloop.index | uri_escape }}"><time>{% if question.part and question.part > 1 %}パート{{ question.part }} {% endif %}{{ question.time }}</time>{{ question.text | escape }}</a></li>
+                    <li data-time="{{ question.time }}"{% if page.audio_url %} data-clip="{{ page.slug }}.c{{ forloop.index }}"{% endif %}{% if question.part %} data-part="{{ question.part }}"{% endif %}><a href="{% if page.audio_url %}{{ '/listen/' | relative_url }}?c={{ page.slug | append: '.c' | append: forloop.index | uri_escape }}{% else %}{{ '/q/' | append: page.slug | append: '-c' | append: forloop.index | append: '/' | relative_url }}{% endif %}"><time>{% if question.part and question.part > 1 %}パート{{ question.part }} {% endif %}{{ question.time }}</time>{{ question.text | escape }}</a></li>
                   {% endunless %}{% endfor %}
                 </ol>
               </section>

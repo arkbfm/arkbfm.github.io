@@ -13,10 +13,10 @@ layout: default
   </p>
   {% if ep %}<a class="clip-visual" href="{{ post.url | relative_url }}">{% include episode-visual.html ep=ep size="large" %}</a>{% endif %}
   <div class="clip-actions">
-    <a class="home-random-button home-listen-button" href="{{ '/listen/' | relative_url }}?c={{ page.clip | uri_escape }}">▶ この答えを聴く</a>
+    {% if post.audio_url %}<a class="home-random-button home-listen-button" href="{{ '/listen/' | relative_url }}?c={{ page.clip | uri_escape }}">▶ この答えを聴く</a>{% else %}<p>この回の音声は公開準備中です。</p>{% endif %}
     <a class="clip-episode-link" href="{{ post.url | relative_url }}">この回のショーノートを見る</a>
   </div>
-  <p class="clip-note">答えが終わると、同じテーマを話している別の回へ自動でつながります。</p>
+  {% if post.audio_url %}<p class="clip-note">答えが終わると、同じテーマを話している別の回へ自動でつながります。</p>{% endif %}
   {% comment %}Most visitors here come from a shared link and do not know the show yet.{% endcomment %}
   {% include subscribe-links.html place="clip" lead="あらB.fm はゲストと一緒にくだをまくポッドキャスト。いつものアプリでフォロー" %}
   {% if page.notes %}

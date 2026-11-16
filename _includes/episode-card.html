@@ -31,7 +31,7 @@
     <a class="ep-card-q" data-question-flip href="{% include question-url.html url=card_url slug=card_post.slug question=first_question index=1 %}">
       <span class="ep-card-q-icon" aria-hidden="true">Q</span>
       <span class="ep-card-q-window">{% for question in card_post.questions %}<span class="ep-card-q-item{% if forloop.first %} is-active{% endif %}" data-href="{% include question-url.html url=card_url slug=card_post.slug question=question index=forloop.index %}">{{ question.text | default: question | escape }}</span>{% endfor %}</span>
-      {% if first_question.time %}<span class="ep-card-q-play" aria-hidden="true">▶ 聴く</span>{% endif %}
+      {% if card_post.audio_url and first_question.time %}<span class="ep-card-q-play" aria-hidden="true">▶ 聴く</span>{% elsif card_post.audio_url == nil %}<span class="ep-card-q-play">公開準備中</span>{% endif %}
     </a>
   {% endif %}
 </article>
