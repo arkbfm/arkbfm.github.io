@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0" xmlns:anchor="https://anchor.fm/xmlns" xmlns:podcast="https://podcastindex.org/namespace/1.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
+	<channel>
+		<title><![CDATA[あらB.fm]]></title>
+		<description><![CDATA[あらB.fm はゲストと一緒にくだをまく様子をお届けするポッドキャストです。 <link>not a tag</link> ]]></description>
+		<link>https://arkbfm.com</link>
+		<atom:link href="https://anchor.fm/s/319a2820/podcast/rss" rel="self" type="application/rss+xml"/>
+		<itunes:owner>
+			<itunes:name>あらB</itunes:name>
+			<itunes:email>owner@example.com</itunes:email>
+		</itunes:owner>
+		<itunes:category text="Society &amp; Culture">
+			<itunes:category text="Documentary"/>
+		</itunes:category>
+		<itunes:image href="https://example.com/art.jpg"/>
+		<!-- a comment with <item><link>https://evil.example</link></item> inside -->
+		<item>
+			<title><![CDATA[Ep. 169 Brand New (ゲスト,あらB)]]></title>
+			<description><![CDATA[<p>New episode, page not on the site yet. <a href="https://example.com/?a=1&b=2">x</a></p>]]></description>
+			<link>https://podcasters.spotify.com/pod/show/arkbfm/episodes/Ep--169-e1</link>
+			<guid isPermaLink="false">guid-169</guid>
+			<pubDate>Mon, 23 Nov 2026 17:18:49 GMT</pubDate>
+			<enclosure url="https://anchor.fm/s/319a2820/podcast/play/1/https%3A%2F%2Fexample.com%2F169.mp3" length="113684981" type="audio/mpeg"/>
+			<itunes:episode>169</itunes:episode>
+			<itunes:episodeType>full</itunes:episodeType>
+		</item>
+		<item>
+			<title><![CDATA[Ep. 168 Think Outside the Output (シオン,あらB)]]></title>
+			<description><![CDATA[<p>ShowNotes</p><ul><li>link: <link>https://inside.cdata</link></li></ul>]]></description>
+			<link>https://podcasters.spotify.com/pod/show/arkbfm/episodes/Ep--168-Think-Outside-the-Output--B-e3sgc35</link>
+			<guid isPermaLink="false">44dad45e-6702-4977-8d08-688e56ae3a26</guid>
+			<dc:creator><![CDATA[あらB]]></dc:creator>
+			<pubDate>Mon, 16 Nov 2026 17:18:49 GMT</pubDate>
+			<enclosure url="https://anchor.fm/s/319a2820/podcast/play/129560101/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2026-10-16%2Fc29ed341.mp3" length="113684981" type="audio/mpeg"/>
+			<itunes:summary>&lt;p&gt;ShowNotes&lt;/p&gt;</itunes:summary>
+			<itunes:explicit>false</itunes:explicit>
+			<itunes:duration>02:38:00</itunes:duration>
+			<itunes:image href="https://example.com/168.jpg"/>
+			<itunes:season>1</itunes:season>
+			<itunes:episode>168</itunes:episode>
+			<itunes:episodeType>full</itunes:episodeType>
+			<podcast:transcript url="https://example.com/168.vtt" type="text/vtt" rel="captions"/>
+		</item>
+		<item>
+			<title><![CDATA[Ep. 158.5-2 Look Back in Anger (モラズ,ムート,あらB)]]></title>
+			<description><![CDATA[Part 2]]></description>
+			<link>https://podcasters.spotify.com/pod/show/arkbfm/episodes/Ep--158-5-2</link>
+			<guid isPermaLink="false">guid-158.5-2</guid>
+			<pubDate>Tue, 01 Jul 2026 10:00:00 GMT</pubDate>
+			<enclosure url="https://example.com/158_5-2.mp3" length="1" type="audio/mpeg"/>
+		</item>
+		<item>
+			<title>Ep. 101.5 This is a Bonus Episode &amp; more</title>
+			<description>Escaped &lt;b&gt;text&lt;/b&gt;</description>
+			<link>https://podcasters.spotify.com/pod/show/arkbfm/episodes/Ep--101-5?x=1&amp;y=2</link>
+			<guid isPermaLink="false">guid-101.5</guid>
+			<pubDate>Tue, 01 Jan 2024 10:00:00 GMT</pubDate>
+			<enclosure url="https://example.com/101_5.mp3" length="1" type="audio/mpeg"/>
+		</item>
+		<item>
+			<title><![CDATA[Ep. 56-1 Eating persimmons rings the bell]]></title>
+			<guid isPermaLink="false">guid-56-1</guid>
+			<pubDate>Tue, 01 Jan 2022 10:00:00 GMT</pubDate>
+			<enclosure url="https://example.com/56-1.mp3" length="1" type="audio/mpeg"/>
+		</item>
+		<item>
+			<title><![CDATA[Ep.69-1 Linear algebra behind complexity]]></title>
+			<link/>
+			<guid isPermaLink="false">guid-69-1</guid>
+			<pubDate>Tue, 01 Jan 2022 11:00:00 GMT</pubDate>
+			<enclosure url="https://example.com/69-1.mp3" length="1" type="audio/mpeg"/>
+		</item>
+		<item>
+			<title><![CDATA[Ep. 63 A Different Subtitle]]></title>
+			<link>https://podcasters.spotify.com/pod/show/arkbfm/episodes/Ep--63</link>
+			<atom:link href="https://example.com/item-atom-link" rel="alternate"/>
+			<guid isPermaLink="false">guid-63</guid>
+			<pubDate>Tue, 01 Jan 2022 12:00:00 GMT</pubDate>
+			<enclosure url="https://example.com/63.mp3" length="1" type="audio/mpeg"/>
+		</item>
+		<item>
+			<title><![CDATA[Trailer]]></title>
+			<link>https://podcasters.spotify.com/pod/show/arkbfm/episodes/trailer</link>
+			<guid isPermaLink="false">guid-trailer</guid>
+			<pubDate>Tue, 01 Jan 2020 12:00:00 GMT</pubDate>
+			<enclosure url="https://example.com/trailer.mp3" length="1" type="audio/mpeg"/>
+			<itunes:episodeType>trailer</itunes:episodeType>
+		</item>
+	</channel>
+</rss>

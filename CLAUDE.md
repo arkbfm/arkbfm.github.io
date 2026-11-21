@@ -2,7 +2,7 @@
 
 ## プロジェクト概要
 
-ポッドキャスト「あらB.fm」のサイト。Jekyll 製の静的サイトを GitHub Pages（カスタムドメイン: www.arkbfm.com）でホストし、全文検索と字幕だけ Cloudflare Worker（`search.arkbfm.com`）が配信する。
+ポッドキャスト「あらB.fm」のサイト。Jekyll 製の静的サイトを GitHub Pages（カスタムドメイン: www.arkbfm.com）でホストし、全文検索と字幕だけ Cloudflare Worker（`search.arkbfm.com`）が配信する。Apple Podcasts 向けの RSS（各回の `<link>` を公式ページに差し替えたもの）は別の Worker（`cloudflare-rss/`）が配信する。
 
 - 言語: 日本語
 - 音声はこのサイトでは持たない。エピソードページは Spotify embed、つまみ聴き（`/listen/`）は番組の RSS にある音声ファイルを直接再生する
@@ -25,6 +25,7 @@
 | `/q/:name/` | `_clips/*.md`（`layout: clip`） | 問い 1 つごとのシェア用ページ |
 | `/listen/` | `listen/index.html`（`layout: listen`） | つまみ聴き（字幕・話者の顔つきの連続再生） |
 | `/404.html`, `/robots.txt`, `/sitemap.xml` | `404.html`, `robots.txt`, jekyll-sitemap | |
+| `/episode-links.json` | `episode-links.json` | 全エピソードページのタイトルと URL（`cloudflare-rss/` の Worker が読む） |
 
 - レイアウト: `_layouts/`（`default`, `article`, `clip`, `guest`, `listen`）
 - インクルード: `_includes/`（`head.html`, `header.html`, `footer.html`, `episode-card.html`, `spotify-embed.html` など）
@@ -80,7 +81,7 @@ questions:                         # 手で選んだ見出しの問い（最大 
 
 ## 注意点
 
-- **タイトルを書き換えない。** `build_site_data.py` は Spotify の再生データとタイトルの完全一致で突き合わせる。`Ep.65` のようにスペースの無い古いタイトルもそのままにしてある
+- **タイトルを書き換えない。** `build_site_data.py` は Spotify の再生データとタイトルの完全一致で突き合わせる。Apple Podcasts 用 RSS の Worker も `Ep. <番号>` と英題で Spotify の RSS の回とページを対応させる。`Ep.65` のようにスペースの無い古いタイトルもそのままにしてある
 - **テンプレートに値を出すときは `escape` を付ける。** タイトルに `"` を含む回がある（Ep. 49, 53-1, 100）。属性値（`content="..."`, `alt="..."`）では特に必須。JSON-LD には `jsonify` を使う
 - frontmatter をスクリプトで読むときは、値の中の引用符を削らない（外すのは前後が対になっている引用符だけ）
 - `_posts/` は CRLF の記事が大半で LF と混在している。編集時は元の改行コードを保つ

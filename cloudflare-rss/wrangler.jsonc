@@ -1,0 +1,21 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "arkbfm-rss",
+  "main": "src/worker.js",
+  "compatibility_date": "2026-09-16",
+  // The Cache API does nothing on workers.dev, so the feed is served from its own hostname on the arkbfm.com zone.
+  "workers_dev": false,
+  "routes": [
+    { "pattern": "rss.arkbfm.com", "custom_domain": true }
+  ],
+  "observability": { "enabled": true },
+  "vars": {
+    "SOURCE_FEED_URL": "https://anchor.fm/s/319a2820/podcast/rss",
+    "SITE_INDEX_URL": "https://www.arkbfm.com/episode-links.json",
+    "SITE_BASE_URL": "https://www.arkbfm.com/episode/",
+    "REFRESH_SECONDS": "900",
+    "FETCH_TIMEOUT_MS": "15000",
+    // { "<guid>": "https://www.arkbfm.com/episode/..." } to place an episode by hand, or null to keep its Spotify link.
+    "LINK_OVERRIDES": {}
+  }
+}

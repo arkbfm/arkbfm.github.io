@@ -1,0 +1,12 @@
+---
+layout: null
+permalink: /episode-links.json
+sitemap: false
+---
+{%- comment -%}Every episode page, for the Apple Podcasts feed Worker (cloudflare-rss/) to point each RSS item's <link> at
+its page. The Worker matches the "Ep. <number>" label and subtitle in the title, so keep titles in that form.{%- endcomment -%}
+[
+{%- for post in site.posts %}
+{"title":{{ post.title | jsonify }},"url":{{ post.url | jsonify }}}{% unless forloop.last %},{% endunless %}
+{%- endfor %}
+]

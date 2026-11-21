@@ -356,6 +356,7 @@ exclude:
   - README.md
   - CLAUDE.md
   - cloudflare-search
+  - cloudflare-rss
   - docker
   - docker-compose.yml
   - scripts

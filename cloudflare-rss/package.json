@@ -1,0 +1,17 @@
+{
+  "name": "arkbfm-rss",
+  "private": true,
+  "type": "module",
+  "description": "Spotify for Creators feed with episode links pointed at www.arkbfm.com, for Apple Podcasts",
+  "scripts": {
+    "test": "node --test test/*.test.mjs",
+    "dev": "wrangler dev",
+    "check:live": "node scripts/check-live.mjs",
+    "diff": "node scripts/diff-feed.mjs",
+    "deploy": "wrangler deploy"
+  },
+  "devDependencies": {
+    "fast-xml-parser": "4.5.7",
+    "wrangler": "^4.166.0"
+  }
+}
